@@ -27,6 +27,8 @@ app.get '/posts', (req, res) ->
     .run (err, posts) ->
       console.log 'query done'
       unless err or not posts?
+        for post in posts
+          post.setValue('id', post.getValue('_id'))
         res.json posts
       else
         res.json 'found nothing'

@@ -10,7 +10,6 @@ class exports.PostsView extends Backbone.View
 
   addAll: ->
     for post in @collection.models
-      console.log post
       @addOne post
 
   addOne: (post) ->

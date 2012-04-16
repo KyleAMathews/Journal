@@ -10,6 +10,6 @@ class exports.Application extends BrunchApplication
     @collections.posts = new Posts
     @collections.posts.fetch()
     @views = {}
-    @views.posts = new PostsView collection: @collections.posts
+    @views.posts = new PostsView collection: @collections.posts, el: $('ul#posts')
 
 window.app = new exports.Application

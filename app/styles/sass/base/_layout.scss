@@ -1,0 +1,29 @@
+@import "susy";
+
+// Suzy defaults
+$total-cols: 12;
+$col-width: 3em;
+$gutter-width: 1em;
+$side-gutter-width: $gutter-width;
+
+@media only screen and (min-width: 751px) {
+  #container {
+    @include container;
+    ul#posts {
+      @include full;
+    }
+  }
+}
+
+$total-cols: 12;
+$col-width: 3em;
+$gutter-width: 1em;
+$side-gutter-width: 6em;
+@media only screen and (max-width: 750px) {
+  #container {
+    @include container;
+    ul#posts {
+      @include full;
+    }
+  }
+}
