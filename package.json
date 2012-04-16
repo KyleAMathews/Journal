@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "express": "2.x.x",
+    "jade": "0.x.x",
     "moment": "1.x.x",
     "underscore": "1.x.x",
     "mongoose": "2.x.x",
