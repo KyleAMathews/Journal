@@ -5,8 +5,9 @@ mongoose.connect('mongodb://localhost/journal')
 Schema = mongoose.Schema
 
 PostSchema = new Schema (
-  title: String
-  body: String
+  title: { type: String, required: true }
+  body: { type: String, required: true }
+  nid: { type: Number, min: 1, required: true, index: true, unique: true }
   created: { type: Date, index: true }
   changed: { type: Date, index: true }
 )

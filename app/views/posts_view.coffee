@@ -1,10 +1,13 @@
 {PostView} = require 'views/post_view'
 class exports.PostsView extends Backbone.View
 
+  id: 'posts'
+
   initialize: ->
     @collection.on 'reset', @render
 
   render: =>
+    @$el.html("<a href='/posts/new'>+post</a>")
     @addAll()
     @
 

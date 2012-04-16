@@ -1,2 +1,11 @@
-<h1><%= @title %></h1>
-<p><%- @rendered %></p>
+<% if @page: %>
+  <a href="/">Home</a>
+  <a href="node/<%= @nid %>/edit">Edit post</a>
+<% end %>
+<% if @page: %>
+  <h1><%= @title %></h1>
+<% else: %>
+  <h1><a href="node/<%- @nid %>"><%= @title %></a></h1>
+<% end %>
+<small class="date"><%- @rendered_created %></small>
+<%- @rendered_body %>

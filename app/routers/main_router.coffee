@@ -1,6 +1,34 @@
+{PostView} = require 'views/post_view'
+{PostEditView} = require 'views/post_edit_view'
+{Post} = require 'models/post'
 class exports.MainRouter extends Backbone.Router
   routes:
     '': 'home'
+    'node/:id': 'post'
+    'post/new': 'newPost'
+    'node/:id/edit': 'editPost'
 
   home: ->
-    app.views.posts.render().el
+    app.views.main.show(app.views.posts)
+
+  post: (id) ->
+    app.util.loadPost id, true, (post) ->
+      # Scroll to top of page.
+      document.body.scrollTop = document.documentElement.scrollTop = 0
+      postView = new PostView model: post, page: true
+      app.views.main.show(postView)
+
+  newPost: ->
+    app.util.loadPost id, true, (post) ->
+      # Scroll to top of page.
+      document.body.scrollTop = document.documentElement.scrollTop = 0
+      newPost = new Post
+      postEditView = new PostEditView model: newPost
+      app.views.main.show(postEditView)
+
+  editPost: (id) ->
+    app.util.loadPost id, true, (post) ->
+      # Scroll to top of page.
+      document.body.scrollTop = document.documentElement.scrollTop = 0
+      postEditView = new PostEditView model: post
+      app.views.main.show(postEditView)
