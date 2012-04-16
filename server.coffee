@@ -19,23 +19,61 @@ app.configure ->
 app.get '/', (req, res) ->
   res.render 'index'
 
+findById = (id, res) ->
+  Post = mongoose.model 'post'
+  Post.findById id, (err, post) ->
+    unless err or not post?
+      post.setValue('id', post.getValue('_id'))
+      res.json post
+
+findByNid = (nid, res) ->
+  Post = mongoose.model 'post'
+  Post.find { nid: nid }, (err, post) ->
+    unless err or not post?
+      post = post[0]
+      post.setValue('id', post.getValue('_id'))
+      res.json post
+    else
+      console.log err
+      res.json 'found nothing'
+
+app.get '/node/:nid', (req, res) ->
+  if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
+    res.render 'index'
+  else
+    findByNid(req.params.nid, res)
+
+app.get '/node/:nid/edit', (req, res) ->
+  if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
+    res.render 'index'
+  else
+    findByNid(req.params.nid, res)
+
 app.get '/posts', (req, res) ->
   Post = mongoose.model 'post'
-  Post.find()
-    .limit(50)
-    .desc('created')
-    .run (err, posts) ->
-      console.log 'query done'
-      unless err or not posts?
-        for post in posts
-          post.setValue('id', post.getValue('_id'))
-        res.json posts
-      else
-        res.json 'found nothing'
+  if req.query.id
+    findById(req.query.id, res)
+  else if req.query.nid
+    findByNid(req.query.nid, res)
+  else
+    Post.find()
+      .limit(50)
+      .desc('created')
+      .run (err, posts) ->
+        console.log 'query done'
+        unless err or not posts?
+          for post in posts
+            post.setValue('id', post.getValue('_id'))
+          res.json posts
+        else
+          res.json 'found nothing'
+
 app.post '/posts', (req, res) ->
   res.send 'hello world'
+
 app.put '/posts/:id', (req, res) ->
   res.send 'hello world'
+
 app.del '/posts/:id', (req, res) ->
   res.send 'hello world'
 
