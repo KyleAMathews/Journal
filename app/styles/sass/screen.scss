@@ -16,3 +16,18 @@ ul#posts {
 .post {
   @include trailer(4);
 }
+
+.post-edit {
+  .title {
+    @include trailer(0.5);
+
+    width: 100%;
+  }
+  .body {
+    @include trailer(0.5);
+
+    width: 100%;
+    height: 30em;
+  }
+
+}

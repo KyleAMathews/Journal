@@ -5,7 +5,7 @@ class exports.MainRouter extends Backbone.Router
   routes:
     '': 'home'
     'node/:id': 'post'
-    'post/new': 'newPost'
+    'posts/new': 'newPost'
     'node/:id/edit': 'editPost'
 
   home: ->
@@ -19,12 +19,12 @@ class exports.MainRouter extends Backbone.Router
       app.views.main.show(postView)
 
   newPost: ->
-    app.util.loadPost id, true, (post) ->
-      # Scroll to top of page.
-      document.body.scrollTop = document.documentElement.scrollTop = 0
-      newPost = new Post
-      postEditView = new PostEditView model: newPost
-      app.views.main.show(postEditView)
+    # Scroll to top of page.
+    document.body.scrollTop = document.documentElement.scrollTop = 0
+    newPost = new Post
+    newPost.collection = app.collections.posts
+    postEditView = new PostEditView model: newPost
+    app.views.main.show(postEditView)
 
   editPost: (id) ->
     app.util.loadPost id, true, (post) ->

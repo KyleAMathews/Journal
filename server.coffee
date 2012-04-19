@@ -69,10 +69,41 @@ app.get '/posts', (req, res) ->
           res.json 'found nothing'
 
 app.post '/posts', (req, res) ->
-  res.send 'hello world'
+  console.log 'saving new post'
+  Post = mongoose.model 'post'
+  post = new Post()
+  for k,v of req.body
+    post[k] = v
+  # Figure out max nid.
+  Post.find({},['nid'])
+    .desc('nid')
+    .limit(1)
+    .run (err, postWithMaxNid) ->
+      postWithMaxNid = postWithMaxNid[0]
+      console.log postWithMaxNid
+      console.log postWithMaxNid.nid
+
+      post.nid = postWithMaxNid.nid + 1
+      post.created = new Date()
+      post.changed = new Date()
+      post.save (err) ->
+        unless err
+          res.json id: post._id, created: post.created, nid: post.nid
 
 app.put '/posts/:id', (req, res) ->
-  res.send 'hello world'
+  console.log 'updating an post'
+  Post = mongoose.model 'post'
+  Post.findById req.params.id, (err, post) ->
+    unless err or not post?
+      for k,v of req.body
+        if k is 'id' then continue
+        post[k] = v
+      post.changed = new Date()
+      post.save()
+      res.json {
+        saved: true
+        changed: post.changed
+      }
 
 app.del '/posts/:id', (req, res) ->
   res.send 'hello world'

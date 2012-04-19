@@ -1,5 +1,5 @@
 <a href="/">Home</a>
-<a href="node/<%- @nid %>">Return to post</a>
-<input value="<%- @title %>">
-<textarea><%- @body %></textarea>
-<button>Save</button>
+<a href="/node/<%- @nid %>">Return to post</a>
+<input class="title" value="<%- @title %>">
+<textarea class="body"><%- @body %></textarea>
+<button class="save">Save</button>
