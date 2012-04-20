@@ -84,8 +84,9 @@ app.post '/posts', (req, res) ->
       console.log postWithMaxNid.nid
 
       post.nid = postWithMaxNid.nid + 1
-      post.created = new Date()
-      post.changed = new Date()
+      unless post.created?
+        post.created = new Date()
+      post.changed = post.created
       post.save (err) ->
         unless err
           res.json id: post._id, created: post.created, nid: post.nid
