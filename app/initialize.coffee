@@ -17,7 +17,6 @@ class exports.Application extends BrunchApplication
     @collections.posts.fetch()
 
     @views.main = new MainView el: $('#container')
-    @views.posts = new PostsView collection: @collections.posts
 
     @util.loadPost = loadPost
     @util.clickHandler = clickHandler

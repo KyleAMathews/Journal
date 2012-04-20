@@ -1,3 +1,4 @@
+{PostsView} = require 'views/posts_view'
 {PostView} = require 'views/post_view'
 {PostEditView} = require 'views/post_edit_view'
 {Post} = require 'models/post'
@@ -9,7 +10,8 @@ class exports.MainRouter extends Backbone.Router
     'node/:id/edit': 'editPost'
 
   home: ->
-    app.views.main.show(app.views.posts)
+    postsView = new PostsView collection: app.collections.posts
+    app.views.main.show(postsView)
 
   post: (id) ->
     app.util.loadPost id, true, (post) ->
