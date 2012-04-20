@@ -3,9 +3,6 @@ class exports.PostView extends Backbone.View
 
   className: 'post'
 
-  initialize: ->
-    @model.on 'change', @render
-
   render: =>
     @model.set rendered_body: marked(@model.get('body'))
     @model.set rendered_created: moment(@model.get('created')).format("dddd, MMMM Do YYYY")
