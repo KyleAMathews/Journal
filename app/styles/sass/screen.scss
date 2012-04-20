@@ -6,6 +6,7 @@
 @import "base/base";
 @import "base/typography";
 @import "base/layout";
+@import "modules/kalendae";
 
 ul#posts {
   @include no-bullets;

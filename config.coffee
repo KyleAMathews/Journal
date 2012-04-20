@@ -24,6 +24,7 @@ exports.config =
           'vendor/scripts/backbone-0.9.2.js'
           'vendor/scripts/marked.js'
           'vendor/scripts/moment.js'
+          'vendor/scripts/kalendae.js'
         ]
 
     templates:

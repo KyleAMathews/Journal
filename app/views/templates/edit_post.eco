@@ -1,5 +1,6 @@
 <a href="/">Home</a>
 <a href="/node/<%- @nid %>">Return to post</a>
 <input class="title" value="<%- @title %>">
+<input class="date" value="<%- moment(@created).format('MM/D/YYYY') %>">
 <textarea class="body"><%- @body %></textarea>
 <button class="save">Save</button>
