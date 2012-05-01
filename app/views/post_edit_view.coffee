@@ -28,6 +28,7 @@ class exports.PostEditView extends Backbone.View
     @model.save(obj,
       {
         success: =>
+          app.collections.posts.sort()
           app.router.navigate '/node/' + @model.get('nid'), true
       }
     )
