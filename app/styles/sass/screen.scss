@@ -24,6 +24,9 @@ ul#posts {
 
     width: 100%;
   }
+  .date {
+    @include trailer(0.5);
+  }
   .body {
     @include trailer(0.5);
 
