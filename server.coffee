@@ -18,6 +18,8 @@ app.configure ->
 
 app.get '/', (req, res) ->
   res.render 'index'
+app.get '/posts/new', (req, res) ->
+  res.render 'index'
 
 findById = (id, res) ->
   Post = mongoose.model 'post'
