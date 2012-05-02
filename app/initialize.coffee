@@ -4,6 +4,9 @@
 {PostsView} = require 'views/posts_view'
 {Posts} = require 'collections/posts'
 
+# Misc
+require 'backbone_extensions'
+
 class exports.Application extends BrunchApplication
   initialize: ->
     @collections = {}

@@ -1,4 +1,5 @@
 PostEditTemplate = require 'views/templates/edit_post'
+{ExpandingTextareaView} = require('widgets/expanding_textarea/expanding_textarea_view')
 class exports.PostEditView extends Backbone.View
 
   className: 'post-edit'
@@ -9,12 +10,18 @@ class exports.PostEditView extends Backbone.View
   render: ->
     @$el.html PostEditTemplate @model.toJSON()
     @$('.date').kalendae()
+    @addChildView new ExpandingTextareaView(
+      el: @$('.expanding-textarea')
+      edit_text: @model.get('body')
+      lines: 20
+    ).render()
+
     @
 
   save: ->
     obj = {}
     obj.title = @$('.title').val()
-    obj.body = @$('.body').val()
+    obj.body = @$('textarea').val()
 
     # See if the date was changed.
     created = @$('.date').val()

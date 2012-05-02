@@ -25,6 +25,7 @@ exports.config =
           'vendor/scripts/marked.js'
           'vendor/scripts/moment.js'
           'vendor/scripts/kalendae.js'
+          'vendor/scripts/expanding.js'
         ]
 
     templates:
