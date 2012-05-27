@@ -19,6 +19,20 @@ ul#posts {
   @include trailer(4);
 }
 
+input, textarea {
+  @include rhythm-borders(1px, 0.5);
+
+  border-color: $grey80;
+  color: $grey20;
+}
+
+.expanding-textarea textarea {
+  @include rhythm-borders(1px, 0.5);
+  @include box-shadow(none);
+
+  border-color: $grey80;
+}
+
 .post-edit {
   .title {
     @include trailer(0.5);
@@ -35,4 +49,8 @@ ul#posts {
     height: 30em;
   }
 
+}
+
+input[type="submit"], button {
+  @include my-button();
 }

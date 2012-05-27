@@ -1,3 +1,6 @@
+@import "sassy-buttons";
+@import "compass/css3/box-sizing";
+
 // Greys
 $grey7: #111111;
 $grey10: #1A1A1A;
@@ -30,3 +33,11 @@ $error_border_color: #dd5522;
 $status_color: #336600;
 $status_background: #ccff88;
 $status_border_color: #bbee77;
+
+@mixin my-button($color: $grey60, $text_size: 1em) {
+  @include sassy-button('simple', 0.5em, $text_size, $color);
+}
+
+* {
+  @include box-sizing('border-box');
+}
