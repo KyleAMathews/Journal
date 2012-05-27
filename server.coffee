@@ -1,6 +1,9 @@
 express = require 'express'
 mongoose = require 'mongoose'
+passport = require 'passport'
+RedisStore = require('connect-redis')(express)
 require './post_schema'
+require './user_schema'
 
 app = express.createServer()
 
@@ -12,14 +15,59 @@ app.configure ->
   app.use express.responseTime()
   app.use express.bodyParser()
   app.use express.methodOverride()
-  #app.use express.session({ store: new RedisStore, secret: 'Make Stuff', cookie: { maxAge: 1209600000 }}) # two weeks
+  app.use express.session({ store: new RedisStore, secret: 'Make Stuff', cookie: { maxAge: 1209600000 }}) # two weeks
+  app.use passport.initialize()
+  app.use passport.session()
   app.use app.router
   app.use express.static __dirname + '/public'
 
 app.get '/', (req, res) ->
-  res.render 'index'
+  if req.isAuthenticated()
+    res.render 'index'
+  else
+    res.redirect '/login'
+app.get '/node/:nid', (req, res) ->
+  if req.isAuthenticated()
+    if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
+      res.render 'index'
+    else
+      findByNid(req.params.nid, res)
+  else
+    res.redirect '/login'
+
+app.get '/node/:nid/edit', (req, res) ->
+  if req.isAuthenticated()
+    if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
+      res.render 'index'
+    else
+      findByNid(req.params.nid, res)
+  else
+    res.redirect '/login'
+
 app.get '/posts/new', (req, res) ->
-  res.render 'index'
+  if req.isAuthenticated()
+    res.render 'index'
+  else
+    res.redirect '/login'
+app.get '/login', (req, res) ->
+  unless req.isAuthenticated()
+    json =
+      errorMessages: []
+    messages = req.flash()
+    if messages.error?
+      json.errorMessages = messages.error
+    res.render 'login', json
+  else
+    res.redirect '/'
+app.post '/login', passport.authenticate('local',
+  {
+    successRedirect: '/'
+    failureRedirect: '/login'
+    failureFlash: true
+  })
+app.get '/logout', (req, res) ->
+  req.logout()
+  res.redirect '/login'
 
 findById = (id, res) ->
   Post = mongoose.model 'post'
@@ -39,18 +87,6 @@ findByNid = (nid, res) ->
       console.log err
       res.json 'found nothing'
 
-app.get '/node/:nid', (req, res) ->
-  if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
-    res.render 'index'
-  else
-    findByNid(req.params.nid, res)
-
-app.get '/node/:nid/edit', (req, res) ->
-  if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
-    res.render 'index'
-  else
-    findByNid(req.params.nid, res)
-
 app.get '/posts', (req, res) ->
   Post = mongoose.model 'post'
   if req.query.id
@@ -69,6 +105,19 @@ app.get '/posts', (req, res) ->
           res.json posts
         else
           res.json 'found nothing'
+
+#User = mongoose.model 'user'
+#user = new User()
+#user.name = "person"
+#user.email = "email"
+#user.created = new Date()
+#user.changed = new Date()
+#user.setPassword('a password', ->
+  #user.save (err) ->
+    #if err then console.err err
+    #else
+      #console.log 'user saved!'
+#)
 
 app.post '/posts', (req, res) ->
   console.log 'saving new post'
