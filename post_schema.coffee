@@ -10,6 +10,7 @@ PostSchema = new Schema (
   nid: { type: Number, min: 1, required: true, index: true, unique: true }
   created: { type: Date, index: true }
   changed: { type: Date, index: true }
+  _user: { type: Schema.ObjectId, ref: 'User', index: true }
 )
 
 mongoose.model 'post', PostSchema

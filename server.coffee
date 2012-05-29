@@ -69,18 +69,18 @@ app.get '/logout', (req, res) ->
   req.logout()
   res.redirect '/login'
 
-findById = (id, res) ->
+findById = (id, res, req) ->
   Post = mongoose.model 'post'
   Post.findById id, (err, post) ->
-    unless err or not post?
+    unless err or not post? or post._user.toString() isnt req.user._id.toString()
       post.setValue('id', post.getValue('_id'))
       res.json post
 
-findByNid = (nid, res) ->
+findByNid = (nid, res, req) ->
   Post = mongoose.model 'post'
   Post.find { nid: nid }, (err, post) ->
-    unless err or not post?
-      post = post[0]
+    post = post[0]
+    unless err or not post? or post._user.toString() isnt req.user._id.toString()
       post.setValue('id', post.getValue('_id'))
       res.json post
     else
@@ -90,12 +90,13 @@ findByNid = (nid, res) ->
 app.get '/posts', (req, res) ->
   Post = mongoose.model 'post'
   if req.query.id
-    findById(req.query.id, res)
+    findById(req.query.id, res, req)
   else if req.query.nid
-    findByNid(req.query.nid, res)
+    findByNid(req.query.nid, res, req)
   else
     Post.find()
       .limit(50)
+      .where( '_user', req.user._id.toString())
       .desc('created')
       .run (err, posts) ->
         console.log 'query done'
@@ -125,6 +126,8 @@ app.post '/posts', (req, res) ->
   post = new Post()
   for k,v of req.body
     post[k] = v
+  post._user = req.user._id.toString()
+
   # Figure out max nid.
   Post.find({},['nid'])
     .desc('nid')
@@ -146,7 +149,7 @@ app.put '/posts/:id', (req, res) ->
   console.log 'updating an post'
   Post = mongoose.model 'post'
   Post.findById req.params.id, (err, post) ->
-    unless err or not post?
+    unless err or not post? or post._user.toString() isnt req.user._id.toString()
       for k,v of req.body
         if k is 'id' then continue
         post[k] = v
