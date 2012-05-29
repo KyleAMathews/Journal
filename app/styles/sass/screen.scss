@@ -33,7 +33,7 @@ input, textarea {
   border-color: $grey80;
 }
 
-.post-edit {
+#post-edit {
   .title {
     @include trailer(0.5);
 

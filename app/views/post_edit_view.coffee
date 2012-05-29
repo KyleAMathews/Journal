@@ -2,7 +2,7 @@ PostEditTemplate = require 'views/templates/edit_post'
 {ExpandingTextareaView} = require('widgets/expanding_textarea/expanding_textarea_view')
 class exports.PostEditView extends Backbone.View
 
-  className: 'post-edit'
+  id: 'post-edit'
 
   events:
     'click .save': 'save'
