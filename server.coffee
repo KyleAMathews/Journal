@@ -133,11 +133,13 @@ app.post '/posts', (req, res) ->
     .desc('nid')
     .limit(1)
     .run (err, postWithMaxNid) ->
-      postWithMaxNid = postWithMaxNid[0]
-      console.log postWithMaxNid
-      console.log postWithMaxNid.nid
+      post.nid = 1
+      if postWithMaxNid[0]?
+        postWithMaxNid = postWithMaxNid[0]
+        console.log postWithMaxNid
+        console.log postWithMaxNid.nid
+        post.nid = postWithMaxNid.nid + 1
 
-      post.nid = postWithMaxNid.nid + 1
       unless post.created?
         post.created = new Date()
       post.changed = post.created
