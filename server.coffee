@@ -4,6 +4,7 @@ passport = require 'passport'
 RedisStore = require('connect-redis')(express)
 require './post_schema'
 require './user_schema'
+_ = require 'underscore'
 
 app = express.createServer()
 

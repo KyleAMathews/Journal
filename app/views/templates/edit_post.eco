@@ -4,3 +4,4 @@
 <input class="date" value="<%- moment(@created).format('MM/D/YYYY') %>">
 <div class="expanding-textarea"></div>
 <button class="save">Save</button>
+<img class="loading" src="/images/loading-small.gif" />

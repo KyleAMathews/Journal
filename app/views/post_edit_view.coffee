@@ -32,6 +32,7 @@ class exports.PostEditView extends Backbone.View
       obj.created = newDate.format()
 
     # Save it.
+    @$('.loading').show()
     @model.save(obj,
       {
         success: =>
