@@ -3,11 +3,18 @@
 @import "compass/typography";
 
 // Typography defaults
-$base-font-size: 14px;
-$blueprint-font-size: 14px;
+$base-font-size: 16px;
+$blueprint-font-size: 16px;
 $base-line-height: $base-font-size * 1.5;
 @include blueprint-typography();
 @include establish-baseline();
+
+body {
+  font-family: 'Open Sans', “Helvetica Neue”, Arial, Helvetica, sans-serif;
+}
+p, textarea {
+  font-family: Georgia, Times, “Times New Roman”, serif;
+}
 
 a {
   @include hover-link();
@@ -16,7 +23,7 @@ a {
 
 h1,h2,h3,h4,h5, #navigation {
   text-rendering: optimizeLegibility;
-  font-weight: bold;
+  font-weight: 800;
 }
 
 // For reference, the following is the traditional typographic hierarchy.

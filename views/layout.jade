@@ -11,6 +11,16 @@ html(lang='en')
     //-script(src='javascripts/libs/modernizr-2.5.3.min.js')
   body!=body
     script(src='//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+    script(type="text/javascript", src="https://www.google.com/jsapi")
+    script(type="text/javascript")
+      google.load("webfont", "1");
+
+      google.setOnLoadCallback(function() {
+        WebFont.load({
+          google: {
+            families: [ 'Open Sans:400,800' ]
+        }});
+      });
     script
       window.jQuery || document.write('<script src="javascripts/libs/jquery-1.7.2.min.js"><\\/script>')
     script(src='/javascripts/vendor.js')
