@@ -1,0 +1,3 @@
+<a href="/posts/new">+post</a>
+<div id="posts"></div>
+<div id="load-more">Load More</div>

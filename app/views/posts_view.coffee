@@ -1,13 +1,19 @@
 {PostView} = require 'views/post_view'
+PostsTemplate = require 'views/templates/posts'
+
 class exports.PostsView extends Backbone.View
 
   id: 'posts'
 
   initialize: ->
     @collection.on 'reset', @render
+    @collection.on 'add', @addOne
+
+  events:
+    'click #load-more': 'loadMore'
 
   render: =>
-    @$el.html("<a href='/posts/new'>+post</a>")
+    @$el.html PostsTemplate()
     @addAll()
     @
 
@@ -15,6 +21,12 @@ class exports.PostsView extends Backbone.View
     for post in @collection.models
       @addOne post
 
-  addOne: (post) ->
+  addOne: (post) =>
     postView = new PostView model: post
-    @$el.append postView.render().el
+    @$('#posts').append postView.render().el
+
+  loadMore: ->
+    @collection.fetch
+      add: true
+      data:
+        skip: @collection.length

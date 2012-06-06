@@ -8,6 +8,6 @@ class exports.Posts extends Backbone.Collection
     nid = parseInt(nid, 10)
     return @find (post) -> post.get('nid') is nid
 
-   comparator: (model, model2) ->
-     if model.get('created') is model2.get('created') then return 0
-     if model.get('created') < model2.get('created') then return 1 else return -1
+  comparator: (model, model2) ->
+    if model.get('created') is model2.get('created') then return 0
+    if model.get('created') < model2.get('created') then return 1 else return -1
