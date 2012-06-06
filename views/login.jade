@@ -1,15 +1,20 @@
-form#login(name="form", method="post", action="login")
-  if errorMessages.length > 0
-    ul.error
-      for message in errorMessages
-        li #{ message }
-  h1 Journal Login
-  //-p This is the basic look of my form without table
-  label
-    | Email:
-  input(type="email",name='email')
-  br
-  label
-    | Password:
-  input(type='password', name='password')
-  button(type="submit") Login
+#wrapper
+  #container
+    form#login(name="form", method="post", action="login")
+      if errorMessages.length > 0
+        ul.error
+          for message in errorMessages
+            li #{ message }
+      h1 Journal Login
+      //-p This is the basic look of my form without table
+      label
+        | Email:
+      input(type="email",name='email')
+      br
+      br
+      label
+        | Password:
+      input(type='password', name='password')
+      br
+      br
+      button(type="submit") Login

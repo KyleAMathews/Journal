@@ -124,3 +124,10 @@ input[type="submit"], button {
   background-color: #DCF0F7;
   text-align: center;
 }
+
+#login {
+  label {
+    width: 90px;
+    display: inline-block;
+  }
+}
