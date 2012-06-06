@@ -1,4 +1,4 @@
-{BrunchApplication, loadPost, clickHandler} = require 'helpers'
+{BrunchApplication, loadPost, clickHandler, scrollPosition} = require 'helpers'
 {MainRouter} = require 'routers/main_router'
 {MainView} = require 'views/main_view'
 {PostsView} = require 'views/posts_view'
@@ -13,6 +13,8 @@ class exports.Application extends BrunchApplication
     @views = {}
     @util = {}
 
+    @site = new Backbone.Model
+
     @router = new MainRouter
     @eventBus = _.extend({}, Backbone.Events)
 
@@ -23,6 +25,7 @@ class exports.Application extends BrunchApplication
 
     @util.loadPost = loadPost
     @util.clickHandler = clickHandler
+    scrollPosition()
     $(window).on 'click', app.util.clickHandler
 
 window.app = new exports.Application

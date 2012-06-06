@@ -44,3 +44,10 @@ exports.clickHandler = (e) ->
     e.preventDefault()
     href = $(e.target).attr('href')
     app.router.navigate(href, {trigger: true})
+
+exports.scrollPosition = ->
+  currentPosition = ->
+    if window.location.pathname is '/'
+      app.site.set postsScroll: $(window).scrollTop()
+  throttled = _.throttle(currentPosition, 100)
+  $(window).scroll(throttled)

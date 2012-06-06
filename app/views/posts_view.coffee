@@ -15,6 +15,13 @@ class exports.PostsView extends Backbone.View
   render: =>
     @$el.html PostsTemplate()
     @addAll()
+
+    # Scroll to last place on screen.
+    _.defer ->
+      scrollPosition = app.site.get 'postsScroll'
+      console.log scrollPosition
+      $(window).scrollTop(scrollPosition)
+
     @
 
   addAll: ->
