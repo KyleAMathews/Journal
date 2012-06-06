@@ -1,5 +1,6 @@
-<a href="/">Home</a>
-<a href="/node/<%- @nid %>">Return to post</a>
+<% unless @nid?: %>
+  <h3>Create new post</h3>
+<% end %>
 <input class="title" value="<%- @title %>">
 <strong class="date">
   <%- moment(@created).format('MM/D/YYYY') %>
@@ -8,6 +9,10 @@
 <input class="date-edit" value="<%- moment(@created).format('MM/D/YYYY') %>">
 <div class="expanding-textarea"></div>
 <button class="save">Save</button>
+<% if @nid?: %>
 <a class="cancel" href="/node/<%- @nid %>">Cancel</a>
-<img class="loading" src="/images/loading-small.gif" />
-<a class="delete" href="#">Delete</a>
+<% end %>
+  <img class="loading" src="/images/loading-small.gif" />
+<% if @nid?: %>
+  <a class="delete" href="#">Delete</a>
+<% end %>

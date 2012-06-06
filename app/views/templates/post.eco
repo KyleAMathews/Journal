@@ -1,5 +1,4 @@
 <% if @page: %>
-  <a href="/">Home</a>
   <a href="node/<%= @nid %>/edit">Edit post</a>
 <% end %>
 <% if @page: %>

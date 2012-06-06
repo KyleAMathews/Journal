@@ -7,9 +7,9 @@ $gutter-width: 1em;
 $side-gutter-width: $gutter-width;
 
 @media only screen and (min-width: 751px) {
-  body {
+  #wrapper, #menu-wrapper {
     @include container;
-    #container {
+    #container, #menu-container {
       @include full;
     }
   }
@@ -20,9 +20,9 @@ $col-width: 3em;
 $gutter-width: 1em;
 $side-gutter-width: 3em;
 @media only screen and (max-width: 750px) {
-  body {
+  #wrapper, #menu-wrapper {
     @include container;
-    #container {
+    #container, #menu-container {
       @include full;
       @include alpha;
     }

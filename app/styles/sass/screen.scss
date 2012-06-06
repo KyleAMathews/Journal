@@ -14,10 +14,35 @@ html {
   overflow-y: scroll;
 }
 
-ul#posts {
-  @include no-bullets;
+#menu-bar {
+  @include box-shadow(0 3px 7px $grey40);
+  @include trailer(2);
 
-  padding: 0;
+  background: $grey10;
+  height: 3em;
+  width: 100%;
+
+  // Fixed elements stutter on some mobile browsers.
+  @media only screen and (min-width: 700px) {
+    position: fixed;
+    top: 0;
+  }
+
+  #menu-container {
+    @include adjust-font-size-to(18px, 2);
+
+    color: $grey90;
+    a {
+      color: $grey90;
+    }
+  }
+}
+
+// Main content wrapper.
+#wrapper {
+  @media only screen and (min-width: 700px) {
+    @include leader(4);
+  }
 }
 
 .post {
