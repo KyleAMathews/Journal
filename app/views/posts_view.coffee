@@ -19,7 +19,6 @@ class exports.PostsView extends Backbone.View
     # Scroll to last place on screen.
     _.defer ->
       scrollPosition = app.site.get 'postsScroll'
-      console.log scrollPosition
       $(window).scrollTop(scrollPosition)
 
     @
