@@ -9,6 +9,11 @@
 @import "modules/kalendae";
 @import "../../widgets/expanding_textarea/expanding_textarea";
 
+// Force scroll-bar.
+html {
+  overflow-y: scroll;
+}
+
 ul#posts {
   @include no-bullets;
 
