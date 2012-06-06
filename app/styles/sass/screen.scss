@@ -44,9 +44,6 @@ input, textarea {
 
     width: 100%;
   }
-  .date {
-    @include trailer(0.5);
-  }
   .body {
     @include trailer(0.5);
 
@@ -67,6 +64,24 @@ input, textarea {
     color: $grey80;
     float: right;
     line-height: 31px;
+  }
+  .date-edit {
+    @include trailer(0.5);
+
+    display: none;
+  }
+  .date {
+    @include trailer(0.25);
+
+    padding-left: 0.75em;
+    display: block;
+  }
+  .show-date-edit {
+    display: none;
+    font-weight: normal;
+    cursor: pointer;
+    color: $grey60;
+    text-decoration: underline;
   }
 }
 

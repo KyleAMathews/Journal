@@ -1,7 +1,11 @@
 <a href="/">Home</a>
 <a href="/node/<%- @nid %>">Return to post</a>
 <input class="title" value="<%- @title %>">
-<input class="date" value="<%- moment(@created).format('MM/D/YYYY') %>">
+<strong class="date">
+  <%- moment(@created).format('MM/D/YYYY') %>
+  <span class="show-date-edit">edit</span>
+</strong>
+<input class="date-edit" value="<%- moment(@created).format('MM/D/YYYY') %>">
 <div class="expanding-textarea"></div>
 <button class="save">Save</button>
 <a class="cancel" href="/node/<%- @nid %>">Cancel</a>
