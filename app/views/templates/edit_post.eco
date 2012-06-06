@@ -4,4 +4,6 @@
 <input class="date" value="<%- moment(@created).format('MM/D/YYYY') %>">
 <div class="expanding-textarea"></div>
 <button class="save">Save</button>
+<a class="cancel" href="/node/<%- @nid %>">Cancel</a>
 <img class="loading" src="/images/loading-small.gif" />
+<a class="delete" href="#">Delete</a>

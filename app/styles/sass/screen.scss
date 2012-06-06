@@ -59,6 +59,15 @@ input, textarea {
     top: 3px;
     display: none;
   }
+  .cancel {
+    color: $grey80;
+    margin-left: 10px;
+  }
+  .delete {
+    color: $grey80;
+    float: right;
+    line-height: 31px;
+  }
 }
 
 input[type="submit"], button {

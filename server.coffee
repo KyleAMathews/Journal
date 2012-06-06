@@ -99,6 +99,7 @@ app.get '/posts', (req, res) ->
     Post.find()
       .limit(10)
       .skip(skip)
+      .notEqualTo('deleted', true)
       .where( '_user', req.user._id.toString())
       .desc('created')
       .run (err, posts) ->
@@ -135,6 +136,7 @@ app.post '/posts', (req, res) ->
   Post.find({},['nid'])
     .desc('nid')
     .limit(1)
+    .notEqualTo('deleted', true)
     .run (err, postWithMaxNid) ->
       post.nid = 1
       if postWithMaxNid[0]?

@@ -6,6 +6,7 @@ class exports.PostEditView extends Backbone.View
 
   events:
     'click .save': 'save'
+    'click .delete': 'delete'
 
   render: ->
     @$el.html PostEditTemplate @model.toJSON()
@@ -38,5 +39,15 @@ class exports.PostEditView extends Backbone.View
         success: =>
           app.collections.posts.sort()
           app.router.navigate '/node/' + @model.get('nid'), true
+      }
+    )
+
+  delete: ->
+    @model.save({ deleted: true },
+      {
+        success: =>
+          app.collections.posts.remove @model
+          app.collections.posts.sort()
+          app.router.navigate '/', true
       }
     )
