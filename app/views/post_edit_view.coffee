@@ -8,8 +8,10 @@ class exports.PostEditView extends Backbone.View
     'click .save': 'save'
     'click .delete': 'delete'
     'click .show-date-edit': 'toggleDateEdit'
+    'keypress': 'draftSave'
 
   render: ->
+    @keystrokecounter = 0
     @$el.html PostEditTemplate @model.toJSON()
     @$('.date-edit').kalendae()
     @addChildView new ExpandingTextareaView(
@@ -18,6 +20,7 @@ class exports.PostEditView extends Backbone.View
       lines: 20
     ).render()
 
+    # Show the edit button for the date field when hovering.
     @$('.date').hover(
       => @$('.show-date-edit').show()
       ,
@@ -44,6 +47,7 @@ class exports.PostEditView extends Backbone.View
     @model.save(obj,
       {
         success: =>
+          @options.draftModel.destroy()
           app.collections.posts.sort()
           app.router.navigate '/node/' + @model.get('nid'), true
       }
@@ -62,3 +66,11 @@ class exports.PostEditView extends Backbone.View
   toggleDateEdit: ->
     @$('.date').hide()
     @$('.date-edit').show()
+
+  draftSave: (e) ->
+    @keystrokecounter += 1
+    if @keystrokecounter % 20 is 0
+      obj = {}
+      obj.title = @$('.title').val()
+      obj.body = @$('textarea').val()
+      @options.draftModel.save(obj)

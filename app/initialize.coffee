@@ -3,6 +3,7 @@
 {MainView} = require 'views/main_view'
 {PostsView} = require 'views/posts_view'
 {Posts} = require 'collections/posts'
+Drafts = require 'collections/drafts'
 
 # Misc
 require 'backbone_extensions'
@@ -20,6 +21,8 @@ class exports.Application extends BrunchApplication
 
     @collections.posts = new Posts
     @collections.posts.fetch()
+    @collections.drafts = new Drafts
+    @collections.drafts.fetch()
 
     @views.main = new MainView el: $('#container')
 

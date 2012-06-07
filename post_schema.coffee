@@ -14,4 +14,13 @@ PostSchema = new Schema (
   _user: { type: Schema.ObjectId, ref: 'User', index: true }
 )
 
+DraftSchema = new Schema (
+  title: { type: String, required: true }
+  body: { type: String, required: true }
+  created: { type: Date, index: true }
+  changed: { type: Date, index: true }
+  _user: { type: Schema.ObjectId, ref: 'User', index: true }
+)
+
 mongoose.model 'post', PostSchema
+mongoose.model 'draft', DraftSchema

@@ -170,6 +170,61 @@ app.put '/posts/:id', (req, res) ->
 app.del '/posts/:id', (req, res) ->
   res.send 'hello world'
 
+app.get '/drafts', (req, res) ->
+  Draft = mongoose.model 'draft'
+  Draft.find()
+    .where( '_user', req.user._id.toString())
+    .desc('created')
+    .run (err, drafts) ->
+      console.log 'drafts query done'
+      unless err or not drafts?
+        for draft in drafts
+          draft.setValue('id', draft.getValue('_id'))
+        res.json drafts
+      else
+        res.json 'found nothing'
+
+app.post '/drafts', (req, res) ->
+  console.log 'saving new draft'
+  Draft = mongoose.model 'draft'
+  draft = new Draft()
+  for k,v of req.body
+    draft[k] = v
+  draft._user = req.user._id.toString()
+
+  draft.created = new Date()
+  draft.changed = draft.created
+  console.log draft
+  draft.save (err) ->
+    unless err
+      res.json id: draft._id, created: draft.created, changed: draft.changed
+    else
+      console.log 'error', err
+
+app.put '/drafts/:id', (req, res) ->
+  console.log 'updating a draft'
+  Draft = mongoose.model 'draft'
+  Draft.findById req.params.id, (err, draft) ->
+    unless err or not draft? or draft._user.toString() isnt req.user._id.toString()
+      for k,v of req.body
+        if k is 'id' then continue
+        draft[k] = v
+      draft.changed = new Date()
+      draft.save()
+      res.json {
+        saved: true
+        changed: draft.changed
+      }
+
+app.del '/drafts/:id', (req, res) ->
+  console.log 'deleting a draft'
+  Draft = mongoose.model 'draft'
+  Draft.findById req.params.id, (err, draft) ->
+    unless err or not draft? or draft._user.toString() isnt req.user._id.toString()
+      console.log draft
+      draft.remove()
+      res.send 'draft successfully deleted'
+
 # Listen on port 3000 or a passed-in port
 args = process.argv.splice(2)
 if args[0]? then port = parseInt(args[0], 10) else port = 3000

@@ -2,12 +2,15 @@
 {PostView} = require 'views/post_view'
 {PostEditView} = require 'views/post_edit_view'
 {Post} = require 'models/post'
+Draft = require 'models/draft'
+
 class exports.MainRouter extends Backbone.Router
   routes:
     '': 'home'
     'node/:id': 'post'
     'posts/new': 'newPost'
     'node/:id/edit': 'editPost'
+    'draft/:id': 'editDraft'
 
   home: ->
     postsView = new PostsView collection: app.collections.posts
@@ -25,7 +28,9 @@ class exports.MainRouter extends Backbone.Router
     document.body.scrollTop = document.documentElement.scrollTop = 0
     newPost = new Post
     newPost.collection = app.collections.posts
-    postEditView = new PostEditView model: newPost
+    draftModel = new Draft
+    draftModel.collection = app.collections.drafts
+    postEditView = new PostEditView model: newPost, draftModel: draftModel
     app.views.main.show(postEditView)
 
   editPost: (id) ->
@@ -34,3 +39,11 @@ class exports.MainRouter extends Backbone.Router
       document.body.scrollTop = document.documentElement.scrollTop = 0
       postEditView = new PostEditView model: post
       app.views.main.show(postEditView)
+
+  editDraft: (id) ->
+    draftModel = app.collections.drafts.get(id)
+    newPost = new Post
+    newPost.collection = app.collections.posts
+    newPost.set title: draftModel.get('title'), body: draftModel.get('body')
+    postEditView = new PostEditView model: newPost, draftModel: draftModel
+    app.views.main.show(postEditView)
