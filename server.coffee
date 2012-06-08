@@ -136,7 +136,6 @@ app.post '/posts', (req, res) ->
   Post.find({},['nid'])
     .desc('nid')
     .limit(1)
-    .notEqualTo('deleted', true)
     .run (err, postWithMaxNid) ->
       post.nid = 1
       if postWithMaxNid[0]?
@@ -151,6 +150,8 @@ app.post '/posts', (req, res) ->
       post.save (err) ->
         unless err
           res.json id: post._id, created: post.created, nid: post.nid
+        else
+          console.err 'Error creating new post', err
 
 app.put '/posts/:id', (req, res) ->
   console.log 'updating an post'
