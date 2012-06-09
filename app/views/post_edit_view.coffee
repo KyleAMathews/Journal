@@ -47,7 +47,7 @@ class exports.PostEditView extends Backbone.View
     @model.save(obj,
       {
         success: =>
-          @options.draftModel.destroy()
+          if @options.draftModel? then @options.draftModel.destroy()
           app.collections.posts.sort()
           app.router.navigate '/node/' + @model.get('nid'), true
       }

@@ -162,11 +162,14 @@ app.put '/posts/:id', (req, res) ->
         if k is 'id' then continue
         post[k] = v
       post.changed = new Date()
-      post.save()
-      res.json {
-        saved: true
-        changed: post.changed
-      }
+      post.save (err) ->
+        if err then console.err err
+        res.json {
+          saved: true
+          changed: post.changed
+        }
+    else
+      console.err 'update error', err
 
 app.del '/posts/:id', (req, res) ->
   res.send 'hello world'
