@@ -1,6 +1,6 @@
 class exports.BrunchApplication
   constructor: ->
-    $ =>
+    _.defer =>
       @initialize this
       Backbone.history.start({ pushState: true })
 
