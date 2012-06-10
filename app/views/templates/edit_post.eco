@@ -1,5 +1,5 @@
 <% unless @nid?: %>
-  <h3>Create new post</h3>
+  <h3>Create new post <span id="last-saved"></span></h3>
 <% end %>
 <input class="title" value="<%- @title %>">
 <strong class="date">

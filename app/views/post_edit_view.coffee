@@ -85,4 +85,9 @@ class exports.PostEditView extends Backbone.View
         obj = {}
         obj.title = @$('.title').val()
         obj.body = @$('textarea').val()
-        @options.draftModel.save(obj)
+        @options.draftModel.save(obj,
+          {
+            success: =>
+              @$('#last-saved').html "Last saved at " + new moment().format('h:mm:ss a')
+          }
+        )

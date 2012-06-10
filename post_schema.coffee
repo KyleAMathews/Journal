@@ -15,8 +15,8 @@ PostSchema = new Schema (
 )
 
 DraftSchema = new Schema (
-  title: { type: String, required: true }
-  body: { type: String, required: true }
+  title: { type: String }
+  body: { type: String }
   created: { type: Date, index: true }
   changed: { type: Date, index: true }
   _user: { type: Schema.ObjectId, ref: 'User', index: true }

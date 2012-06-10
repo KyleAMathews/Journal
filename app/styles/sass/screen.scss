@@ -75,6 +75,11 @@ input, textarea {
 #post-edit {
   @include trailer(3);
 
+  #last-saved {
+    float: right;
+    font-size: 65%;
+    font-weight: normal;
+  }
   .title {
     @include trailer(0.5);
 
