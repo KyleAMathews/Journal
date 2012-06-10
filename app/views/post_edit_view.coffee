@@ -11,6 +11,7 @@ class exports.PostEditView extends Backbone.View
     'keypress': 'draftSave'
 
   render: ->
+    _.defer => @lineheight = @$('.textareaClone div').css('line-height').slice(0,-2)
     @keystrokecounter = 0
     @$el.html PostEditTemplate @model.toJSON()
     @$('.date-edit').kalendae()
@@ -26,6 +27,16 @@ class exports.PostEditView extends Backbone.View
       ,
       => @$('.show-date-edit').hide()
     )
+
+    # Keep the save button visible by autoscrolling.
+    autoscroll = (e) =>
+      lines = @$('.textareaClone div').height() / @lineheight
+      if lines < 18 then return # Only scroll when typing near bottom of textarea.
+      distanceBottom = $(document).height() - ($(window).scrollTop() + $(window).height())
+      if distanceBottom > 20
+        $("html, body").animate({ scrollTop: $(document).height()-$(window).height() })
+    throttled = _.throttle(autoscroll, 200)
+    @$('textarea').on('keypress', throttled)
 
     @
 
