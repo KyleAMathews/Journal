@@ -53,6 +53,8 @@ html {
   @include trailer(4);
   p {
     @include force-wrap();
+
+    margin: 0;
   }
 }
 
@@ -77,6 +79,7 @@ input, textarea {
     @include trailer(0.5);
 
     width: 100%;
+    font-weight: bold;
   }
   .body {
     @include trailer(0.5);

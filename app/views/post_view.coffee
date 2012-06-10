@@ -11,4 +11,9 @@ class exports.PostView extends Backbone.View
       data.page = true
     @$el.remove()
     @$el.html PostTemplate data
+
+    # Make external links open in new tab
+    @$("a[href^=http]").each ->
+      if @href.indexOf(location.hostname) is -1
+        $(@).attr target: "_blank"
     @
