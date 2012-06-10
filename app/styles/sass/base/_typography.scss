@@ -9,10 +9,10 @@ $base-line-height: $base-font-size * 1.5;
 @include blueprint-typography();
 @include establish-baseline();
 
-body {
+body, #post-edit .title {
   font-family: 'Open Sans', “Helvetica Neue”, Arial, Helvetica, sans-serif;
 }
-p, textarea {
+p, #post-edit .expanding-textarea textarea {
   font-family: Georgia, Times, “Times New Roman”, serif;
 }
 
