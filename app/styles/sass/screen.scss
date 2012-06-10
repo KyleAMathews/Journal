@@ -51,6 +51,9 @@ html {
 
 .post {
   @include trailer(4);
+  p {
+    @include force-wrap();
+  }
 }
 
 input, textarea {
