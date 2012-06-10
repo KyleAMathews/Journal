@@ -21,6 +21,7 @@ html {
   background: $grey10;
   height: 3em;
   width: 100%;
+  z-index: 100;
 
   // Fixed elements stutter on some mobile browsers.
   @media only screen and (min-width: 700px) {
