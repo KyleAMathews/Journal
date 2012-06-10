@@ -79,9 +79,10 @@ class exports.PostEditView extends Backbone.View
     @$('.date-edit').show()
 
   draftSave: (e) ->
-    @keystrokecounter += 1
-    if @keystrokecounter % 20 is 0
-      obj = {}
-      obj.title = @$('.title').val()
-      obj.body = @$('textarea').val()
-      @options.draftModel.save(obj)
+    if @options.draftModel?
+      @keystrokecounter += 1
+      if @keystrokecounter % 20 is 0
+        obj = {}
+        obj.title = @$('.title').val()
+        obj.body = @$('textarea').val()
+        @options.draftModel.save(obj)
