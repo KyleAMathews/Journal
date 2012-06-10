@@ -68,6 +68,8 @@ input, textarea {
 }
 
 #post-edit {
+  @include trailer(3);
+
   .title {
     @include trailer(0.5);
 
