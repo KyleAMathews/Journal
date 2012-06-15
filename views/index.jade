@@ -2,6 +2,11 @@ div#menu-bar
   #menu-wrapper
     #menu-container
       a(href="/") Home
+      span(class="drafts") Drafts(
+        span(class="count") 0
+        )
+        span(class='arrow') ▼
+        ul.dropdown
       a(href="/logout", class="logout") Logout
 div#wrapper
   div#container

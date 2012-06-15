@@ -88,6 +88,7 @@ class exports.PostEditView extends Backbone.View
         @options.draftModel.save(obj,
           {
             success: =>
+              # Add new draft to its collection.
               unless @options.draftModel.get 'addedToCollection'
                 app.collections.drafts.add @options.draftModel
                 @options.draftModel.set addedToCollection: true

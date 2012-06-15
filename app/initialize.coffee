@@ -4,6 +4,7 @@
 {PostsView} = require 'views/posts_view'
 {Posts} = require 'collections/posts'
 Drafts = require 'collections/drafts'
+DraftsIndicatorView = require 'views/drafts_indicator_view'
 
 # Misc
 require 'backbone_extensions'
@@ -25,6 +26,10 @@ class exports.Application extends BrunchApplication
     @collections.drafts.fetch()
 
     @views.main = new MainView el: $('#container')
+    @views.draftsIndicatorView = new DraftsIndicatorView(
+      el: $('#menu-container .drafts')
+      collection: @collections.drafts
+    ).render()
 
     @util.loadPost = loadPost
     @util.clickHandler = clickHandler

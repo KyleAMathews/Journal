@@ -39,6 +39,60 @@ html {
     .logout {
       float: right;
     }
+    .drafts {
+      margin-left: 10%;
+      color: $grey60;
+      cursor: pointer;
+      position: relative;
+      display: inline-block;
+      height: 48px;
+      padding: 0 20px;
+      &.active {
+        color: $grey90;
+        .arrow {
+          display: inline;
+        }
+      }
+      &.dropdown-active {
+        background: $grey20;
+        .dropdown {
+          display: block;
+        }
+      }
+      .arrow {
+        display: none;
+        color: $grey80;
+        font-size: 16px;
+        padding-left: 2px;
+      }
+      .dropdown {
+        @include adjust-font-size-to(13px, 1, 18px);
+        @include no-bullets();
+        @include box-shadow(0 3px 7px $grey40);
+        @include leading-border(2px, 0.5);
+        @include padding-trailer(0.5);
+
+        display: none;
+        z-index: 100;
+        border-color: $grey60;
+        width: 300px;
+        position: absolute;
+        left: -30px;
+        padding-left: 0;
+        background: $grey20;
+        margin: 0;
+        li {
+          padding: rhythm(0.5) rhythm(1);
+          &:hover {
+            background: $grey60;
+            color: $grey10;
+          }
+        }
+        em {
+          @include adjust-font-size-to(11px, 1, 13px);
+        }
+      }
+    }
   }
 }
 
