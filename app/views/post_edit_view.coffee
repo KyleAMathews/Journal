@@ -88,6 +88,9 @@ class exports.PostEditView extends Backbone.View
         @options.draftModel.save(obj,
           {
             success: =>
+              unless @options.draftModel.get 'addedToCollection'
+                app.collections.drafts.add @options.draftModel
+                @options.draftModel.set addedToCollection: true
               @$('#last-saved').html "Last saved at " + new moment().format('h:mm:ss a')
           }
         )
