@@ -82,8 +82,9 @@ class exports.PostEditView extends Backbone.View
 
   _draftSave: ->
     if @options.draftModel?
+      # Autosave two seconds after last time user types.
       clearTimeout(@saveDraftAfterDelay)
-      @saveDraftAfterDelay = setTimeout(@draftSave, 10000)
+      @saveDraftAfterDelay = setTimeout(@draftSave, 2000)
       @keystrokecounter += 1
       if @keystrokecounter % 20 is 0
         @draftSave()
@@ -97,10 +98,11 @@ class exports.PostEditView extends Backbone.View
         {
           success: =>
             # Add new draft to its collection.
-            unless @options.draftModel.get 'addedToCollection'
+            unless app.collections.drafts.get @options.draftModel.id
               app.collections.drafts.add @options.draftModel
-              @options.draftModel.set addedToCollection: true
             @$('#last-saved').html "Last saved at " + new moment().format('h:mm:ss a')
         }
       )
 
+  onClose: ->
+    clearTimeout(@saveDraftAfterDelay)
