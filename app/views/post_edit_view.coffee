@@ -8,7 +8,8 @@ class exports.PostEditView extends Backbone.View
     'click .save': 'save'
     'click .delete': 'delete'
     'click .show-date-edit': 'toggleDateEdit'
-    'keypress': 'draftSave'
+    'click .save-draft': 'draftSave'
+    'keypress': '_draftSave'
 
   render: ->
     _.defer => @lineheight = @$('.textareaClone div').css('line-height').slice(0,-2)
@@ -65,6 +66,7 @@ class exports.PostEditView extends Backbone.View
     )
 
   delete: ->
+    if @options.draftModel? then @options.draftModel.destroy()
     @model.save({ deleted: true },
       {
         success: =>
@@ -78,20 +80,25 @@ class exports.PostEditView extends Backbone.View
     @$('.date').hide()
     @$('.date-edit').show()
 
-  draftSave: (e) ->
+  _draftSave: ->
     if @options.draftModel?
       @keystrokecounter += 1
       if @keystrokecounter % 20 is 0
-        obj = {}
-        obj.title = @$('.title').val()
-        obj.body = @$('textarea').val()
-        @options.draftModel.save(obj,
-          {
-            success: =>
-              # Add new draft to its collection.
-              unless @options.draftModel.get 'addedToCollection'
-                app.collections.drafts.add @options.draftModel
-                @options.draftModel.set addedToCollection: true
-              @$('#last-saved').html "Last saved at " + new moment().format('h:mm:ss a')
-          }
-        )
+        @draftSave()
+
+  draftSave: (e) ->
+    if @options.draftModel?
+      obj = {}
+      obj.title = @$('.title').val()
+      obj.body = @$('textarea').val()
+      @options.draftModel.save(obj,
+        {
+          success: =>
+            # Add new draft to its collection.
+            unless @options.draftModel.get 'addedToCollection'
+              app.collections.drafts.add @options.draftModel
+              @options.draftModel.set addedToCollection: true
+            @$('#last-saved').html "Last saved at " + new moment().format('h:mm:ss a')
+        }
+      )
+

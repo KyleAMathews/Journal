@@ -152,14 +152,13 @@ input, textarea {
     top: 3px;
     display: none;
   }
-  .cancel {
-    color: $grey80;
+  .less-important-button {
+    @include my-button($grey80);
     margin-left: 10px;
   }
   .delete {
-    color: $grey80;
+    @include my-button($grey80);
     float: right;
-    line-height: 31px;
   }
   .date-edit {
     @include trailer(0.5);

@@ -34,7 +34,7 @@ $status_color: #336600;
 $status_background: #ccff88;
 $status_border_color: #bbee77;
 
-@mixin my-button($color: $grey60, $text_size: 1em) {
+@mixin my-button($color: #1592CE, $text_size: 1em) {
   @include sassy-button('simple', 0.5em, $text_size, $color);
 }
 

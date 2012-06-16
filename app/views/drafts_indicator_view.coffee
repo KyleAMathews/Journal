@@ -24,9 +24,10 @@ module.exports = class DraftsIndicatorView extends Backbone.View
       @$('ul.dropdown').append("<li data-draft-id='#{ draft.get('id')}'>#{ draft.get 'title' } <em>#{ moment(draft.get('created')).fromNow() }</em></li>")
 
   toggleDropdown: ->
-    @$el.toggleClass('dropdown-active')
+    if @collection.length > 0
+      @renderDrafts()
+      @$el.toggleClass('dropdown-active')
 
   gotoDraftEditPage: (e) ->
-    console.log 'drafting'
-    draftId = $(e.target).data('draft-id')
+    draftId = $(e.target).closest('li').data('draft-id')
     app.router.navigate('draft/' + draftId, true)

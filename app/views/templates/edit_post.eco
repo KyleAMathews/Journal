@@ -10,9 +10,9 @@
 <div class="expanding-textarea"></div>
 <button class="save">Save</button>
 <% if @nid?: %>
-<a class="cancel" href="/node/<%- @nid %>">Cancel</a>
+<a class="less-important-button" href="/node/<%- @nid %>">Cancel</a>
+<% else: %>
+<span class="less-important-button save-draft">Save Draft</span>
 <% end %>
-  <img class="loading" src="/images/loading-small.gif" />
-<% if @nid?: %>
-  <a class="delete" href="#">Delete</a>
-<% end %>
+<img class="loading" src="/images/loading-small.gif" />
+<span class="delete">Delete</span>
