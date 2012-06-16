@@ -82,11 +82,13 @@ class exports.PostEditView extends Backbone.View
 
   _draftSave: ->
     if @options.draftModel?
+      clearTimeout(@saveDraftAfterDelay)
+      @saveDraftAfterDelay = setTimeout(@draftSave, 10000)
       @keystrokecounter += 1
       if @keystrokecounter % 20 is 0
         @draftSave()
 
-  draftSave: (e) ->
+  draftSave: (e) =>
     if @options.draftModel?
       obj = {}
       obj.title = @$('.title').val()
