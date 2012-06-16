@@ -12,7 +12,7 @@
 <% if @nid?: %>
 <a class="less-important-button" href="/node/<%- @nid %>">Cancel</a>
 <% else: %>
-<a class="less-important-button save-draft" href="/">Save draft</a>
+<span class="less-important-button save-draft">Save Draft</span>
 <% end %>
 <img class="loading" src="/images/loading-small.gif" />
 <span class="delete">Delete</span>
