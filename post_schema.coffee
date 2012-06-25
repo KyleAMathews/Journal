@@ -1,5 +1,6 @@
 mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost/journal')
+mongoosastic = require('mongoosastic')
 
 # Setup MongoDB schemas.
 Schema = mongoose.Schema
@@ -13,6 +14,8 @@ PostSchema = new Schema (
   deleted: { type: Boolean, default: false, index: true }
   _user: { type: Schema.ObjectId, ref: 'User', index: true }
 )
+
+PostSchema.plugin(mongoosastic)
 
 DraftSchema = new Schema (
   title: { type: String }

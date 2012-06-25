@@ -4,7 +4,12 @@ passport = require 'passport'
 RedisStore = require('connect-redis')(express)
 require './post_schema'
 require './user_schema'
+async = require 'async'
 _ = require 'underscore'
+# Import Underscore.string to separate object, because there are conflict functions (include, reverse, contains)
+_.str = require('underscore.string')
+# Mix in non-conflict functions to Underscore namespace if you want
+_.mixin(_.str.exports())
 
 app = express.createServer()
 
@@ -228,6 +233,36 @@ app.del '/drafts/:id', (req, res) ->
       console.log draft
       draft.remove()
       res.send 'draft successfully deleted'
+
+# Search
+app.get '/search', (req, res) ->
+  if req.isAuthenticated()
+    res.render 'index'
+  else
+    res.redirect '/login'
+
+app.get '/search/:query', (req, res) ->
+  if req.isAuthenticated()
+    if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
+      res.render 'index'
+    else
+      Post = mongoose.model 'post'
+      rand_number = Math.floor(Math.random() * 1000)
+      console.log req.params.query
+      Post.search({
+        query:
+          text:
+            _all: req.params.query
+        highlight:
+          fields:
+            title: {"fragment_size" : 300}
+            body: {"fragment_size" : 200}
+      }, (err, posts) ->
+        console.log err
+        res.json posts
+      )
+  else
+    res.redirect '/login'
 
 # Listen on port 3000 or a passed-in port
 args = process.argv.splice(2)

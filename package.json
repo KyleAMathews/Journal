@@ -8,10 +8,12 @@
   "dependencies": {
     "express": "2.x.x",
     "jade": "0.x.x",
+    "underscore.string": "x.x.x",
     "moment": "1.6.1",
     "underscore": "1.x.x",
-    "mongoose": "2.x.x",
+    "mongoose": "2.6.x",
     "bcrypt": "0.x.x",
+    "mongoosastic": "0.x.x",
     "connect-redis": "1.x.x",
     "passport": "0.x.x",
     "passport-local": "0.x.x",

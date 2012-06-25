@@ -27,6 +27,7 @@ exports.config =
           'vendor/scripts/moment.js'
           'vendor/scripts/kalendae.js'
           'vendor/scripts/expanding.js'
+          'vendor/scripts/underscore.string.js'
         ]
 
     templates:

@@ -1,0 +1,5 @@
+<h1>Search</h1>
+<input type='text'><button>Search</button>
+<img class="loading" src="/images/loading-small.gif" />
+<p class="search-meta"></p>
+<div id="search-results"></div>

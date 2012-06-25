@@ -7,6 +7,8 @@ class exports.BrunchApplication
   initialize: ->
     null
 
+  util: ->
+
 exports.loadPost = (id, nid = false, callback) ->
   if _.isFunction nid
     callback = nid
@@ -51,3 +53,6 @@ exports.scrollPosition = ->
       app.site.set postsScroll: $(window).scrollTop()
   throttled = _.throttle(currentPosition, 100)
   $(window).scroll(throttled)
+
+exports.search = (query, callback) ->
+  $.getJSON('/search/' + encodeURIComponent(query), (data) -> callback(data))

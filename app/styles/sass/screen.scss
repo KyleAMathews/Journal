@@ -93,6 +93,9 @@ html {
         }
       }
     }
+    .search {
+      margin-left: 10%;
+    }
   }
 }
 
@@ -225,5 +228,45 @@ input[type="submit"], button, .button {
     position: absolute;
     top: 10px;
     right: -150px;
+  }
+}
+
+#search-page {
+  .search-meta {
+    @include adjust-font-size-to(14px);
+
+    color: $grey60;
+    clear: both;
+  }
+  em {
+    font-style: normal;
+    font-weight: bold;
+  }
+  h3 {
+    @include adjust-font-size-to(18px, 1);
+    @include trailer(0);
+    @include leader(0);
+
+    font-weight: normal;
+    a {
+      font-weight: normal;
+    }
+  }
+  p {
+    @include adjust-font-size-to(14px);
+  }
+  .search-result {
+    @include trailer(1);
+  }
+  input {
+    width: 50%;
+    margin-right: 2%;
+  }
+  button {
+    @include my-button($grey80);
+  }
+  .loading {
+    display: none;
+    margin-left: 1%;
   }
 }

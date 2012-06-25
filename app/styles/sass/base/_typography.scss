@@ -50,3 +50,7 @@ h5 {
 h6 {
   @include adjust-font-size-to(14px);
 }
+
+blockquote {
+  margin: 0 1.5em;
+}

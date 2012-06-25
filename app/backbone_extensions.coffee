@@ -22,6 +22,8 @@ BindTo =
     })
 
   # Unbind all of the events that we have stored.
+  # TODO change how I store bindings so that we just store one reference to each
+  # object then call object.off(null, null, this) -- faster.
   unbindAll: ->
     _.each(@bindings, (binding) ->
       binding.obj.unbind(binding.eventName, binding.callback)

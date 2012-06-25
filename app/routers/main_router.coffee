@@ -3,6 +3,7 @@
 {PostEditView} = require 'views/post_edit_view'
 {Post} = require 'models/post'
 Draft = require 'models/draft'
+SearchView = require 'views/search_view'
 
 class exports.MainRouter extends Backbone.Router
   routes:
@@ -11,6 +12,8 @@ class exports.MainRouter extends Backbone.Router
     'posts/new': 'newPost'
     'node/:id/edit': 'editPost'
     'draft/:id': 'editDraft'
+    'search': 'search'
+    'search/:query': 'search'
 
   home: ->
     postsView = new PostsView collection: app.collections.posts
@@ -47,3 +50,11 @@ class exports.MainRouter extends Backbone.Router
     newPost.set title: draftModel.get('title'), body: draftModel.get('body')
     postEditView = new PostEditView model: newPost, draftModel: draftModel
     app.views.main.show(postEditView)
+
+  search: (query = "") ->
+    unless query is ""
+      app.collections.search.query(query)
+    else
+      app.collections.search.clear()
+    searchView = new SearchView collection: app.collections.search
+    app.views.main.show(searchView)

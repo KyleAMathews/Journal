@@ -1,16 +1,20 @@
-{BrunchApplication, loadPost, clickHandler, scrollPosition} = require 'helpers'
+{BrunchApplication, loadPost, clickHandler, scrollPosition, search} = require 'helpers'
 {MainRouter} = require 'routers/main_router'
 {MainView} = require 'views/main_view'
 {PostsView} = require 'views/posts_view'
 {Posts} = require 'collections/posts'
 Drafts = require 'collections/drafts'
 DraftsIndicatorView = require 'views/drafts_indicator_view'
+Search = require 'collections/search'
 
 # Misc
 require 'backbone_extensions'
 
 class exports.Application extends BrunchApplication
   initialize: ->
+    # Mixin Underscore.String functions.
+    _.mixin(_.str.exports())
+
     @collections = {}
     @views = {}
     @util = {}
@@ -24,6 +28,7 @@ class exports.Application extends BrunchApplication
     @collections.posts.fetch()
     @collections.drafts = new Drafts
     @collections.drafts.fetch()
+    @collections.search = new Search
 
     @views.main = new MainView el: $('#container')
     @views.draftsIndicatorView = new DraftsIndicatorView(
@@ -33,6 +38,7 @@ class exports.Application extends BrunchApplication
 
     @util.loadPost = loadPost
     @util.clickHandler = clickHandler
+    @util.search = search
     scrollPosition()
     $(window).on 'click', app.util.clickHandler
 
