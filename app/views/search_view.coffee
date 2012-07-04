@@ -42,11 +42,12 @@ module.exports = class SearchView extends Backbone.View
     @
 
   search: ->
-    # Show ajax loader gif for long queries.
-    @$('.loading').show()
     query = @$('input').val()
-    @collection.query(query)
-    app.router.navigate('/search/' + encodeURIComponent(query))
+    unless query is ""
+      # Show ajax loader gif for long queries.
+      @$('.loading').show()
+      @collection.query(query)
+      app.router.navigate('/search/' + encodeURIComponent(query))
 
   searchByEnter: (e) ->
     if e.which is 13 then @search()
