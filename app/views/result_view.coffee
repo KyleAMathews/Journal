@@ -7,14 +7,14 @@ module.exports = class ResultView extends Backbone.View
     if @model.get('highlight').title?[0]?
       title = @model.get('highlight').title?[0]
     else
-      title = @model.get('source').title
+      title = @model.get('_source').title
     if @model.get('highlight').body?[0]?
       body = @model.get('highlight').body?[0]
     else
-      body = _.prune(@model.get('source').body, 200)
+      body = _.prune(@model.get('_source').body, 200)
     @$el.html ResultTemplate {
       title: title
       body: body
-      link: '/node/' + @model.get('source').nid
+      link: '/node/' + @model.get('_source').nid
     }
     @
