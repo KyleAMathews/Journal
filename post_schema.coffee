@@ -6,16 +6,21 @@ mongoosastic = require('mongoosastic')
 Schema = mongoose.Schema
 
 PostSchema = new Schema (
-  title: { type: String, required: true }
+  title: { type: String, required: true, es_boost:2.0 }
   body: { type: String, required: true }
-  nid: { type: Number, min: 1, required: true, index: true, unique: true }
-  created: { type: Date, index: true }
-  changed: { type: Date, index: true }
+  nid: { type: Number, min: 1, required: true, index: true, unique: true, es_type: 'integer' }
+  created: { type: Date, index: true, es_type:'date' }
+  changed: { type: Date, index: true, es_type:'date' }
   deleted: { type: Boolean, default: false, index: true }
   _user: { type: Schema.ObjectId, ref: 'User', index: true }
 )
 
-PostSchema.plugin(mongoosastic)
+PostSchema.plugin(mongoosastic, { index: 'journal_posts' })
+Post = mongoose.model 'post', PostSchema
+#Post.createMapping (err, mapping) ->
+  #console.log err
+  #console.log mapping
+  #return mapping
 
 DraftSchema = new Schema (
   title: { type: String }
@@ -25,5 +30,4 @@ DraftSchema = new Schema (
   _user: { type: Schema.ObjectId, ref: 'User', index: true }
 )
 
-mongoose.model 'post', PostSchema
 mongoose.model 'draft', DraftSchema
