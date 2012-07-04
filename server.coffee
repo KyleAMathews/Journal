@@ -247,18 +247,22 @@ app.get '/search/:query', (req, res) ->
       res.render 'index'
     else
       Post = mongoose.model 'post'
-      rand_number = Math.floor(Math.random() * 1000)
-      console.log req.params.query
       Post.search({
+        from: 0
+        size: 40
         query:
-          text:
-            _all: req.params.query
+          query_string:
+            fields: ['title', 'body']
+            query: req.params.query
+        filter:
+          term:
+            _user: req.user._id.toString()
         highlight:
           fields:
             title: {"fragment_size" : 300}
             body: {"fragment_size" : 200}
       }, (err, posts) ->
-        console.log err
+        if err then console.log err
         res.json posts
       )
   else
