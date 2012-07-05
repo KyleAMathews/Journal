@@ -15,6 +15,7 @@ module.exports = class ResultView extends Backbone.View
     @$el.html ResultTemplate {
       title: title
       body: body
+      created: moment(@model.get('_source').created).format("D MMMM YYYY")
       link: '/node/' + @model.get('_source').nid
     }
     @

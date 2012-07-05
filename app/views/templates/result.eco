@@ -1,2 +1,2 @@
-<h3><a href="<%- @link %>"><%- @title %></a></h3>
+<h3><a href="<%- @link %>"><%- @title %></a> <span class="created">– <%- @created %></span></h3>
 <p><%- @body %></p>

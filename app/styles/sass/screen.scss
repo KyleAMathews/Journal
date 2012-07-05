@@ -252,6 +252,11 @@ input[type="submit"], button, .button {
       font-weight: normal;
     }
   }
+  .created {
+    @include adjust-font-size-to(13px, 1, 18px);
+
+    color: $grey60;
+  }
   p {
     @include adjust-font-size-to(14px);
   }
