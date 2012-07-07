@@ -267,8 +267,26 @@ app.get '/search/:query', (req, res) ->
             fields: ['title', 'body']
             query: req.params.query
         filter:
-          term:
-            _user: req.user._id.toString()
+          #and: [
+            term:
+              _user: req.user._id.toString()
+            #,
+            #{
+            #range:
+              #created:
+                #from: 1262304000000
+                #to: 1293840000000
+            #}
+            #]
+        facets:
+          year:
+            date_histogram:
+              field: 'created'
+              interval: 'year'
+          month:
+            date_histogram:
+              field: 'created'
+              interval: 'month'
         highlight:
           fields:
             title: {"fragment_size" : 300}

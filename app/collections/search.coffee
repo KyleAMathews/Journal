@@ -10,9 +10,12 @@ module.exports = class Search extends Backbone.Collection
     unless query is ""
       app.util.search query, (results) =>
         @searchtime = new Date() - start
-        @total = results.total
-        @max_score = results.max_score
-        @reset(results.hits)
+        @total = results.hits.total
+        @max_score = results.hits.max_score
+        @reset(results.hits.hits)
+        for entry in results.facets.year.entries
+          year = moment.utc(entry.time).year()
+          console.log year + ": " + entry.count
 
   # Remove my various bits of state.
   clear: ->
