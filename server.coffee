@@ -27,6 +27,22 @@ app.configure ->
   app.use app.router
   app.use express.static __dirname + '/public'
 
+# Synchronize models with Elastic Search.
+Post = mongoose.model 'post'
+#stream = Post.synchronize()
+#count = 0;
+
+#stream.on('data', (err, doc) ->
+    #count++
+#)
+#stream.on('close', ->
+    #console.log('indexed ' + count + ' documents!')
+#)
+#stream.on('error', (err) ->
+    #console.log(err)
+#)
+
+# Routes.
 app.get '/', (req, res) ->
   if req.isAuthenticated()
     res.render 'index'
@@ -247,18 +263,6 @@ app.get '/search/:query', (req, res) ->
       res.render 'index'
     else
       Post = mongoose.model 'post'
-      #stream = Post.synchronize()
-      #count = 0;
-
-      #stream.on('data', (err, doc) ->
-          #count++
-      #)
-      #stream.on('close', ->
-          #console.log('indexed ' + count + ' documents!')
-      #)
-      #stream.on('error', (err) ->
-          #console.log(err)
-      #)
       Post.search({
         from: 0
         size: 40
