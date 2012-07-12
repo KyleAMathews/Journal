@@ -10,7 +10,7 @@ BindTo =
   # easily, at a later point in time.
   bindTo: (obj, eventName, callback, context) ->
     context = context || @
-    obj.bind(eventName, callback, context)
+    obj.on(eventName, callback, context)
 
     if !@bindings then @bindings = []
 
@@ -22,11 +22,9 @@ BindTo =
     })
 
   # Unbind all of the events that we have stored.
-  # TODO change how I store bindings so that we just store one reference to each
-  # object then call object.off(null, null, this) -- faster.
   unbindAll: ->
     _.each(@bindings, (binding) ->
-      binding.obj.unbind(binding.eventName, binding.callback)
+      binding.obj.off(null, null, binding.context)
     )
 
     this.bindings = []
@@ -41,13 +39,17 @@ Backbone.View.prototype.close = ->
   @unbind()
   @unbindAll()
   @remove()
+  @closeChildrenViews()
+  if @onClose then @onClose()
 
+# Close children views. Also useful for cleaning up long-living views which creates
+# lots of children views.
+Backbone.View.prototype.closeChildrenViews = ->
   if @children
     _.each @children, (childView) ->
       if childView.close?
         childView.close()
-
-  if @onClose then @onClose()
+    @children = []
 
 # Add addChildView method so we can keep track of children views so when closing the
 # parent view, it's easy to close each child view.
