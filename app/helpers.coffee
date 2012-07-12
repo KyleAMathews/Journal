@@ -51,8 +51,15 @@ exports.scrollPosition = ->
   currentPosition = ->
     if window.location.pathname is '/'
       app.site.set postsScroll: $(window).scrollTop()
-  throttled = _.throttle(currentPosition, 100)
+  throttled = _.throttle(currentPosition, 500)
   $(window).scroll(throttled)
 
 exports.search = (query, callback) ->
   $.getJSON('/search/' + encodeURIComponent(query), (data) -> callback(data))
+
+# Misc global stuff
+$ ->
+  reportNearBottom = ->
+    app.eventBus.trigger 'distance:bottom_page', ($(document).height() - $(window).height()) - $(window).scrollTop()
+  throttled = _.throttle(reportNearBottom, 200)
+  $(window).scroll(throttled)

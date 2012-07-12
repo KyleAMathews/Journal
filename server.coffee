@@ -111,7 +111,7 @@ findByNid = (nid, res, req) ->
 
 app.get '/posts', (req, res) ->
   Post = mongoose.model 'post'
-  skip = if req.query.skip? then req.query.skip else 0
+  created = if req.query.created? then req.query.created else new Date()
   if req.query.id
     findById(req.query.id, res, req)
   else if req.query.nid
@@ -119,7 +119,7 @@ app.get '/posts', (req, res) ->
   else
     Post.find()
       .limit(10)
-      .skip(skip)
+      .where('created').lt(created)
       .notEqualTo('deleted', true)
       .where( '_user', req.user._id.toString())
       .desc('created')

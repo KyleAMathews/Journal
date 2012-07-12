@@ -25,7 +25,7 @@ class exports.Application extends BrunchApplication
     @eventBus = _.extend({}, Backbone.Events)
 
     @collections.posts = new Posts
-    @collections.posts.fetch()
+    @collections.posts.load()
     @collections.drafts = new Drafts
     @collections.drafts.fetch()
     @collections.search = new Search
@@ -42,4 +42,5 @@ class exports.Application extends BrunchApplication
     scrollPosition()
     $(window).on 'click', app.util.clickHandler
 
-window.app = new exports.Application
+unless location.pathname is '/login'
+  window.app = new exports.Application

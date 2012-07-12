@@ -6,11 +6,10 @@ class exports.PostsView extends Backbone.View
   id: 'posts'
 
   initialize: ->
-    @collection.on 'reset', @render
-    @collection.on 'add', @addOne
-
-  events:
-    'click #load-more': 'loadMore'
+    @bindTo @collection, 'reset', @render
+    @bindTo @collection, 'add', @addOne
+    @bindTo @collection, 'loading-posts', -> @$('.loading-posts').show()
+    @bindTo @collection, 'done-loading-posts', -> @$('.loading-posts').hide()
 
   render: =>
     @$el.html PostsTemplate()
@@ -30,9 +29,3 @@ class exports.PostsView extends Backbone.View
   addOne: (post) =>
     postView = new PostView model: post
     @$('#posts').append postView.render().el
-
-  loadMore: ->
-    @collection.fetch
-      add: true
-      data:
-        skip: @collection.length
