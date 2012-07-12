@@ -15,6 +15,7 @@
     "bcrypt": "0.x.x",
     "mongoosastic": "0.x.x",
     "connect-redis": "1.x.x",
+    "async": "0.1.x",
     "passport": "0.x.x",
     "passport-local": "0.x.x",
     "javascript-brunch": "1.x.x",
