@@ -3,6 +3,7 @@ class exports.Posts extends Backbone.Collection
 
   url: '/posts'
   model: Post
+  sync: Backbone.cachingSync(Backbone.sync, 'posts')
 
   initialize: ->
     @last_id = ""

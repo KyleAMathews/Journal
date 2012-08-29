@@ -23,6 +23,8 @@ exports.config =
           'vendor/scripts/console-helper.js',
           'vendor/scripts/underscore-min.js',
           'vendor/scripts/backbone-0.9.2.js'
+          'vendor/scripts/burry.js'
+          'vendor/scripts/backbone.cachingsync.js'
           'vendor/scripts/marked.js'
           'vendor/scripts/moment.js'
           'vendor/scripts/kalendae.js'
