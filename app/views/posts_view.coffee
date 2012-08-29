@@ -8,8 +8,8 @@ class exports.PostsView extends Backbone.View
   initialize: ->
     @bindTo @collection, 'reset', @render
     @bindTo @collection, 'add', @addOne
-    @bindTo @collection, 'loading-posts', -> @$('.loading-posts').show()
-    @bindTo @collection, 'done-loading-posts', -> @$('.loading-posts').hide()
+    @bindTo @collection, 'loading-posts', -> @$('#loading-posts').show()
+    @bindTo @collection, 'done-loading-posts', -> @$('#loading-posts').hide()
 
   render: =>
     @$el.html PostsTemplate()

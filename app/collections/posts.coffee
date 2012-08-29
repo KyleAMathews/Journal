@@ -7,8 +7,9 @@ class exports.Posts extends Backbone.Collection
   initialize: ->
     @last_id = ""
     @loading(false)
-    app.eventBus.on 'distance:bottom_page', (distance) =>
+    app.eventBus.on 'distance:bottom_page', ((distance) =>
       if distance <= 1500 then @load()
+    ), @
 
   getByNid: (nid) ->
     nid = parseInt(nid, 10)
@@ -43,6 +44,12 @@ class exports.Posts extends Backbone.Collection
         data:
           created: created
         success: (collection, response) =>
+          # If server returns nothing, this means we're at the bottom and should
+          # stop trying to load new posts.
+          if response.length is 0
+            app.eventBus.off null, null, @
+            @loading(false)
+            return
           # Set the posts collection last_id from the response.
           @last_id = _.last(response)['id']
           @loading(false)
