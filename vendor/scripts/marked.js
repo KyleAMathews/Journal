@@ -13,25 +13,32 @@ var block = {
   newline: /^\n+/,
   code: /^( {4}[^\n]+\n*)+/,
   fences: noop,
-  hr: /^( *[\-*_]){3,} *(?:\n+|$)/,
+  hr: /^( *[-*_]){3,} *(?:\n+|$)/,
   heading: /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,
   lheading: /^([^\n]+)\n *(=|-){3,} *\n*/,
   blockquote: /^( *>[^\n]+(\n[^\n]+)*\n*)+/,
-  list: /^( *)([*+-]|\d+\.) [^\0]+?(?:\n{2,}(?! )(?!\1bullet)\n*|\s*$)/,
+  list: /^( *)(bull) [^\0]+?(?:hr|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
   html: /^ *(?:comment|closed|closing) *(?:\n{2,}|\s*$)/,
   def: /^ *\[([^\]]+)\]: *([^\s]+)(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,
   paragraph: /^([^\n]+\n?(?!body))+\n*/,
   text: /^[^\n]+/
 };
 
+block.bullet = /(?:[*+-]|\d+\.)/;
+block.item = /^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/;
+block.item = replace(block.item, 'gm')
+  (/bull/g, block.bullet)
+  ();
+
 block.list = replace(block.list)
-  ('bullet', /(?:[*+-](?!(?: *[-*]){2,})|\d+\.)/)
+  (/bull/g, block.bullet)
+  ('hr', /\n+(?=(?: *[-*_]){3,} *(?:\n+|$))/)
   ();
 
 block.html = replace(block.html)
   ('comment', /<!--[^\0]*?-->/)
   ('closed', /<(tag)[^\0]+?<\/\1>/)
-  ('closing', /<tag(?!:\/|@)\b(?:"[^"]*"|'[^']*'|[^'">])*?>/)
+  ('closing', /<tag(?:"[^"]*"|'[^']*'|[^'">])*?>/)
   (/tag/g, tag())
   ();
 
@@ -61,12 +68,12 @@ block.normal = {
 };
 
 block.gfm = {
-  fences: /^ *``` *(\w+)? *\n([^\0]+?)\s*``` *(?:\n+|$)/,
+  fences: /^ *(```|~~~) *(\w+)? *\n([^\0]+?)\s*\1 *(?:\n+|$)/,
   paragraph: /^/
 };
 
 block.gfm.paragraph = replace(block.paragraph)
-  ('(?!', '(?!' + block.gfm.fences.source.replace(/(^|[^\[])\^/g, '$1') + '|')
+  ('(?!', '(?!' + block.gfm.fences.source.replace(/(^|[^\[])\^/g, '$2') + '|')
   ();
 
 /**
@@ -124,8 +131,8 @@ block.token = function(src, tokens, top) {
       src = src.substring(cap[0].length);
       tokens.push({
         type: 'code',
-        lang: cap[1],
-        text: cap[2]
+        lang: cap[2],
+        text: cap[3]
       });
       continue;
     }
@@ -193,9 +200,7 @@ block.token = function(src, tokens, top) {
       });
 
       // Get each top-level item.
-      cap = cap[0].match(
-        /^( *)([*+-]|\d+\.) [^\n]*(?:\n(?!\1(?:[*+-]|\d+\.) )[^\n]*)*/gm
-      );
+      cap = cap[0].match(block.item);
 
       next = false;
       l = cap.length;
@@ -474,7 +479,7 @@ inline.lexer = function(src) {
   return out;
 };
 
-var outputLink = function(cap, link) {
+function outputLink(cap, link) {
   if (cap[0][0] !== '!') {
     return '<a href="'
       + escape(link.href)
@@ -500,7 +505,7 @@ var outputLink = function(cap, link) {
       : '')
       + '>';
   }
-};
+}
 
 /**
  * Parsing
@@ -509,11 +514,11 @@ var outputLink = function(cap, link) {
 var tokens
   , token;
 
-var next = function() {
+function next() {
   return token = tokens.pop();
-};
+}
 
-var tok = function() {
+function tok() {
   switch (token.type) {
     case 'space': {
       return '';
@@ -538,9 +543,11 @@ var tok = function() {
           token.text = token.code;
         }
       }
+
       if (!token.escaped) {
         token.text = escape(token.text, true);
       }
+
       return '<pre><code'
         + (token.lang
         ? ' class="lang-'
@@ -621,9 +628,9 @@ var tok = function() {
         + '</p>\n';
     }
   }
-};
+}
 
-var parseText = function() {
+function parseText() {
   var body = token.text
     , top;
 
@@ -633,9 +640,9 @@ var parseText = function() {
   }
 
   return inline.lexer(body);
-};
+}
 
-var parse = function(src) {
+function parse(src) {
   tokens = src.reverse();
 
   var out = '';
@@ -647,22 +654,22 @@ var parse = function(src) {
   token = null;
 
   return out;
-};
+}
 
 /**
  * Helpers
  */
 
-var escape = function(html, encode) {
+function escape(html, encode) {
   return html
     .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
-};
+}
 
-var mangle = function(text) {
+function mangle(text) {
   var out = ''
     , l = text.length
     , i = 0
@@ -677,21 +684,22 @@ var mangle = function(text) {
   }
 
   return out;
-};
+}
 
 function tag() {
   var tag = '(?!(?:'
     + 'a|em|strong|small|s|cite|q|dfn|abbr|data|time|code'
     + '|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo'
-    + '|span|br|wbr|ins|del|img)\\b)\\w+';
+    + '|span|br|wbr|ins|del|img)\\b)\\w+(?!:/|@)\\b';
 
   return tag;
 }
 
-function replace(regex) {
+function replace(regex, opt) {
   regex = regex.source;
+  opt = opt || '';
   return function self(name, val) {
-    if (!name) return new RegExp(regex);
+    if (!name) return new RegExp(regex, opt);
     regex = regex.replace(name, val.source || val);
     return self;
   };
@@ -704,10 +712,10 @@ noop.exec = noop;
  * Marked
  */
 
-var marked = function(src, opt) {
+function marked(src, opt) {
   setOptions(opt);
   return parse(block.lexer(src));
-};
+}
 
 /**
  * Options
@@ -716,7 +724,7 @@ var marked = function(src, opt) {
 var options
   , defaults;
 
-var setOptions = function(opt) {
+function setOptions(opt) {
   if (!opt) opt = defaults;
   if (options === opt) return;
   options = opt;
@@ -740,7 +748,7 @@ var setOptions = function(opt) {
     inline.em = inline.normal.em;
     inline.strong = inline.normal.strong;
   }
-};
+}
 
 marked.options =
 marked.setOptions = function(opt) {
@@ -749,7 +757,7 @@ marked.setOptions = function(opt) {
   return marked;
 };
 
-marked.options({
+marked.setOptions({
   gfm: true,
   pedantic: false,
   sanitize: false,

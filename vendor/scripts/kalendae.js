@@ -2,7 +2,7 @@
  *	Kalendae, a framework agnostic javascript date picker           *
  *	Copyright(c) 2012 Jarvis Badgley (chipersoft@gmail.com)         *
  *	http://github.com/ChiperSoft/Kalendae                           *
- *	Version 0.2                                                     *
+ *	Version 0.3                                                     *
  ********************************************************************/
 
 (function (undefined) {
@@ -10,8 +10,17 @@
 var today;
 
 var Kalendae = function (targetElement, options) {
+	if (typeof document.addEventListener !== 'function' && !util.isIE8()) return;
+	
 	//if the first argument isn't an element and isn't a string, assume that it is the options object
-	if (!(targetElement instanceof Element || typeof targetElement === 'string')) options = targetElement;
+	var is_element = false;
+	try { 
+		is_element = targetElement instanceof Element;
+	}
+	catch (err) {
+		is_element = !!targetElement && is_element.nodeType === 1;
+	}
+	if (!(is_element || typeof(targetElement) === 'string')) options = targetElement;
 	
 	var self = this,
 		classes = self.classes,
@@ -108,6 +117,9 @@ var Kalendae = function (targetElement, options) {
 		
 		//title bar
 		$title = util.make('div', {'class':classes.title}, $cal);
+		if(!opts.useYearNav){
+			util.addClassName($title, classes.disableYearNav);
+		}
 		util.make('a', {'class':classes.previousYear}, $title);	//previous button
 		util.make('a', {'class':classes.previousMonth}, $title);	//previous button
 		util.make('a', {'class':classes.nextYear}, $title);		//next button
@@ -221,6 +233,7 @@ Kalendae.prototype = {
 		blackout:				null,			/* array of dates, or function to be passed a date */
 		selected:				null,			/* dates already selected.  can be string, date, or array of strings or dates. */
 		mode:					'single',		/* single, multiple, range */
+		dayOutOfMonthClickable: false,
 		format:					null,			/* string used for parsing dates. */
 		subscribe:				null,			/* object containing events to subscribe to */
 
@@ -231,6 +244,7 @@ Kalendae.prototype = {
 		parseSplitDelimiter:	/,\s*|\s+-\s+/,	/* regex to use for splitting multiple dates from a passed string */
 		rangeDelimiter:			' - ',			/* string to use between dates when outputting in range mode */
 		multipleDelimiter:		', ',			/* string to use between dates when outputting in multiple mode */
+		useYearNav: 			true,
 		
 		dateClassMap:			{}
 	},
@@ -249,6 +263,7 @@ Kalendae.prototype = {
 		header			:'k-header',
 		days			:'k-days',
 		dayOutOfMonth	:'k-out-of-month',
+		dayInMonth: 'k-in-month',
 		dayActive		:'k-active',
 		daySelected		:'k-selected',
 		dayInRange		:'k-range',
@@ -257,7 +272,8 @@ Kalendae.prototype = {
 		disablePreviousMonth	:'k-disable-previous-month-btn',
 		disableNextMonth		:'k-disable-next-month-btn',
 		disablePreviousYear		:'k-disable-previous-year-btn',
-		disableNextYear			:'k-disable-next-year-btn'
+		disableNextYear			:'k-disable-next-year-btn',
+		disableYearNav 			:'k-disable-year-nav'
 	},
 	
 	disablePreviousMonth: false,
@@ -360,6 +376,9 @@ Kalendae.prototype = {
 	
 	addSelected : function (date, draw) {
 		date = moment(date).hours(12);
+
+		if(this.settings.dayOutOfMonthClickable && this.settings.mode !== 'range'){ this.makeSelectedDateVisible(date); }
+
 		switch (this.settings.mode) {
 			case 'multiple':
 				if (!this.isSelected(date)) this._sel.push(date);
@@ -384,7 +403,18 @@ Kalendae.prototype = {
 		if (draw !== false) this.draw();
 		return true;
 	},
-	
+
+	makeSelectedDateVisible: function (date) {
+		outOfViewMonth = moment(date).date('1').diff(this.viewStartDate,'months')
+
+		if(outOfViewMonth < 0){
+			this.viewStartDate.subtract('months',1);
+		}
+		else if(outOfViewMonth > 0 && outOfViewMonth >= this.settings.months){
+			this.viewStartDate.add('months',1);
+		}
+	},
+
 	removeSelected : function (date, draw) {
 		date = moment(date).yearDay();
 		var i = this._sel.length;
@@ -433,7 +463,9 @@ Kalendae.prototype = {
 				if (s) klass.push(({'-1':classes.dayInRange,'1':classes.daySelected, 'true':classes.daySelected})[s]);
 
 				if (day.month() != month.month()) klass.push(classes.dayOutOfMonth);
-				else if (!(this.blackout(day) || this.direction(day)) || s>0) klass.push(classes.dayActive);
+				else klass.push(classes.dayInMonth);
+				
+				if (!(this.blackout(day) || this.direction(day) || (day.month() != month.month() && opts.dayOutOfMonthClickable === false)) || s>0) klass.push(classes.dayActive);
 
 				if (day.yearDay() === today.yearDay()) klass.push(classes.dayToday);
 
@@ -454,7 +486,7 @@ Kalendae.prototype = {
 			var diff = -(moment().diff(month, 'months'));		
 			if (opts.direction==='today-past' || opts.direction==='past') {
 
-				if (diff <= 0) {
+				if (diff < 0) {
 					this.disableNextMonth = false;
 					util.removeClassName(this.container, classes.disableNextMonth);
 				} else {
@@ -464,7 +496,7 @@ Kalendae.prototype = {
 
 			} else if (opts.direction==='today-future' || opts.direction==='future') {
 
-				if (diff > opts.months) {
+				if (diff >= opts.months) {
 					this.disablePreviousMonth = false;
 					util.removeClassName(this.container, classes.disablePreviousMonth);
 				} else {
@@ -476,7 +508,7 @@ Kalendae.prototype = {
 			
 				
 			if (opts.direction==='today-past' || opts.direction==='past') {
-				if (month.add({Y:1}).diff(moment(), 'years') < 0) {
+				if (month.add({y:1}).diff(moment(), 'months') <= 0) {
 					this.disableNextYear = false;
 					util.removeClassName(this.container, classes.disableNextYear);
 				} else {
@@ -485,7 +517,7 @@ Kalendae.prototype = {
 				}
 
 			} else if (opts.direction==='today-future' || opts.direction==='future') {
-				if (month.subtract({Y:1}).diff(moment(), 'years') > 0) {
+				if ((month.subtract({y:1}).diff(moment(), 'months') - (opts.months-1)) >= 0) {
 					this.disablePreviousYear = false;
 					util.removeClassName(this.container, classes.disablePreviousYear);
 				} else {
@@ -619,6 +651,14 @@ var util = Kalendae.util = {
 		} while ((elem = elem.offsetParent));
 		return false;
 	},
+
+	scrollContainer: function (elem) {
+		do {
+			var overflow = util.getStyle(elem, 'overflow');
+			if (overflow === 'auto' || overflow === 'scroll') return elem;
+		} while ((elem = elem.parentNode) && elem != window.document.body);
+		return null;
+	},
 	
 	getPosition: function (elem, isInner) {
 		var x = elem.offsetLeft,
@@ -695,25 +735,32 @@ var util = Kalendae.util = {
 
 
 //auto-initializaiton code
-Kalendae.util.domReady(function () {
+if (typeof document.addEventListener === 'function') Kalendae.util.domReady(function () {
 	var els = util.$$('.auto-kal'),
 		i = els.length,
-		e;
+		e,
+		options,
+		optionsRaw;
 
 	while (i--) {
 		e = els[i];
+		optionsRaw = e.getAttribute('data-kal');
+		options = (optionsRaw == null || optionsRaw == "") ? {} : (new Function('return {' + optionsRaw + '};'))();
+
 		if (e.tagName === 'INPUT') {
 			//if element is an input, bind a popup calendar to the input.
-			new Kalendae.Input(e);
+			new Kalendae.Input(e, options);
 		} else {
 			//otherwise, insert a flat calendar into the element.
-			new Kalendae({attachTo:e});
+			new Kalendae(util.merge(options, {attachTo:e}));
 		}
 		
 	}
 });
 
 Kalendae.Input = function (targetElement, options) {
+	if (typeof document.addEventListener !== 'function') return;
+
 	var $input = this.input = util.$(targetElement),
 		overwriteInput;
 
@@ -771,6 +818,16 @@ Kalendae.Input = function (targetElement, options) {
 	util.addEvent($input, 'keyup', function (event) {
 		self.setSelected(this.value);
 	});
+
+	var $scrollContainer = util.scrollContainer($input);
+
+	if( $scrollContainer ) {
+
+		// Hide calendar when $scrollContainer is scrolled
+		util.addEvent($scrollContainer, 'scroll', function (event) {
+			$input.blur();
+		});
+	}
 	
 	self.subscribe('change', function () {
 		$input.value = self.getSelected();
@@ -795,36 +852,40 @@ Kalendae.Input.prototype = util.merge(Kalendae.prototype, {
 		var $container = this.container,
 			style = $container.style,
 			$input = this.input,
-			pos = util.getPosition($input);
-		
+			pos = util.getPosition($input),
+			$scrollContainer = util.scrollContainer($input),
+			scrollTop = $scrollContainer ? $scrollContainer.scrollTop : 0;
+
 		style.display = '';
 		switch (opts.side) {
 			case 'left':
 				style.left = (pos.left - util.getWidth($container) + this.settings.offsetLeft) + 'px';
-				style.top  = (pos.top + this.settings.offsetTop) + 'px';
+				style.top  = (pos.top + this.settings.offsetTop - scrollTop) + 'px';
 				break;
 			case 'right':
 				style.left = (pos.left + util.getWidth($input)) + 'px';
-				style.top  = (pos.top + this.settings.offsetTop) + 'px';
+				style.top  = (pos.top + this.settings.offsetTop - scrollTop) + 'px';
 				break;
 			case 'top':
 				style.left = (pos.left + this.settings.offsetLeft) + 'px';
-				style.top  = (pos.top - util.getHeight($container) + this.settings.offsetTop) + 'px';
+				style.top  = (pos.top - util.getHeight($container) + this.settings.offsetTop - scrollTop) + 'px';
 				break;
 			case 'bottom':
 				/* falls through */
 			default:
 				style.left = (pos.left + this.settings.offsetLeft) + 'px';
-				style.top  = (pos.top + util.getHeight($input) + this.settings.offsetTop) + 'px';
+				style.top  = (pos.top + util.getHeight($input) + this.settings.offsetTop - scrollTop) + 'px';
 				break;
 		}
 		
 		style.position = util.isFixed($input) ? 'fixed' : 'absolute';
-				
+		
+		this.publish('show', this);
 	},
 	
 	hide : function () {
 		this.container.style.display = 'none';
+		this.publish('hide', this);
 	}
 	
 });
@@ -1657,7 +1718,7 @@ moment.fn.yearDay = function (input) {
 
 today = moment().stripTime();
 
-if (typeof jQuery !== 'undefined') {
+if (typeof jQuery !== 'undefined' && typeof document.addEventListener === 'function') {
 	jQuery.fn.kalendae = function (options) {
 		this.each(function (i, e) {
 			if (e.tagName === 'INPUT') {
