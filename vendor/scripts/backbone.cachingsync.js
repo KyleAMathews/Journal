@@ -72,13 +72,10 @@
                 }
             });
 
-            if (typeof ids !== 'undefined') {
+            if (!_.isUndefined(ids) && !_.isNull(ids[0])) {
                 d.resolve(_.map(ids, function (id) {
                     json = burry.get(id);
                     console.log(json);
-                    if (typeof json === 'undefined') {
-                      return;
-                    }
                     json.id = id;
                     return json;
                 }));

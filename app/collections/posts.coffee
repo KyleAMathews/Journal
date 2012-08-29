@@ -51,6 +51,8 @@ class exports.Posts extends Backbone.Collection
             app.eventBus.off null, null, @
             @loading(false)
             return
+          # Backbone.cachesync returns junk sometimes.
+          unless _.last(response)? then return
           # Set the posts collection last_id from the response.
           @last_id = _.last(response)['id']
           @loading(false)
