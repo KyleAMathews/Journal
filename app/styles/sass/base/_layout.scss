@@ -1,30 +1,16 @@
 @import "susy";
 
+$base-font-size: 14px;
+
+// Box-sizing fix + tell Susy to use border-box
+@include border-box-sizing;
+
 // Suzy defaults
-$total-cols: 12;
-$col-width: 3em;
+$total-columns: 7;
+$column-width: 4em;
 $gutter-width: 1em;
-$side-gutter-width: $gutter-width;
+$grid-padding: $gutter-width;
 
-@media only screen and (min-width: 751px) {
-  #wrapper, #menu-wrapper {
-    @include container;
-    #container, #menu-container {
-      @include full;
-    }
-  }
-}
-
-$total-cols: 12;
-$col-width: 3em;
-$gutter-width: 1em;
-$side-gutter-width: 3em;
-@media only screen and (max-width: 750px) {
-  #wrapper, #menu-wrapper {
-    @include container;
-    #container, #menu-container {
-      @include full;
-      @include alpha;
-    }
-  }
+#wrapper, #menu-wrapper {
+  @include container;
 }
