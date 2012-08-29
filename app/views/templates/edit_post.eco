@@ -1,13 +1,13 @@
 <% unless @nid?: %>
   <h3>Create new post <span id="last-saved"></span></h3>
 <% end %>
-<input class="title" value="<%- @title %>">
+<div class="title expanding-textarea"></div>
 <strong class="date">
   <%- moment(@created).format('MM/D/YYYY') %>
   <span class="show-date-edit">edit</span>
 </strong>
 <input class="date-edit" value="<%- moment(@created).format('MM/D/YYYY') %>">
-<div class="expanding-textarea"></div>
+<div class="body expanding-textarea"></div>
 <button class="save">Save</button>
 <% if @nid?: %>
 <a class="less-important-button" href="/node/<%- @nid %>">Cancel</a>

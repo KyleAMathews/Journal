@@ -148,13 +148,18 @@ input, textarea {
     @include trailer(0.5);
 
     width: 100%;
-    font-weight: bold;
+    .expandingText textarea {
+      @include adjust-font-size-to(36px);
+      @extend %title-font;
+
+      border: 0;
+      padding: 0;
+    }
   }
   .body {
     @include trailer(0.5);
 
     width: 100%;
-    height: 30em;
   }
   .loading {
     margin-left: 10px;

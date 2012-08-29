@@ -7,8 +7,16 @@ $base-font-size: 14px;
 $base-line-height: $base-font-size * 1.5;
 @include establish-baseline();
 
-body, #post-edit .title {
+%title-font {
   font-family: 'Open Sans', “Helvetica Neue”, Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+body {
+  font-family: 'Open Sans', “Helvetica Neue”, Arial, Helvetica, sans-serif;
+}
+#post-edit .title {
+  @extend %title-font;
 }
 p, #post-edit .expanding-textarea textarea, ul, ol, li {
   font-family: Georgia, Times, “Times New Roman”, serif;
