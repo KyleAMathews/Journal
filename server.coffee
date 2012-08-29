@@ -106,7 +106,7 @@ findByNid = (nid, res, req) ->
       post.setValue('id', post.getValue('_id'))
       res.json post
     else
-      console.log err
+      console.error err
       res.json 'found nothing'
 
 app.get '/posts', (req, res) ->
@@ -172,7 +172,7 @@ app.post '/posts', (req, res) ->
         unless err
           res.json id: post._id, created: post.created, nid: post.nid
         else
-          console.err 'Error creating new post', err
+          console.error 'Error creating new post', err
 
 app.put '/posts/:id', (req, res) ->
   console.log 'updating an post'
@@ -184,13 +184,15 @@ app.put '/posts/:id', (req, res) ->
         post[k] = v
       post.changed = new Date()
       post.save (err) ->
-        if err then console.err err
+        if err
+          console.error err
+          res.json 400, error: "The post wasn't saved correctly"
         res.json {
           saved: true
           changed: post.changed
         }
     else
-      console.err 'update error', err
+      console.error 'update error', err
 
 app.del '/posts/:id', (req, res) ->
   res.send 'hello world'
@@ -224,7 +226,7 @@ app.post '/drafts', (req, res) ->
     unless err
       res.json id: draft._id, created: draft.created, changed: draft.changed
     else
-      console.log 'error', err
+      console.error 'error', err
 
 app.put '/drafts/:id', (req, res) ->
   console.log 'updating a draft'
@@ -246,7 +248,7 @@ app.del '/drafts/:id', (req, res) ->
   Draft = mongoose.model 'draft'
   Draft.findById req.params.id, (err, draft) ->
     unless err or not draft? or draft._user.toString() isnt req.user._id.toString()
-      console.log draft
+      console.error draft
       draft.remove()
       res.send 'draft successfully deleted'
 
@@ -296,7 +298,7 @@ app.get '/search/:query', (req, res) ->
             title: {"fragment_size" : 300}
             body: {"fragment_size" : 200}
       }, (err, posts) ->
-        if err then console.log err
+        if err then console.error err
         res.json posts
       )
   else
