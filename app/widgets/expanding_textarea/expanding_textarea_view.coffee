@@ -61,3 +61,5 @@ class exports.ExpandingTextareaView extends Backbone.View
 
       # Set widget to active.
       @$el.addClass('active')
+      _.defer =>
+        @$('textarea').trigger('input')
