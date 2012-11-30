@@ -37,10 +37,20 @@ class exports.PostEditView extends Backbone.View
 
     # Keep the save button visible by autoscrolling.
     autoscroll = (e) =>
+      # Measure distance from bottom of textarea to bottom of page.
       distanceTextareaToTop = $('.body textarea').offset().top - $(document).scrollTop()
       textareaHeight = @$('.body textarea').height()
       distanceToBottomFromTextarea = $(window).height() - textareaHeight - distanceTextareaToTop
-      if distanceToBottomFromTextarea < 50
+
+      # Measure how many values it is from current cursor position to the end of the
+      # textarea.
+      cursorPosition = @$('.body textarea')[0].selectionStart
+      cursorMax = @$('.body textarea')[0].value.length
+      distanceToEnd = cursorMax - cursorPosition
+
+      # Only scroll if the bottom of the textarea is very near the bottom of the page
+      # and the cursor is within one line distance of the bottom of the textarea.
+      if -50 < distanceToBottomFromTextarea < 50 and distanceToEnd < 80
         $("html, body").animate({ scrollTop: $(document).height()-$(window).height() })
     throttled = _.throttle(autoscroll, 200)
     @$('textarea').on('keypress', throttled)

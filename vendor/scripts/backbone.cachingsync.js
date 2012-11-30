@@ -1,6 +1,6 @@
-//    Backbone.cachingSync v0.1
+//    Backbone.cachingSync v0.1.0
 
-//    (c) 2012 Yiorgis Gozadinos.
+//    (c) 2012 Yiorgis Gozadinos, Crypho AS.
 //    Backbone.cachingSync is distributed under the MIT license.
 //    http://github.com/ggozad/Backbone.cachingSync
 
@@ -66,11 +66,11 @@
                 _.each(models, function (model) { burry.set(model.id, model); });
                 burry.set('__ids__', _.pluck(models, 'id'));
                 if (!options.add) {
-                  collection.reset(models);
+                    collection.reset(models);
                 }
             });
 
-            if (!_.isUndefined(ids) && !_.isNull(ids[0])) {
+            if (typeof ids !== 'undefined') {
                 d.resolve(_.map(ids, function (id) {
                     json = burry.get(id);
                     json.id = id;
