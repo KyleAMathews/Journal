@@ -62,9 +62,7 @@
                 d = $.Deferred(),
                 wp;
 
-            console.log(ids);
             wp = wrapped('read', collection, options).done(function (models) {
-                console.log(models);
                 _.each(models, function (model) { burry.set(model.id, model); });
                 burry.set('__ids__', _.pluck(models, 'id'));
                 if (!options.add) {
@@ -75,7 +73,6 @@
             if (!_.isUndefined(ids) && !_.isNull(ids[0])) {
                 d.resolve(_.map(ids, function (id) {
                     json = burry.get(id);
-                    console.log(json);
                     json.id = id;
                     return json;
                 }));
