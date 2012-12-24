@@ -6,7 +6,7 @@ class exports.Posts extends Backbone.Collection
   sync: Backbone.cachingSync(Backbone.sync, 'posts')
 
   initialize: ->
-    @last_id = ""
+    @last_post = ""
     @loading(false)
     app.eventBus.on 'distance:bottom_page', ((distance) =>
       if distance <= 1500 then @load()
@@ -36,23 +36,26 @@ class exports.Posts extends Backbone.Collection
         if @isLoading then @loading(false); @load()
       , 10000
 
-      if @last_id is ""
+      if @last_post is ""
         created = new Date().toJSON()
       else
-        created = @get(@last_id).get('created')
+        created = @last_post
       @fetch
-        add: true
+        update: true
+        remove: false
+        cache_append: true
         data:
           created: created
         success: (collection, response) =>
           # If server returns nothing, this means we're at the bottom and should
           # stop trying to load new posts.
-          if response.length is 0
+          if _.isString response
             app.eventBus.off null, null, @
             @loading(false)
             return
           # Backbone.cachesync returns junk sometimes.
           unless _.last(response)? then return
-          # Set the posts collection last_id from the response.
-          @last_id = _.last(response)['id']
+          # Set the posts collection last created time from the response.
+          @new_last_post = _.last(response)['created']
+          @last_post = @new_last_post if @new_last_post < @last_post or @last_post is ""
           @loading(false)

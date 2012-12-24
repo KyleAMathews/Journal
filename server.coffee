@@ -130,7 +130,7 @@ app.get '/posts', (req, res) ->
             post.setValue('id', post.getValue('_id'))
           res.json posts
         else
-          res.json 'found nothing'
+          res.json ''
 
 #User = mongoose.model 'user'
 #user = new User()
