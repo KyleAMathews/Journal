@@ -11,9 +11,13 @@ class exports.PostsView extends Backbone.View
     @bindTo @collection, 'loading-posts', -> @showLoading()
     @bindTo @collection, 'done-loading-posts', -> @hideLoading()
 
+
   render: =>
     @$el.html PostsTemplate()
     if @collection.isLoading then @showLoading() else @hideLoading()
+
+    # Create infinity.js listView
+    @listView = new infinity.ListView(@$('.posts'))
 
     @addAll()
 
@@ -36,4 +40,4 @@ class exports.PostsView extends Backbone.View
 
   addOne: (post) =>
     postView = new PostView model: post
-    @$('#posts').append postView.render().el
+    @listView.append postView.render().$el

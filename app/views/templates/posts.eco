@@ -1,5 +1,5 @@
 <a class="button post-action" href="/posts/new">New post</a>
-<div id="posts"></div>
+<div class="posts"></div>
 <div id="loading-posts">
   <em>Loading posts</em> <img class="loading" src="/images/loading-small.gif" />
 </div>
