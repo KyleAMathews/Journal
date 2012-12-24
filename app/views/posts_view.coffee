@@ -41,3 +41,6 @@ class exports.PostsView extends Backbone.View
   addOne: (post) =>
     postView = new PostView model: post
     @listView.append postView.render().$el
+
+  onClose: ->
+    @listView.remove()
