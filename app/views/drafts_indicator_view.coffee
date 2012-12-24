@@ -1,7 +1,7 @@
 module.exports = class DraftsIndicatorView extends Backbone.View
 
   initialize: ->
-    @bindTo @collection, 'all', @update
+    @listenTo @collection, 'all', @update
 
   events:
     'click': 'toggleDropdown'

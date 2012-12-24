@@ -6,10 +6,10 @@ class exports.PostsView extends Backbone.View
   id: 'posts'
 
   initialize: ->
-    @bindTo @collection, 'reset', @render
-    @bindTo @collection, 'add', @addOne
-    @bindTo @collection, 'loading-posts', -> @showLoading()
-    @bindTo @collection, 'done-loading-posts', -> @hideLoading()
+    @listenTo @collection, 'reset', @render
+    @listenTo @collection, 'add', @addOne
+    @listenTo @collection, 'loading-posts', -> @showLoading()
+    @listenTo @collection, 'done-loading-posts', -> @hideLoading()
 
 
   render: =>

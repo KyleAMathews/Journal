@@ -5,7 +5,7 @@ module.exports = class SearchView extends Backbone.View
   id: 'search-page'
 
   initialize: ->
-    @bindTo @collection, 'reset', @renderResults
+    @listenTo @collection, 'reset', @renderResults
 
   events:
     'click button': 'search'
