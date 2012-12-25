@@ -62,8 +62,12 @@
                 d = $.Deferred(),
                 wp;
 
+            // Filter out any nulls which creep in.
+            ids = _.filter(ids, function(id) { return !_.isNull(id) });
+
             wp = wrapped('read', collection, options).done(function (models) {
                 _.each(models, function (model) { burry.set(model.id, model); });
+
                 // Implementing collections can optionally append new model ids
                 // to the cache instead of rewriting this set each time.
                 if (options.cache_append) {
