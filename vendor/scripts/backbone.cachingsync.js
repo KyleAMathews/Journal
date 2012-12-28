@@ -62,9 +62,6 @@
                 d = $.Deferred(),
                 wp;
 
-            // Filter out any nulls which creep in.
-            ids = _.filter(ids, function(id) { return (typeof id !== "undefined" && id !== null);});
-
             wp = wrapped('read', collection, options).done(function (models) {
                 options.fromServer = true;
                 _.each(models, function (model) { burry.set(model.id, model); });
@@ -108,7 +105,7 @@
                         if (!maintain_own_ids) {
                           burry.set('__ids__', _(model.collection.models).chain()
                               .pluck('id')
-                              .union([newmodel.id])
+                              .union([model.id])
                               .without(undefined).value());
                         }
                         else {

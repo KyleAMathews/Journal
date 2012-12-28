@@ -78,9 +78,8 @@ class exports.PostEditView extends Backbone.View
 
     # Save it.
     @$('.loading').show()
-    @model.collection.create(obj,
+    @model.save(obj,
       {
-        wait: true
         success: (model) =>
           if @options.draftModel? then @options.draftModel.destroy()
           app.collections.posts.sort()
