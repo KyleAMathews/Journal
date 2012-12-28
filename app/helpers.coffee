@@ -19,21 +19,25 @@ exports.loadPost = (id, nid = false, callback) ->
       callback app.collections.posts.getByNid(id)
     else
       app.collections.posts.fetch
-        add: true
+        update: true
         data:
           nid: id
         success: (collection, response) =>
-          callback collection.getByNid(id)
+          # Ignore empty response from the cache.
+          if response.id?
+            callback collection.getByNid(id)
   else
     if app.collections.posts.get(id)
       callback app.collections.posts.get(id)
     else
       app.collections.posts.fetch
-        add: true
+        update: true
         data:
           id: id
         success: (collection, response) =>
-          callback collection.get(id)
+          # Ignore empty response from the cache.
+          if response.id?
+            callback collection.get(id)
 
 exports.clickHandler = (e) ->
   # If the click target isn't a link, then return
