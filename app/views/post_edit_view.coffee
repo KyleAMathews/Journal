@@ -78,12 +78,13 @@ class exports.PostEditView extends Backbone.View
 
     # Save it.
     @$('.loading').show()
-    @model.save(obj,
+    @model.collection.create(obj,
       {
-        success: =>
+        wait: true
+        success: (model) =>
           if @options.draftModel? then @options.draftModel.destroy()
           app.collections.posts.sort()
-          app.router.navigate '/node/' + @model.get('nid'), true
+          app.router.navigate '/node/' + model.get('nid'), true
       }
     )
 
@@ -94,6 +95,7 @@ class exports.PostEditView extends Backbone.View
         success: =>
           app.collections.posts.remove @model
           app.collections.posts.sort()
+          app.collections.posts.trigger 'set_cache_ids'
           app.router.navigate '/', true
       }
     )

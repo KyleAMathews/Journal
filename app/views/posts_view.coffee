@@ -17,6 +17,7 @@ class exports.PostsView extends Backbone.View
     if @collection.isLoading then @showLoading() else @hideLoading()
 
     # Create infinity.js listView
+    if @listView then @listView.remove()
     @listView = new infinity.ListView(@$('.posts'))
 
     @addAll()

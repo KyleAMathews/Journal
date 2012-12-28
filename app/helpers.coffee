@@ -20,6 +20,7 @@ exports.loadPost = (id, nid = false, callback) ->
     else
       app.collections.posts.fetch
         update: true
+        remove: false
         data:
           nid: id
         success: (collection, response) =>
@@ -32,6 +33,7 @@ exports.loadPost = (id, nid = false, callback) ->
     else
       app.collections.posts.fetch
         update: true
+        remove: false
         data:
           id: id
         success: (collection, response) =>

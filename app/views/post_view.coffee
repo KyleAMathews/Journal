@@ -4,8 +4,10 @@ class exports.PostView extends Backbone.View
   className: 'post'
 
   render: =>
-    @model.set rendered_body: marked(@model.get('body'))
-    @model.set rendered_created: moment(@model.get('created')).format("dddd, MMMM Do YYYY")
+    unless @model.get('rendered_body')?
+      @model.set rendered_body: marked(@model.get('body'))
+    unless @model.get('rendered_created')?
+      @model.set rendered_created: moment(@model.get('created')).format("dddd, MMMM Do YYYY")
     data = @model.toJSON()
     if @options.page
       data.page = true
