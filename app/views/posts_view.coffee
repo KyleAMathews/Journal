@@ -10,6 +10,7 @@ class exports.PostsView extends Backbone.View
     @listenTo @collection, 'add', @addOne
     @listenTo @collection, 'loading-posts', -> @showLoading()
     @listenTo @collection, 'done-loading-posts', -> @hideLoading()
+    app.eventBus.trigger 'postsView:active', true
 
 
   render: =>
@@ -45,3 +46,4 @@ class exports.PostsView extends Backbone.View
 
   onClose: ->
     @listView.remove()
+    app.eventBus.trigger 'postsView:active', false

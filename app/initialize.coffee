@@ -25,7 +25,7 @@ class exports.Application extends BrunchApplication
     @eventBus = _.extend({}, Backbone.Events)
 
     @collections.posts = new Posts
-    @collections.posts.load()
+    @collections.posts.load(true)
     @collections.drafts = new Drafts
     @collections.drafts.fetch()
     @collections.search = new Search
