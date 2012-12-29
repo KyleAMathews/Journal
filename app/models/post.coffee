@@ -9,5 +9,15 @@ class exports.Post extends Backbone.Model
 
   initialize: ->
     @on 'request', ->
-      @set rendered_body: marked(@get('body'))
-      @set rendered_created: moment(@get('created')).format("dddd, MMMM Do YYYY")
+      @renderThings()
+
+  renderThings: ->
+    # Eliminate the extra new line marked.js mostly adds.
+    html = marked(@get('body'))
+    el = $('<div></div>')
+    el.html(html)
+    el.find('p').each( ->
+      $(@).html($.trim($(@).html()))
+    )
+    @set rendered_body: el.html()
+    @set rendered_created: moment(@get('created')).format("dddd, MMMM Do YYYY")

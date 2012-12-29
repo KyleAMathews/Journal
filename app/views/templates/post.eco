@@ -6,5 +6,5 @@
 <% else: %>
   <h1><a href="node/<%- @nid %>"><%= @title %></a></h1>
 <% end %>
-<small class="date"><%- @rendered_created %></small>
+<small class="post-date"><%- @rendered_created %></small>
 <%- @rendered_body %>

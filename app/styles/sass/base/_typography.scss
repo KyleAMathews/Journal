@@ -42,10 +42,10 @@ h1 {
   @include adjust-font-size-to(36px);
 }
 h2 {
-  @include adjust-font-size-to(24px);
+  @include adjust-font-size-to(24px, 1.5);
 }
 h3 {
-  @include adjust-font-size-to(21px);
+  @include adjust-font-size-to(21px, 1.5);
 }
 h4 {
   @include adjust-font-size-to(18px);
@@ -55,6 +55,11 @@ h5 {
 }
 h6 {
   @include adjust-font-size-to(14px);
+}
+
+dl, ul, ol {
+  margin: 0 0 rhythm(1) 0;
+  padding: 0 0 0 rhythm(2);
 }
 
 blockquote {

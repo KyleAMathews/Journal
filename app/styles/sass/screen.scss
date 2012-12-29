@@ -117,8 +117,10 @@ html {
   position: relative;
   p {
     @include force-wrap();
-
-    margin: 0;
+  }
+  .post-date {
+    display: block;
+    margin-bottom: rhythm(-1);
   }
 }
 
