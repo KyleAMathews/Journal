@@ -6,6 +6,12 @@ Draft = require 'models/draft'
 SearchView = require 'views/search_view'
 
 class exports.MainRouter extends Backbone.Router
+
+  initialize: ->
+    # Define global keyboard shortcuts.
+    key('s,/', -> app.router.navigate('search', true))
+    key('h', -> app.router.navigate('', true))
+
   routes:
     '': 'home'
     'node/:id': 'post'

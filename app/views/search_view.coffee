@@ -22,7 +22,6 @@ module.exports = class SearchView extends Backbone.View
     @
 
   renderResults: ->
-    console.log 'rendering results'
     @$('#search-results').empty()
     # Show how many results + how long the search took.
     if @collection.total? and @collection.searchtime?
