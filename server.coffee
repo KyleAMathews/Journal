@@ -29,18 +29,18 @@ app.configure ->
 
 # Synchronize models with Elastic Search.
 Post = mongoose.model 'post'
-#stream = Post.synchronize()
-#count = 0;
+stream = Post.synchronize()
+count = 0;
 
-#stream.on('data', (err, doc) ->
-    #count++
-#)
-#stream.on('close', ->
-    #console.log('indexed ' + count + ' documents!')
-#)
-#stream.on('error', (err) ->
-    #console.log(err)
-#)
+stream.on('data', (err, doc) ->
+    count++
+)
+stream.on('close', ->
+    console.log('indexed ' + count + ' documents!')
+)
+stream.on('error', (err) ->
+    console.log(err)
+)
 
 # Routes.
 app.get '/', (req, res) ->
