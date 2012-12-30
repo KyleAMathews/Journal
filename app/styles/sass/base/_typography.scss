@@ -65,3 +65,14 @@ dl, ul, ol {
 blockquote {
   margin: 0 1.5em;
 }
+
+// Style placeholders in inputs/textareas.
+::-webkit-input-placeholder {
+  color: #222;
+}
+:-moz-placeholder {
+  color: #222;
+}
+:-ms-input-placeholder {
+  color: #222;
+}

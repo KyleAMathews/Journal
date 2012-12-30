@@ -16,10 +16,10 @@ class exports.PostEditView extends Backbone.View
     @keystrokecounter = 0
     @$el.html PostEditTemplate @model.toJSON()
     @$('.date-edit').kalendae()
-    title = if @model.get('title') is "" then "New Journal Title..." else @model.get('title')
     @addChildView new ExpandingTextareaView(
       el: @$('.title')
-      edit_text: title
+      edit_text: @model.get('title')
+      placeholder: 'New Journal Title…'
       lines: 1
     ).render()
     @addChildView new ExpandingTextareaView(
