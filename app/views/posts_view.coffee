@@ -23,6 +23,10 @@ class exports.PostsView extends Backbone.View
 
     @addAll()
 
+    # Time to initial render.
+    _.defer ->
+      console.log (new Date().getTime() - performance.timing.navigationStart) / 1000
+
     # Scroll to last place on screen.
     _.defer ->
       scrollPosition = app.site.get 'postsScroll'
