@@ -39,9 +39,8 @@ class exports.PostsView extends Backbone.View
 
   scrollLastPostion: ->
     # Scroll to last place on screen.
-    _.defer ->
-      scrollPosition = app.site.get 'postsScroll'
-      $(window).scrollTop(scrollPosition)
+    scrollPosition = app.site.get 'postsScroll'
+    $(window).scrollTop(scrollPosition)
 
   showLoading: ->
     @$('#loading-posts').show()
