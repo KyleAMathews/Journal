@@ -19,7 +19,7 @@ class exports.PostsView extends Backbone.View
 
     # Create infinity.js listView
     if @listView then @listView.remove()
-    @listView = new infinity.ListView(@$('.posts'))
+    @listView = new infinity.ListView(@$('.posts-listview'))
 
     @addAll()
 
@@ -42,7 +42,9 @@ class exports.PostsView extends Backbone.View
 
   addOne: (post) =>
     postView = new PostView model: post
-    @listView.append postView.render().$el
+    postView.render()
+    _.defer =>
+      @listView.append postView.$el
 
   onClose: ->
     @listView.remove()
