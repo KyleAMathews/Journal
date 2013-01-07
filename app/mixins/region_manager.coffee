@@ -6,6 +6,9 @@ exports.RegionManager =
   # `onShow` and `close` method on your view, just after showing
   # or just before closing the view, respectively.
   show: (view) ->
+    # In case the view was hidden.
+    @$el.show()
+
     oldView = @currentView
     @currentView = view
 

@@ -8,14 +8,8 @@ class exports.Posts extends Backbone.Collection
   initialize: ->
     @last_post = ""
     @loading(false)
-    app.eventBus.on 'distance:bottom_page', ((distance) =>
-      if distance <= 1500 then @load()
-    ), @
     @on 'set_cache_ids', @setCacheIds
     @postsViewActive = false
-    app.eventBus.on 'postsView:active', (boolean) =>
-      @postsViewActive = boolean
-
     @setMaxOldPostFromCache = _.once =>
       @maxOld = @max((post) -> return moment(post.get('created')).unix())
 
@@ -36,7 +30,7 @@ class exports.Posts extends Backbone.Collection
       @isLoading = false
 
   load: (override = false) ->
-    if not @isLoading and @postsViewActive or override
+    if not @isLoading or override
       @loading(true)
       # Timeout request after 10 seconds
       setTimeout =>

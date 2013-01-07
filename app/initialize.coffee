@@ -31,6 +31,11 @@ class exports.Application extends BrunchApplication
     @collections.search = new Search
 
     @views.main = new MainView el: $('#container')
+
+    # Create and render our infinity.js postsView.
+    postsView = new PostsView collection: app.collections.posts, el: $('#posts')
+    postsView.render()
+
     @views.draftsIndicatorView = new DraftsIndicatorView(
       el: $('#menu-container .drafts')
       collection: @collections.drafts
@@ -41,6 +46,10 @@ class exports.Application extends BrunchApplication
     @util.search = search
     scrollPosition()
     $(window).on 'click', app.util.clickHandler
+
+    # Make moving back to the postsView more snappy.
+    # This configures how quickly infinity.js will respond to scroll events.
+    infinity.config.SCROLL_THROTTLE = 100
 
 unless location.pathname is '/login'
   window.app = new exports.Application

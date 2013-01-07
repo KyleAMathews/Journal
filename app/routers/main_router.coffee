@@ -22,8 +22,9 @@ class exports.MainRouter extends Backbone.Router
     'search/:query': 'search'
 
   home: ->
-    postsView = new PostsView collection: app.collections.posts
-    app.views.main.show(postsView)
+    $('#container').hide()
+    $('#posts').show()
+    app.eventBus.trigger 'posts:show'
 
   post: (id) ->
     app.util.loadPost id, true, (post) ->
