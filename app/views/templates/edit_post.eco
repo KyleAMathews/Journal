@@ -10,7 +10,7 @@
 <div class="body expanding-textarea"></div>
 <button class="save">Save</button>
 <% if @nid?: %>
-<a class="less-important-button" href="/node/<%- @nid %>">Cancel</a>
+<span class="less-important-button cancel">Cancel</span>
 <% else: %>
 <span class="less-important-button save-draft">Save Draft</span>
 <% end %>

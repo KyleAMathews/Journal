@@ -7,6 +7,7 @@ class exports.PostEditView extends Backbone.View
   events:
     'click .save': 'save'
     'click .delete': 'delete'
+    'click .cancel': 'cancel'
     'click .show-date-edit': 'toggleDateEdit'
     'click .save-draft': 'draftSave'
     'keypress': '_draftSave'
@@ -83,7 +84,7 @@ class exports.PostEditView extends Backbone.View
         success: (model) =>
           if @options.draftModel? then @options.draftModel.destroy()
           app.collections.posts.sort()
-          app.router.navigate '/node/' + model.get('nid'), true
+          window.history.back()
       }
     )
 
@@ -98,6 +99,9 @@ class exports.PostEditView extends Backbone.View
           app.router.navigate '/', true
       }
     )
+
+  cancel: ->
+    window.history.back()
 
   toggleDateEdit: ->
     @$('.date').hide()
