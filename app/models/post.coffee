@@ -12,6 +12,8 @@ module.exports = class Post extends Backbone.Model
       return "/posts/#{ @get('id') }"
     else if @get('nid')
       return "/posts/?nid=#{ @get 'nid' }"
+    else
+      @collection.url
 
   initialize: ->
     @on 'request', ->
