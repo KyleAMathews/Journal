@@ -59,6 +59,7 @@ class exports.MainRouter extends Backbone.Router
     app.views.main.show(postEditView)
 
   search: (query = "") ->
+    query = decodeURIComponent query
     unless query is ""
       app.collections.search.query(query)
     else
