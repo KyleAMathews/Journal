@@ -68,11 +68,11 @@ blockquote {
 
 // Style placeholders in inputs/textareas.
 ::-webkit-input-placeholder {
-  color: #222;
+  color: $grey30;
 }
 :-moz-placeholder {
-  color: #222;
+  color: $grey30;
 }
 :-ms-input-placeholder {
-  color: #222;
+  color: $grey30;
 }

@@ -1,7 +1,7 @@
 {PostsView} = require 'views/posts_view'
 {PostView} = require 'views/post_view'
 {PostEditView} = require 'views/post_edit_view'
-{Post} = require 'models/post'
+Post = require 'models/post'
 Draft = require 'models/draft'
 SearchView = require 'views/search_view'
 
