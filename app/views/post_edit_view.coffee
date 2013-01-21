@@ -4,6 +4,9 @@ class exports.PostEditView extends Backbone.View
 
   id: 'post-edit'
 
+  initialize: ->
+    @listenTo @model, 'change', @render
+
   events:
     'click .save': 'save'
     'click .delete': 'delete'
@@ -13,54 +16,58 @@ class exports.PostEditView extends Backbone.View
     'keypress': '_draftSave'
 
   render: ->
-    _.defer => @lineheight = @$('.textareaClone div').css('line-height').slice(0,-2)
-    @keystrokecounter = 0
-    @$el.html PostEditTemplate @model.toJSON()
-    @$('.date-edit').kalendae()
-    @addChildView new ExpandingTextareaView(
-      el: @$('.title')
-      edit_text: @model.get('title')
-      placeholder: 'New Journal Title…'
-      lines: 1
-    ).render()
-    @addChildView new ExpandingTextareaView(
-      el: @$('.body')
-      edit_text: @model.get('body')
-      lines: 20
-    ).render()
+    # If still loading the model.
+    if (@model.get('nid')? or @model.id?) and (@model.get('body') is "" or @model.get('title') is "")
+      @$el.html "<h2>Loading post&hellip; <img width='32px' height='32px' src='/images/loading.gif' /></h2>"
+    else
+      _.defer => @lineheight = @$('.textareaClone div').css('line-height').slice(0,-2)
+      @keystrokecounter = 0
+      @$el.html PostEditTemplate @model.toJSON()
+      @$('.date-edit').kalendae()
+      @addChildView new ExpandingTextareaView(
+        el: @$('.title')
+        edit_text: @model.get('title')
+        placeholder: 'New Journal Title…'
+        lines: 1
+      ).render()
+      @addChildView new ExpandingTextareaView(
+        el: @$('.body')
+        edit_text: @model.get('body')
+        lines: 20
+      ).render()
 
-    # Show the edit button for the date field when hovering.
-    @$('.date').hover(
-      => @$('.show-date-edit').show()
-      ,
-      => @$('.show-date-edit').hide()
-    )
+      # Show the edit button for the date field when hovering.
+      @$('.date').hover(
+        => @$('.show-date-edit').show()
+        ,
+        => @$('.show-date-edit').hide()
+      )
 
-    # Keep the save button visible by autoscrolling.
-    autoscroll = (e) =>
-      # Measure distance from bottom of textarea to bottom of page.
-      distanceTextareaToTop = $('.body textarea').offset().top - $(document).scrollTop()
-      textareaHeight = @$('.body textarea').height()
-      distanceToBottomFromTextarea = $(window).height() - textareaHeight - distanceTextareaToTop
+      # Keep the save button visible by autoscrolling.
+      autoscroll = (e) =>
+        # Measure distance from bottom of textarea to bottom of page.
+        distanceTextareaToTop = $('.body textarea').offset().top - $(document).scrollTop()
+        textareaHeight = @$('.body textarea').height()
+        distanceToBottomFromTextarea = $(window).height() - textareaHeight - distanceTextareaToTop
 
-      # Measure how many values it is from current cursor position to the end of the
-      # textarea.
-      cursorPosition = @$('.body textarea')[0].selectionStart
-      cursorMax = @$('.body textarea')[0].value.length
-      distanceToEnd = cursorMax - cursorPosition
+        # Measure how many values it is from current cursor position to the end of the
+        # textarea.
+        cursorPosition = @$('.body textarea')[0].selectionStart
+        cursorMax = @$('.body textarea')[0].value.length
+        distanceToEnd = cursorMax - cursorPosition
 
-      # See if the user is editing the title. If so, don't scroll.
-      if $(document.activeElement).parents('.title').length > 0
-        notInTitle = false
-      else
-        notInTitle = true
+        # See if the user is editing the title. If so, don't scroll.
+        if $(document.activeElement).parents('.title').length > 0
+          notInTitle = false
+        else
+          notInTitle = true
 
-      # Only scroll if the bottom of the textarea is very near the bottom of the page
-      # and the cursor is within one line distance of the bottom of the textarea.
-      if -50 < distanceToBottomFromTextarea < 50 and distanceToEnd < 80 and notInTitle
-        $("html, body").animate({ scrollTop: $(document).height()-$(window).height() })
-    throttled = _.throttle(autoscroll, 200)
-    @$('textarea').on('keypress', throttled)
+        # Only scroll if the bottom of the textarea is very near the bottom of the page
+        # and the cursor is within one line distance of the bottom of the textarea.
+        if -50 < distanceToBottomFromTextarea < 50 and distanceToEnd < 80 and notInTitle
+          $("html, body").animate({ scrollTop: $(document).height()-$(window).height() })
+      throttled = _.throttle(autoscroll, 200)
+      @$('textarea').on('keypress', throttled)
 
     @
 
