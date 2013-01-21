@@ -132,10 +132,10 @@ input, textarea {
 }
 
 .expanding-textarea textarea {
-  @include rhythm-borders(1px, 0.5);
   @include box-shadow(none);
 
-  border-color: $grey80;
+  border: none;
+  padding: 0;
 }
 
 #post-edit {
@@ -160,6 +160,7 @@ input, textarea {
     }
   }
   .body {
+    @include leader(1);
     @include trailer(0.5);
 
     width: 100%;
@@ -188,7 +189,6 @@ input, textarea {
   .date {
     @include trailer(0.25);
 
-    padding-left: 0.75em;
     display: block;
   }
   .show-date-edit {
