@@ -1,4 +1,4 @@
-//    Backbone.cachingSync v0.1.0
+//    Backbone.cachingSync v0.1.1
 
 //    (c) 2012 Yiorgis Gozadinos, Crypho AS.
 //    Backbone.cachingSync is distributed under the MIT license.
@@ -24,7 +24,7 @@
     // Parameters are: `wrapped` the original sync function you are wrapping,
     // `ns`, the namespace you want your Store to have,
     // `default_ttl`, a default time-to-live for the cache in minutes.
-    var cachingSync = function (wrapped, ns, default_ttl, maintain_own_ids) {
+    var cachingSync = function (wrapped, ns, default_ttl) {
 
         // Create the `Burry.Store`
         var burry = new Burry.Store(ns, default_ttl);
@@ -63,23 +63,13 @@
                 wp;
 
             wp = wrapped('read', collection, options).done(function (models) {
-                options.fromServer = true;
                 _.each(models, function (model) { burry.set(model.id, model); });
-
-                if (!maintain_own_ids) {
-                  burry.set('__ids__', _.pluck(models, 'id'));
-                }
-                else {
-                  collection.trigger('set_cache_ids');
-                }
-
-                // Respect the fetch "update" option.
                 if (options.update) {
-                  collection.update(models, options);
+                    collection.update(models, options);
+                } else {
+                    collection.reset(models);
                 }
-                else {
-                  collection.reset(models, options);
-                }
+                burry.set('__ids__', _.pluck(collection.models, 'id'));
             });
 
             if (typeof ids !== 'undefined') {
@@ -99,18 +89,13 @@
         // the model (and potentially its collection) is cached.
         function create (model, options) {
             return wrapped('create', model, options)
-                .done(function () {
-                    burry.set(model.id, model.attributes);
+                .done(function (attrs) {
+                    burry.set(attrs[model.idAttribute], attrs);
                     if (model.collection)
-                        if (!maintain_own_ids) {
-                          burry.set('__ids__', _(model.collection.models).chain()
-                              .pluck('id')
-                              .union([model.id])
-                              .without(undefined).value());
-                        }
-                        else {
-                          model.collection.trigger('set_cache_ids');
-                        }
+                        burry.set('__ids__', _(model.collection.models).chain()
+                            .pluck('id')
+                            .union([attrs[model.idAttribute]])
+                            .without(undefined).value());
 
                 }).promise();
         }
@@ -145,7 +130,7 @@
         return function (method, model, options) {
             var p;
 
-            // Give access to the cache on the implementing collection.
+            // Give direct access to the cache.
             this.burry = burry;
 
             options = options || {};
@@ -159,11 +144,6 @@
             // Fallback for old-style callbacks.
             if (options.success) p.done(options.success);
             if (options.error) p.fail(options.error);
-
-            // In order to distinguish in our fetch success callback between response
-            // from the server and cache, now that the cache callback has returned,
-            // set on options that the next response is from the server.
-            options.fromServer = true;
 
             return p;
         };

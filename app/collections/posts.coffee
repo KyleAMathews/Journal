@@ -69,6 +69,8 @@ class exports.Posts extends Backbone.Collection
           @new_last_post = _.last(response)['created']
           @last_post = @new_last_post if @new_last_post < @last_post or @last_post is ""
           @loading(false)
+          _.defer =>
+            @setCacheIds()
 
   setCacheIds: ->
     @burry.set('__ids__', _.pluck(@first(10), 'id'))
