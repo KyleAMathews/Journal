@@ -66,6 +66,15 @@ app.get '/node/:nid/edit', (req, res) ->
   else
     res.redirect '/login'
 
+app.get '/posts/:id', (req, res) ->
+  if req.isAuthenticated()
+    if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
+      res.render 'index'
+    else
+      findById(req.params.id, res, req)
+  else
+    res.redirect '/login'
+
 app.get '/posts/new', (req, res) ->
   if req.isAuthenticated()
     res.render 'index'
@@ -94,19 +103,24 @@ app.get '/logout', (req, res) ->
 findById = (id, res, req) ->
   Post = mongoose.model 'post'
   Post.findById id, (err, post) ->
+    console.log post
     unless err or not post? or post._user.toString() isnt req.user._id.toString()
       post.setValue('id', post.getValue('_id'))
       res.json post
+    else
+      console.log err
+      res.json 'found nothing'
 
 findByNid = (nid, res, req) ->
   Post = mongoose.model 'post'
   Post.find { nid: nid }, (err, post) ->
     post = post[0]
+    console.log post
     unless err or not post? or post._user.toString() isnt req.user._id.toString()
       post.setValue('id', post.getValue('_id'))
       res.json post
     else
-      console.error err
+      console.log err
       res.json 'found nothing'
 
 app.get '/posts', (req, res) ->

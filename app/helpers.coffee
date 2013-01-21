@@ -1,3 +1,5 @@
+Post = require 'models/post'
+
 class exports.BrunchApplication
   constructor: ->
     _.defer =>
@@ -9,37 +11,21 @@ class exports.BrunchApplication
 
   util: ->
 
-exports.loadPost = (id, nid = false, callback) ->
-  if _.isFunction nid
-    callback = nid
-    nid = false
-
+exports.loadPostModel = (id, nid = false) ->
   if nid
     if app.collections.posts.getByNid(id)
-      callback app.collections.posts.getByNid(id)
+      return app.collections.posts.getByNid(id)
     else
-      app.collections.posts.fetch
-        update: true
-        remove: false
-        data:
-          nid: id
-        success: (collection, response) =>
-          # Ignore empty response from the cache.
-          if response.id?
-            callback collection.getByNid(id)
+      post = new Post( nid: id, id: null )
+      post.fetch( nid: id )
+      return post
   else
     if app.collections.posts.get(id)
-      callback app.collections.posts.get(id)
+      return app.collections.posts.get(id)
     else
-      app.collections.posts.fetch
-        update: true
-        remove: false
-        data:
-          id: id
-        success: (collection, response) =>
-          # Ignore empty response from the cache.
-          if response.id?
-            callback collection.get(id)
+      post = new Post( id: id )
+      post.fetch()
+      return post
 
 exports.clickHandler = (e) ->
   # If the click target isn't a link, then return

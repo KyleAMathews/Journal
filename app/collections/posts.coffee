@@ -1,4 +1,4 @@
-{Post} = require 'models/post'
+Post = require 'models/post'
 class exports.Posts extends Backbone.Collection
 
   url: '/posts'
@@ -41,6 +41,7 @@ class exports.Posts extends Backbone.Collection
         created = new Date().toJSON()
       else
         created = @last_post
+
       @fetch
         update: true
         remove: false

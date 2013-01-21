@@ -27,11 +27,11 @@ class exports.MainRouter extends Backbone.Router
     app.eventBus.trigger 'posts:show'
 
   post: (id) ->
-    app.util.loadPost id, true, (post) ->
-      # Scroll to top of page.
-      document.body.scrollTop = document.documentElement.scrollTop = 0
-      postView = new PostView model: post, page: true
-      app.views.main.show(postView)
+    post = app.util.loadPostModel id, true
+    # Scroll to top of page.
+    document.body.scrollTop = document.documentElement.scrollTop = 0
+    postView = new PostView model: post, page: true
+    app.views.main.show(postView)
 
   newPost: ->
     # Scroll to top of page.
@@ -44,11 +44,11 @@ class exports.MainRouter extends Backbone.Router
     app.views.main.show(postEditView)
 
   editPost: (id) ->
-    app.util.loadPost id, true, (post) ->
-      # Scroll to top of page.
-      document.body.scrollTop = document.documentElement.scrollTop = 0
-      postEditView = new PostEditView model: post
-      app.views.main.show(postEditView)
+    post = app.util.loadPostModel id, true
+    # Scroll to top of page.
+    document.body.scrollTop = document.documentElement.scrollTop = 0
+    postEditView = new PostEditView model: post
+    app.views.main.show(postEditView)
 
   editDraft: (id) ->
     draftModel = app.collections.drafts.get(id)

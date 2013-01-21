@@ -1,4 +1,4 @@
-{BrunchApplication, loadPost, clickHandler, scrollPosition, search} = require 'helpers'
+{BrunchApplication, loadPostModel, clickHandler, scrollPosition, search} = require 'helpers'
 {MainRouter} = require 'routers/main_router'
 {MainView} = require 'views/main_view'
 {PostsView} = require 'views/posts_view'
@@ -41,7 +41,7 @@ class exports.Application extends BrunchApplication
       collection: @collections.drafts
     ).render()
 
-    @util.loadPost = loadPost
+    @util.loadPostModel = loadPostModel
     @util.clickHandler = clickHandler
     @util.search = search
     scrollPosition()
