@@ -47,9 +47,5 @@ class exports.Application extends BrunchApplication
     scrollPosition()
     $(window).on 'click', app.util.clickHandler
 
-    # Make moving back to the postsView more snappy.
-    # This configures how quickly infinity.js will respond to scroll events.
-    infinity.config.SCROLL_THROTTLE = 100
-
 unless location.pathname is '/login'
   window.app = new exports.Application
