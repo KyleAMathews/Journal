@@ -3,6 +3,7 @@
 {MainView} = require 'views/main_view'
 {PostsView} = require 'views/posts_view'
 {Posts} = require 'collections/posts'
+PostsCache = require 'collections/posts_cache'
 Drafts = require 'collections/drafts'
 DraftsIndicatorView = require 'views/drafts_indicator_view'
 Search = require 'collections/search'
@@ -26,6 +27,7 @@ class exports.Application extends BrunchApplication
 
     @collections.posts = new Posts
     @collections.posts.load(true)
+    @collections.postsCache = new PostsCache
     @collections.drafts = new Drafts
     @collections.drafts.fetch()
     @collections.search = new Search

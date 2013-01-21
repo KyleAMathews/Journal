@@ -103,7 +103,6 @@ app.get '/logout', (req, res) ->
 findById = (id, res, req) ->
   Post = mongoose.model 'post'
   Post.findById id, (err, post) ->
-    console.log post
     unless err or not post? or post._user.toString() isnt req.user._id.toString()
       post.setValue('id', post.getValue('_id'))
       res.json post
@@ -115,7 +114,6 @@ findByNid = (nid, res, req) ->
   Post = mongoose.model 'post'
   Post.find { nid: nid }, (err, post) ->
     post = post[0]
-    console.log post
     unless err or not post? or post._user.toString() isnt req.user._id.toString()
       post.setValue('id', post.getValue('_id'))
       res.json post
