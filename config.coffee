@@ -20,9 +20,10 @@ exports.config =
       # even if they are not present here.
       order:
         before: [
-          'vendor/scripts/console-helper.js',
-          'vendor/scripts/underscore.js',
-          'vendor/scripts/backbone-0.9.9.js'
+          'vendor/scripts/jquery.js'
+          'vendor/scripts/console-helper.js'
+          'vendor/scripts/underscore.js'
+          'vendor/scripts/backbone-0.9.10.js'
           'vendor/scripts/burry.js'
           'vendor/scripts/backbone.cachingsync.js'
           'vendor/scripts/marked.js'
