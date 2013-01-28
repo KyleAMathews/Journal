@@ -52,7 +52,11 @@ class exports.MainRouter extends Backbone.Router
     draftModel = app.collections.drafts.get(id)
     newPost = new Post
     newPost.collection = app.collections.posts
-    newPost.set title: draftModel.get('title'), body: draftModel.get('body')
+    newPost.set
+      title: draftModel.get('title')
+      body: draftModel.get('body')
+      created: draftModel.get('created')
+      changed: draftModel.get('changed')
     postEditView = new PostEditView model: newPost, draftModel: draftModel
     app.views.main.show(postEditView)
 
