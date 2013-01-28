@@ -5,7 +5,7 @@ class exports.PostEditView extends Backbone.View
   id: 'post-edit'
 
   initialize: ->
-    @listenTo @model, 'change', @render
+    @listenTo @model, 'sync', @modelSynced
 
   events:
     'click .save': 'save'
@@ -87,14 +87,23 @@ class exports.PostEditView extends Backbone.View
 
     # Save it.
     @$('.loading').show()
-    @model.save(obj,
-      {
-        success: (model) =>
-          if @options.draftModel? then @options.draftModel.destroy()
-          app.collections.posts.sort()
-          window.history.back()
-      }
-    )
+    @model.save(obj)
+
+  # Once the model is done syncing, cleanup the draft model
+  # force a re-render of postsView and go back.
+  modelSynced: (model, response, options) ->
+    if @options.draftModel?
+      @options.draftModel.destroy()
+      newPost = true
+    @model.collection.add @model, silent: true
+    app.collections.posts.trigger 'reset'
+    unless newPost
+      window.history.back()
+    # Back, in the case of a new post, means back to the home page which isn't the
+    # expected behavior when creating a new post.
+    else
+      app.router.navigate '/node/' + @model.get('nid'), true
+
 
   delete: ->
     if @options.draftModel? then @options.draftModel.destroy()
@@ -104,6 +113,7 @@ class exports.PostEditView extends Backbone.View
           app.collections.posts.remove @model
           app.collections.posts.sort()
           app.collections.posts.trigger 'set_cache_ids'
+          app.collections.posts.trigger 'reset'
           app.router.navigate '/', true
       }
     )
@@ -127,14 +137,12 @@ class exports.PostEditView extends Backbone.View
   draftSave: (e) =>
     if @options.draftModel?
       obj = {}
-      obj.title = @$('.title').val()
-      obj.body = @$('textarea').val()
+      obj.title = @$('.title textarea').val()
+      obj.body = @$('.body textarea').val()
       @options.draftModel.save(obj,
         {
+          # Indicate in UI that the draft was saved.
           success: =>
-            # Add new draft to its collection.
-            unless app.collections.drafts.get @options.draftModel.id
-              app.collections.drafts.add @options.draftModel
             @$('#last-saved').html "Last saved at " + new moment().format('h:mm:ss a')
         }
       )

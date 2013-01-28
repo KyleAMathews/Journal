@@ -10,7 +10,7 @@ class exports.Posts extends Backbone.Collection
     @loading(false)
     @on 'set_cache_ids', @setCacheIds
     @postsViewActive = false
-    @setMaxOldPostFromCache = _.once =>
+    @setMaxOldPostFromCollection = _.once =>
       @maxOld = @max((post) -> return moment(post.get('created')).unix())
 
   getByNid: (nid) ->
@@ -57,11 +57,14 @@ class exports.Posts extends Backbone.Collection
 
           # If the server returns a post that's newer than any already displayed,
           # trigger reset on the collection so postViews re-renders.
-          @setMaxOldPostFromCache()
+          @setMaxOldPostFromCollection()
           maxNew = _.max(response, (post) -> return moment(post.created).unix())
           if @maxOld? and maxNew? and @maxOld.get('created') < maxNew.created
             @maxOld = @first()
-            @trigger 'reset'
+            # Seems we need to wait a bit to let the new post(s) to be added to the collection
+            # to ensure they'll be rendered.
+            _.defer =>
+              @trigger 'reset'
 
           # Backbone.cachesync returns junk sometimes.
           unless _.last(response)? then return
