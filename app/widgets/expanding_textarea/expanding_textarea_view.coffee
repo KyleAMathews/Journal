@@ -48,12 +48,7 @@ class exports.ExpandingTextareaView extends Backbone.View
       fontSize = parseInt(@$('textarea').css('font-size').slice(0,-2), 10)
       paddingTop = parseInt(@$('textarea').css('padding-top').slice(0,-2), 10)
       paddingBottom = parseInt(@$('textarea').css('padding-bottom').slice(0,-2), 10)
-      # Mozilla bug - https://bugzilla.mozilla.org/show_bug.cgi?id=308801
-      # min-height doesn't work right for box-sizing:border-box
-      if $.browser.mozilla
-        height = lines * 1.5
-      else
-        height = (lines * 1.5) + (paddingTop + paddingBottom) / fontSize # Num ems for padding.
+      height = (lines * 1.5) + (paddingTop + paddingBottom) / fontSize # Num ems for padding.
 
       height = height + "em"
       @$('textarea').css({ 'min-height': height })
