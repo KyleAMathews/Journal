@@ -283,3 +283,14 @@ input[type="submit"], button, .button {
     margin-left: 1%;
   }
 }
+
+.error {
+  @include rhythm-borders(1px, 0.5);
+  @include trailer(1);
+
+  background: #F8DCD9;
+  border-color: #ED1C00;
+  color: #DD2020;
+  display: none;
+  font-weight: bold;
+}

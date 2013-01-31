@@ -1,6 +1,7 @@
 <% unless @nid?: %>
   <h3>Create new post <span id="last-saved"></span></h3>
 <% end %>
+<div class="error"></div>
 <div class="title expanding-textarea"></div>
 <strong class="date">
   <%- moment(@created).format('MM/D/YYYY') %>

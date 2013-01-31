@@ -69,10 +69,18 @@ class exports.PostEditView extends Backbone.View
 
     @
 
+  errorMessage: (message) ->
+    @$('.error').html(message).show()
+
   save: ->
     obj = {}
     obj.title = @$('.title textarea').val()
     obj.body = @$('.body textarea').val()
+
+    if obj.title is ""
+      return @errorMessage('You are missing your title')
+    if obj.body is ""
+      return @errorMessage('You are missing the body of your post')
 
     # See if the date was changed.
     created = @$('.date-edit').val()
@@ -142,6 +150,8 @@ class exports.PostEditView extends Backbone.View
           success: (model) =>
             # Merge changes into drafts collection.
             app.collections.drafts.add(model, merge: true)
+
+            # Update (or show) the "last saved" message.
             @$('#last-saved').html "Last saved at " + new moment().format('h:mm:ss a')
         }
       )
