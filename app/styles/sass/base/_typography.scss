@@ -40,18 +40,28 @@ h1,h2,h3,h4,h5, #navigation {
 // up or down the hierarchy.
 h1 {
   @include adjust-font-size-to(36px);
+  @include leader(1);
+  @include trailer(1);
 }
 h2 {
   @include adjust-font-size-to(24px, 1.5);
+  @include leader(1);
+  @include trailer(1);
 }
 h3 {
   @include adjust-font-size-to(21px, 1.5);
+  @include leader(1);
+  @include trailer(1);
 }
 h4 {
   @include adjust-font-size-to(18px);
+  @include leader(1);
+  @include trailer(1);
 }
 h5 {
   @include adjust-font-size-to(16px);
+  @include leader(1);
+  @include trailer(1);
 }
 h6 {
   @include adjust-font-size-to(14px);
