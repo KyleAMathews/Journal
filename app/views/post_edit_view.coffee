@@ -4,9 +4,6 @@ class exports.PostEditView extends Backbone.View
 
   id: 'post-edit'
 
-  initialize: ->
-    @listenTo @model, 'sync', @modelSynced
-
   events:
     'click .save': 'save'
     'click .delete': 'delete'
@@ -87,11 +84,11 @@ class exports.PostEditView extends Backbone.View
 
     # Save it.
     @$('.loading').show()
-    @model.save(obj)
+    @model.save(obj, success: @modelSynced)
 
   # Once the model is done syncing, cleanup the draft model
   # force a re-render of postsView and go back.
-  modelSynced: (model, response, options) ->
+  modelSynced: (model, response, options) =>
     if @options.draftModel?
       @options.draftModel.destroy()
       newPost = true
@@ -142,7 +139,9 @@ class exports.PostEditView extends Backbone.View
       @options.draftModel.save(obj,
         {
           # Indicate in UI that the draft was saved.
-          success: =>
+          success: (model) =>
+            # Merge changes into drafts collection.
+            app.collections.drafts.add(model, merge: true)
             @$('#last-saved').html "Last saved at " + new moment().format('h:mm:ss a')
         }
       )
