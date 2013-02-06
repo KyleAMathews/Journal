@@ -54,6 +54,10 @@ class exports.PostEditView extends Backbone.View
         cursorMax = @$('.body textarea')[0].value.length
         distanceToEnd = cursorMax - cursorPosition
 
+        # Count how many characters there are. We don't want to scroll down until
+        # the person has typed several lines at least.
+        numCharactersTyped = @$('.body textarea').val().length
+
         # See if the user is editing the title. If so, don't scroll.
         if $(document.activeElement).parents('.title').length > 0
           notInTitle = false
@@ -62,8 +66,9 @@ class exports.PostEditView extends Backbone.View
 
         # Only scroll if the bottom of the textarea is very near the bottom of the page
         # and the cursor is within one line distance of the bottom of the textarea.
-        if -50 < distanceToBottomFromTextarea < 50 and distanceToEnd < 80 and notInTitle
-          $("html, body").animate({ scrollTop: $(document).height()-$(window).height() })
+        if -50 < distanceToBottomFromTextarea < 50 and distanceToEnd < 80 and
+          numCharactersTyped > 400 and notInTitle
+            $("html, body").animate({ scrollTop: $(document).height()-$(window).height() })
       throttled = _.throttle(autoscroll, 200)
       @$('textarea').on('keypress', throttled)
 
