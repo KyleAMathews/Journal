@@ -107,6 +107,8 @@ class exports.PostEditView extends Backbone.View
       newPost = true
     @model.collection.add @model, silent: true
     app.collections.posts.trigger 'reset'
+    # Update posts localstorage cache.
+    @model.collection.setCacheIds()
     unless newPost
       window.history.back()
     # Back, in the case of a new post, means back to the home page which isn't the
