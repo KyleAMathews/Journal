@@ -294,3 +294,8 @@ input[type="submit"], button, .button {
   display: none;
   font-weight: bold;
 }
+
+// Remove tap hightlight on webkit mobile browsers.
+* {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
