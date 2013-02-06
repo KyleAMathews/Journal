@@ -86,3 +86,15 @@ blockquote {
 :-ms-input-placeholder {
   color: $grey30;
 }
+
+hr {
+  @include leader(1);
+  @include trailer(1);
+
+  background: grey(90);
+  border: none;
+  clear: both;
+  float: none;
+  height: 1px;
+  width: 100%;
+}
