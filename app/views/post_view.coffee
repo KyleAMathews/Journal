@@ -17,7 +17,7 @@ class exports.PostView extends Backbone.View
         data.page = true
       @$el.html PostTemplate data
     else
-      @$el.html "<h2>Loading post&hellip; <img width='32px' height='32px' class='loading' src='/images/loading.gif' /></h2>"
+      @$el.html "<h2>Loading post... #{ app.templates.throbber('show', '32px') }</h2>"
 
     # Make external links open in new tab
     @$("a[href^=http]").each ->

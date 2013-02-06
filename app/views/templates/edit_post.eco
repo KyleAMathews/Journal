@@ -15,5 +15,5 @@
 <% else: %>
 <span class="less-important-button save-draft">Save Draft</span>
 <% end %>
-<img class="loading" src="/images/loading-small.gif" />
+<%- app.templates.throbber('button-throbber js-loading', '24px') %>
 <span class="delete">Delete</span>

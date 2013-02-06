@@ -29,7 +29,7 @@ module.exports = class SearchView extends Backbone.View
     else
       @$('.search-meta').empty()
     if @collection.length
-      @$('.loading').hide()
+      @$('.js-loading').hide()
       for result in @collection.models
         @addChildView = resultView = new ResultView model: result
         @$('#search-results').append resultView.render().el
@@ -37,14 +37,14 @@ module.exports = class SearchView extends Backbone.View
     # page, don't show this.
     else if @collection.total is 0
       @$('#search-results').html '<h4>No matches</h4>'
-      @$('.loading').hide()
+      @$('.js-loading').hide()
     @
 
   search: ->
     query = @$('input').val()
     unless query is ""
-      # Show ajax loader gif for long queries.
-      @$('.loading').show()
+      # Show throbber to show activity during long queries.
+      @$('.js-loading').css('display', 'inline-block')
       @collection.query(query)
       app.router.navigate('/search/' + encodeURIComponent(query))
 

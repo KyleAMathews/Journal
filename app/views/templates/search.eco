@@ -1,5 +1,5 @@
 <h1>Search</h1>
 <input type='text'><button>Search</button>
-<img class="loading" src="/images/loading-small.gif" />
+<%- app.templates.throbber('button-throbber js-loading', '24px') %>
 <p class="search-meta"></p>
 <div id="search-results"></div>

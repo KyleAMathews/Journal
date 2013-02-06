@@ -15,7 +15,7 @@ class exports.PostEditView extends Backbone.View
   render: ->
     # If still loading the model.
     if (@model.get('nid')? or @model.id?) and (@model.get('body') is "" or @model.get('title') is "")
-      @$el.html "<h2>Loading post&hellip; <img width='32px' height='32px' src='/images/loading.gif' /></h2>"
+      @$el.html "<h2>Loading post...; #{ app.templates.throber(null, 'show', '32px') } </h2>"
     else
       _.defer => @lineheight = @$('.textareaClone div').css('line-height').slice(0,-2)
       @keystrokecounter = 0
@@ -96,7 +96,7 @@ class exports.PostEditView extends Backbone.View
       obj.created = newDate.format()
 
     # Save it.
-    @$('.loading').show()
+    @$('.js-loading').css('display', 'inline-block')
     @model.save(obj, success: @modelSynced)
 
   # Once the model is done syncing, cleanup the draft model

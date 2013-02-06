@@ -1,4 +1,4 @@
-{BrunchApplication, loadPostModel, clickHandler, scrollPosition, search} = require 'helpers'
+{BrunchApplication, loadPostModel, clickHandler, scrollPosition, search, throbber} = require 'helpers'
 {MainRouter} = require 'routers/main_router'
 {MainView} = require 'views/main_view'
 {PostsView} = require 'views/posts_view'
@@ -19,6 +19,12 @@ class exports.Application extends BrunchApplication
     @collections = {}
     @views = {}
     @util = {}
+    @templates = {}
+
+    @util.loadPostModel = loadPostModel
+    @util.clickHandler = clickHandler
+    @util.search = search
+    @templates.throbber = throbber
 
     @site = new Backbone.Model
 
@@ -43,9 +49,6 @@ class exports.Application extends BrunchApplication
       collection: @collections.drafts
     ).render()
 
-    @util.loadPostModel = loadPostModel
-    @util.clickHandler = clickHandler
-    @util.search = search
     scrollPosition()
     $(window).on 'click', app.util.clickHandler
 
