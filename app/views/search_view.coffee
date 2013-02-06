@@ -12,7 +12,6 @@ module.exports = class SearchView extends Backbone.View
     'keypress input': 'searchByEnter'
 
   render: ->
-    console.log 'rendering search page'
     @$el.html SearchTemplate()
     @$('input').val(@collection.query_str)
 

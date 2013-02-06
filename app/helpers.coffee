@@ -51,7 +51,7 @@ exports.scrollPosition = ->
   $(window).scroll(throttled)
 
 exports.search = (query, callback) ->
-  $.getJSON('/search/' + encodeURIComponent(query), (data) -> callback(data))
+  $.getJSON('/search/' + query, (data) -> callback(data))
 
 # Misc global stuff
 $ ->

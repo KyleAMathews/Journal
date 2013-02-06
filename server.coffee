@@ -267,7 +267,8 @@ app.del '/drafts/:id', (req, res) ->
 # Search
 app.get '/search', (req, res) ->
   if req.isAuthenticated()
-    res.render 'index'
+    if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
+      res.render 'index'
   else
     res.redirect '/login'
 
