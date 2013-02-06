@@ -19,7 +19,7 @@ body {
 #post-edit .title {
   @extend %title-font;
 }
-p, ul, ol, li, pre {
+p, pre, blockquote {
   @include leader(1);
   @include trailer(1);
 }
@@ -83,11 +83,7 @@ h6 {
 
 dl, ul, ol {
   margin: 0 0 rhythm(1) 0;
-  padding: 0 0 0 rhythm(2);
-}
-
-blockquote {
-  margin: 0 1.5em;
+  padding: 0 0 0 rhythm(1);
 }
 
 // Style placeholders in inputs/textareas.

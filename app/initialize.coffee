@@ -26,6 +26,9 @@ class exports.Application extends BrunchApplication
     @util.search = search
     @templates.throbber = throbber
 
+    # Set defaults for marked.js (our markdown editor).
+    marked.setOptions( smartLists: true )
+
     @site = new Backbone.Model
 
     @router = new MainRouter
