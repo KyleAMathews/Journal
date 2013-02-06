@@ -38,6 +38,10 @@ $status_border_color: #bbee77;
   @include sassy-button('simple', 0.5em, $text_size, $color);
 }
 
+@function grey($n) {
+    @return hsl(0,0,$n);
+}
+
 * {
   @include box-sizing('border-box');
 }
