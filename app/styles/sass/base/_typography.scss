@@ -13,12 +13,19 @@ $base-line-height: $base-font-size * 1.5;
 }
 
 body {
+  color: grey(10);
   font-family: 'Open Sans', “Helvetica Neue”, Arial, Helvetica, sans-serif;
 }
 #post-edit .title {
   @extend %title-font;
 }
-p, #post-edit .expanding-textarea textarea, ul, ol, li {
+p, ul, ol, li, pre {
+  @include leader(1);
+  @include trailer(1);
+}
+
+p, #post-edit .expanding-textarea textarea, ul, ol, li, pre {
+  color: grey(30);
   font-family: Georgia, Times, “Times New Roman”, serif;
 }
 
@@ -30,6 +37,13 @@ a {
 h1,h2,h3,h4,h5, #navigation {
   text-rendering: optimizeLegibility;
   font-weight: 800;
+
+  a {
+    color: grey(10);
+    &:hover {
+      color: grey(10);
+    }
+  }
 }
 
 // For reference, the following is the traditional typographic hierarchy.
