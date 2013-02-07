@@ -48,6 +48,9 @@ class exports.Posts extends Backbone.Collection
         data:
           created: created
         success: (collection, response, options) =>
+          # Backbone.cachesync returns junk sometimes.
+          unless _.last(response)? then return
+
           # If server returns nothing, this means we're at the bottom and should
           # stop trying to load new posts.
           if _.isString response
@@ -66,8 +69,6 @@ class exports.Posts extends Backbone.Collection
             _.defer =>
               @trigger 'reset'
 
-          # Backbone.cachesync returns junk sometimes.
-          unless _.last(response)? then return
           # Set the posts collection last created time from the response.
           @new_last_post = _.last(response)['created']
           @last_post = @new_last_post if @new_last_post < @last_post or @last_post is ""

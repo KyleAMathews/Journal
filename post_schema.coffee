@@ -1,11 +1,13 @@
 mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost/journal')
 mongoosastic = require('mongoosastic')
+require('mongoose-double')(mongoose)
 config = require './app_config'
 
 # Setup MongoDB schemas.
 Schema = mongoose.Schema
 
+SchemaTypes = mongoose.Schema.Types
 PostSchema = new Schema (
   title: { type: String, required: true, es_boost:2.0 }
   body: { type: String, required: true }
@@ -13,6 +15,8 @@ PostSchema = new Schema (
   created: { type: Date, index: true, es_type:'date' }
   changed: { type: Date, index: true, es_type:'date' }
   deleted: { type: Boolean, default: false, index: true }
+  latitude: { type: SchemaTypes.Double, default: null }
+  longitude: { type: SchemaTypes.Double, default: null }
   _user: { type: Schema.ObjectId, ref: 'User', index: true }
 )
 

@@ -95,6 +95,12 @@ class exports.PostEditView extends Backbone.View
     if Math.abs(diff) > 86400000 # one day in miliseconds
       obj.created = newDate.format()
 
+    # Add latitude and longitude.
+    unless @model.get('latitude')? or @model.get('longitude')?
+      pos = app.geolocation.getLatitudeLongitude()
+      obj.latitude = pos.latitude
+      obj.longitude = pos.longitude
+
     # Save it.
     @$('.js-loading').css('display', 'inline-block')
     @model.save(obj, success: @modelSynced)

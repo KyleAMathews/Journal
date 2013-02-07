@@ -20,6 +20,7 @@ class exports.Application extends BrunchApplication
     @views = {}
     @util = {}
     @templates = {}
+    @geolocation = require 'geolocation'
 
     @util.loadPostModel = loadPostModel
     @util.clickHandler = clickHandler
