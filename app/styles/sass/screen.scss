@@ -21,7 +21,6 @@ html {
 
   background: $grey10;
   height: 3em;
-  overflow: hidden;
   width: 100%;
   z-index: 100;
 
@@ -39,6 +38,10 @@ html {
       color: $grey90;
     }
     .logout {
+      @media only screen and (max-width: 450px) {
+        display: none;
+      }
+
       float: right;
     }
     .drafts {
