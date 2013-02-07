@@ -87,6 +87,7 @@ html {
         background: $grey20;
         margin: 0;
         li {
+          color: $grey60;
           padding: rhythm(0.5) rhythm(1);
           &:hover {
             background: $grey60;
