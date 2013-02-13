@@ -223,6 +223,13 @@ app.get '/drafts', (req, res) ->
       else
         res.json 'found nothing'
 
+app.get '/drafts/:id', (req, res) ->
+  if req.isAuthenticated()
+    if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
+      res.render 'index'
+  else
+    res.redirect '/login'
+
 app.post '/drafts', (req, res) ->
   console.log 'saving new draft'
   Draft = mongoose.model 'draft'

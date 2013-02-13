@@ -30,4 +30,4 @@ module.exports = class DraftsIndicatorView extends Backbone.View
 
   gotoDraftEditPage: (e) ->
     draftId = $(e.target).closest('li').data('draft-id')
-    app.router.navigate('draft/' + draftId, true)
+    app.router.navigate('drafts/' + draftId, true)

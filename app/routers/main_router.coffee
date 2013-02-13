@@ -17,7 +17,7 @@ class exports.MainRouter extends Backbone.Router
     'node/:id': 'post'
     'posts/new': 'newPost'
     'node/:id/edit': 'editPost'
-    'draft/:id': 'editDraft'
+    'drafts/:id': 'editDraft'
     'search': 'search'
     'search/:query': 'search'
 
