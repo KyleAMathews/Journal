@@ -5,18 +5,20 @@ RedisStore = require('connect-redis')(express)
 require './post_schema'
 require './user_schema'
 async = require 'async'
+flash = require 'connect-flash'
 _ = require 'underscore'
 # Import Underscore.string to separate object, because there are conflict functions (include, reverse, contains)
 _.str = require('underscore.string')
 # Mix in non-conflict functions to Underscore namespace if you want
 _.mixin(_.str.exports())
 
-app = express.createServer()
+app = express()
 
 # Setup Express middleware.
 app.configure ->
   app.set 'views', __dirname + '/views'
   app.set 'view engine', 'jade'
+  app.use express.compress()
   app.use express.cookieParser()
   app.use express.responseTime()
   app.use express.bodyParser()
@@ -24,8 +26,9 @@ app.configure ->
   app.use express.session({ store: new RedisStore, secret: 'Make Stuff', cookie: { maxAge: 1209600000 }}) # two weeks
   app.use passport.initialize()
   app.use passport.session()
+  app.use flash()
   app.use app.router
-  app.use express.static __dirname + '/public'
+  app.use express.static 'public'
 
 # Synchronize models with Elastic Search.
 Post = mongoose.model 'post'
@@ -328,4 +331,4 @@ app.get '/search/:query', (req, res) ->
 args = process.argv.splice(2)
 if args[0]? then port = parseInt(args[0], 10) else port = 3000
 app.listen(port)
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env)
+console.log("Express server listening on port %d in %s mode", port, app.settings.env)

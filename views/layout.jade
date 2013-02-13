@@ -9,7 +9,8 @@ html(lang='en')
     meta(name='viewport', content='user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0')
     link(rel='stylesheet', href='/css/screen.css', type="text/css", media="screen")
     //-script(src='javascripts/libs/modernizr-2.5.3.min.js')
-  body!=body
+  body
+    block body
     script(src='/javascripts/vendor.js')
     script(src='/javascripts/app.js')
     script require('initialize');
