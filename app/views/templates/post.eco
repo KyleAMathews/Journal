@@ -7,4 +7,8 @@
   <h1><a href="node/<%- @nid %>"><%= @title %></a></h1>
 <% end %>
 <small class="post-date"><%- @rendered_created %></small>
+<% if @page: %>
 <%- @rendered_body %>
+<% else: %>
+<%- @readMore %>
+<% end %>
