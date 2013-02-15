@@ -19,8 +19,9 @@ module.exports = class Post extends Backbone.Model
         @renderThings(true)
 
   renderThings: (breakCache) ->
-    if @get('rendered_body')? and not breakCache
-      return
+    if @get('rendered_body')? and @get('rendered_body') isnt "" and
+      not breakCache
+        return
 
     # Eliminate the extra new line marked.js mostly adds.
     html = marked(@get('body'))

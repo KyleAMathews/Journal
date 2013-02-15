@@ -4,7 +4,8 @@ class exports.PostView extends Backbone.View
   className: 'post'
 
   initialize: ->
-    @listenTo @model, 'change', @render
+    debouncedRender = _.debounce @render, 10
+    @listenTo @model, 'change', debouncedRender
 
   events:
     'dblclick': 'doubleclick'
