@@ -23,7 +23,6 @@ module.exports = class Post extends Backbone.Model
       not breakCache
         return
 
-    # Eliminate the extra new line marked.js mostly adds.
     html = marked(@get('body'))
     @set rendered_body: html
     @set rendered_created: moment(@get('created')).format("dddd, MMMM Do YYYY")

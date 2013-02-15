@@ -25,10 +25,6 @@ class exports.PostsView extends Backbone.View
     @$el.html PostsTemplate()
     if @collection.isLoading then @showLoading() else @hideLoading()
 
-    # Create infinity.js listView
-    if @listView then @listView.remove()
-    @listView = new infinity.ListView(@$('.posts-listview'))
-
     @addAll()
 
     # Time to initial render.
@@ -55,9 +51,7 @@ class exports.PostsView extends Backbone.View
   addOne: (post) =>
     postView = new PostView model: post
     postView.render()
-    _.defer =>
-      @listView.append postView.$el
+    @$('.posts').append postView.el
 
   onClose: ->
-    @listView.remove()
     app.eventBus.trigger 'postsView:active', false
