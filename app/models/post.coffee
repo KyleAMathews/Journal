@@ -28,18 +28,18 @@ module.exports = class Post extends Backbone.Model
     @set rendered_created: moment(@get('created')).format("dddd, MMMM Do YYYY")
 
     # Created a shortened version of the post for postsView
-    if @get('body').length > 800
+    if @get('body').length > 300
       pieces = @get('body').split('\n')
       readMore = ""
       for piece in pieces
         readMore += piece + "\n"
-        if readMore.length > 800
+        if readMore.length > 300
           break
       readMore = _.str.trim(readMore)
 
       # Add read more link unless our trimmed version ended up the same
       # as the original version.
-      unless readMore.length is @get('body').length
+      unless readMore.length is _.str.trim(@get('body')).length
         readMore += "\n\n[Read more](node/#{ @get('nid') })"
 
       @set readMore: marked(readMore)
