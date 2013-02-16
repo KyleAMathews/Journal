@@ -35,3 +35,13 @@ DraftSchema = new Schema (
 )
 
 mongoose.model 'draft', DraftSchema
+
+AttachmentSchema = new Schema (
+  path: { type: String }
+  pathSmall: { type: String }
+  uid: { type: String, index: true }
+  created: { type: Date, index: true }
+  _user: { type: Schema.ObjectId, ref: 'User', index: true }
+)
+
+mongoose.model 'attachment', AttachmentSchema

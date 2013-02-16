@@ -26,6 +26,14 @@ class exports.PostView extends Backbone.View
     @$("a[href^=http]").each ->
       if @href.indexOf(location.hostname) is -1
         $(@).attr target: "_blank"
+
+    @$("img").each ->
+      el = $(@)
+      if _.str.include el.attr('src'), 'attachments'
+        if Modernizr.touch
+          $(@).wrap("<a href='#{ el.attr('src') + "/original" }' />")
+        else
+          $(@).wrap("<a target='_blank' href='#{ el.attr('src') + "/original" }' />")
     @
 
   doubleclick: ->

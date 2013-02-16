@@ -23,6 +23,7 @@
     "eco-brunch": "1.x.x",
     "mongoose-double": "",
     "connect-flash": "",
+    "gm": "",
     "uglify-js-brunch": "1.x.x"
   },
   "devDependencies": {

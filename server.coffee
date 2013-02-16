@@ -6,6 +6,8 @@ require './post_schema'
 require './user_schema'
 async = require 'async'
 flash = require 'connect-flash'
+fs = require 'fs'
+gm = require 'gm'
 _ = require 'underscore'
 # Import Underscore.string to separate object, because there are conflict functions (include, reverse, contains)
 _.str = require('underscore.string')
@@ -167,6 +169,60 @@ recentPostChanges = (req, res) ->
         res.json posts
       else
         res.json ''
+
+app.post '/attachments', (req, res) ->
+  Attachment = mongoose.model 'attachment'
+  tmpFile = req.files.attachment.file.path
+  targetPath = './attachments/kylemathews/' + req.files.attachment.file.name
+  smallPath = './attachments/kylemathews/small/' + req.files.attachment.file.name
+
+  # Move file from the temporary location to our attachments directory.
+  fs.rename tmpFile, targetPath, (err) ->
+    if err
+      console.log err
+      res.json "Couldn't copy file", 500
+    else
+      # Save uid -> file path mapping to mongo.
+      attachment = new Attachment()
+      attachment.path = targetPath
+      attachment.pathSmall = smallPath
+      attachment.uid = req.body.attachment.uid
+      attachment.created = new Date()
+      attachment._user = req.user._id.toString()
+      attachment.save (err) ->
+        if err
+          console.log err
+          res.json "Couldn't save file mapping to MongoDB", 500
+        else
+          res.json 'File uploaded to: ' + targetPath + ' - ' + req.files.attachment.file.size + ' bytes'
+
+      # Create smaller version.
+      gm(targetPath)
+        .autoOrient()
+        .resize('476', '1000000', ">")
+        .write(smallPath, (err, stdout, stderr, command) ->
+          if err then console.log err
+      )
+
+app.get '/attachments/:id', (req, res) ->
+  Attachment = mongoose.model 'attachment'
+  Attachment.find({ uid: req.params.id })
+    .run (err, attachments) ->
+      if err then console.log err
+      if attachments.length > 0
+        res.sendfile(attachments[0].pathSmall)
+      else
+        res.send "File not found", 404
+
+app.get '/attachments/:id/original', (req, res) ->
+  Attachment = mongoose.model 'attachment'
+  Attachment.find({ uid: req.params.id })
+    .run (err, attachments) ->
+      if err then console.log err
+      if attachments.length > 0
+        res.sendfile(attachments[0].path)
+      else
+        res.send "File not found", 404
 
 #User = mongoose.model 'user'
 #user = new User()
