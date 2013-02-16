@@ -201,6 +201,7 @@ app.post '/attachments', (req, res) ->
         .resize('476', '1000000', ">")
         .write(smallPath, (err, stdout, stderr, command) ->
           if err then console.log err
+          console.log 'gm command', command
       )
 
 app.get '/attachments/:id', (req, res) ->
