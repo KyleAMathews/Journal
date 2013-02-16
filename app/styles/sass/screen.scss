@@ -135,6 +135,9 @@ html {
     display: block;
     margin-bottom: rhythm(-1, 11px);
   }
+  img {
+    max-width: 100%;
+  }
 }
 
 input, textarea {
