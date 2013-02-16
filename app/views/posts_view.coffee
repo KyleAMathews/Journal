@@ -8,8 +8,8 @@ class exports.PostsView extends Backbone.View
   initialize: ->
     @listenTo @collection, 'reset', @render
     @listenTo @collection, 'add', @addOne
-    @listenTo @collection, 'loading-posts', -> @showLoading()
-    @listenTo @collection, 'done-loading-posts', -> @hideLoading()
+    @listenTo @collection, 'loading-posts', @showLoading
+    @listenTo @collection, 'done-loading-posts', @hideLoading
     # When an individual post or a postEdit view is loaded, hide.
     @listenTo app.eventBus, 'pane:show', -> @$el.hide()
     # We're live, scroll to the last position.

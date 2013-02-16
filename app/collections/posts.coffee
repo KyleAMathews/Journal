@@ -7,6 +7,7 @@ class exports.Posts extends Backbone.Collection
 
   initialize: ->
     @lastPost = ""
+    @timesLoaded = 0
     @loading(false)
     @on 'set_cache_ids', @setCacheIds
     @postsViewActive = false
@@ -70,7 +71,13 @@ class exports.Posts extends Backbone.Collection
         data:
           created: created
         success: (collection, response, options) =>
-          # Backbone.cachesync returns junk sometimes.
+          @timesLoaded += 1
+
+          # Backbone.cachingSync always returns the first 10 posts.
+          if response[0].id is @first().id
+            fromCache = true
+
+          # Backbone.cacheSync returns junk sometimes.
           unless _.last(response)? then return
 
           # Record fetch time.
@@ -89,7 +96,16 @@ class exports.Posts extends Backbone.Collection
           # Set the posts collection last created time from the response.
           @newLastPost = _.last(response)['created']
           @lastPost = @newLastPost if @newLastPost < @lastPost or @lastPost is ""
-          @loading(false)
+
+          # We're not done loading until the server responds.
+          unless fromCache
+            @loading(false)
+
+          # Special case as our hacky way of detecting if the response is from
+          # localstorage fails on the first load.
+          if @timesLoaded is 2
+            @loading(false)
+
           _.defer =>
             @setCacheIds()
 
