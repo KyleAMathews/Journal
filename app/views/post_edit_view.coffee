@@ -15,7 +15,7 @@ class exports.PostEditView extends Backbone.View
   render: ->
     # If still loading the model.
     if (@model.get('nid')? or @model.id?) and (@model.get('body') is "" or @model.get('title') is "")
-      @$el.html "<h2>Loading post...; #{ app.templates.throber(null, 'show', '32px') } </h2>"
+      @$el.html "<h2>Loading post... #{ app.templates.throbber('show', '21px') } </h2>"
     else
       _.defer => @lineheight = @$('.textareaClone div').css('line-height').slice(0,-2)
       @keystrokecounter = 0
@@ -115,8 +115,8 @@ class exports.PostEditView extends Backbone.View
     app.collections.posts.trigger 'reset'
 
     # Save model in localstorage and update the Posts collection localstorage cache.
-    @model.collection.burry.set(model.id, model.toJSON())
-    @model.collection.setCacheIds()
+    app.collections.posts.burry.set(model.id, model.toJSON())
+    app.collections.posts.setCacheIds()
 
     # Going back, in the case of a new post, means back to the home page which isn't the
     # expected behavior when creating a new post.
