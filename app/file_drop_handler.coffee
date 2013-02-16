@@ -33,4 +33,4 @@ createAttachment = (file) ->
   )
 
   attachmentText = "![#{ file.name }](/attachments/#{ uid })"
-  $('.body textarea').insertAtCaret(attachmentText)
+  $('.body textarea').insertAtCaret(attachmentText + "\n\n")
