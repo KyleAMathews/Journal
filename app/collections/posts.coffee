@@ -6,12 +6,18 @@ class exports.Posts extends Backbone.Collection
   sync: Backbone.cachingSync(Backbone.sync, 'posts', null, true)
 
   initialize: ->
-    @last_post = ""
+    @lastPost = ""
     @loading(false)
     @on 'set_cache_ids', @setCacheIds
     @postsViewActive = false
     @setMaxOldPostFromCollection = _.once =>
       @maxOld = @max((post) -> return moment(post.get('created')).unix())
+
+    app.eventBus.on 'visibilitychange', (state) =>
+      if state is "visible"
+        # Calculate time since last fetch.
+        if moment().diff(moment(@lastFetch), 'minutes') > 15
+          @loadChangesSinceLastFetch()
 
   getByNid: (nid) ->
     nid = parseInt(nid, 10)
@@ -29,6 +35,22 @@ class exports.Posts extends Backbone.Collection
       @trigger 'done-loading-posts'
       @isLoading = false
 
+  # Load all posts (newer than our oldest post) created or changed since the last fetch.
+  loadChangesSinceLastFetch: ->
+    @fetch
+      update: true
+      remove: false
+      data:
+        changed: @lastFetch
+        oldest: @lastPost
+      success: (collection, response, options) =>
+        # Record fetch time.
+        @lastFetch = new Date().toJSON()
+
+        # See if the collection needs reset as there's a new post.
+        @resetCollection(response)
+
+
   load: (override = false) ->
     if not @isLoading or override
       @loading(true)
@@ -37,10 +59,10 @@ class exports.Posts extends Backbone.Collection
         if @isLoading then @loading(false); @load()
       , 10000
 
-      if @last_post is ""
+      if @lastPost is ""
         created = new Date().toJSON()
       else
-        created = @last_post
+        created = @lastPost
 
       @fetch
         update: true
@@ -51,6 +73,9 @@ class exports.Posts extends Backbone.Collection
           # Backbone.cachesync returns junk sometimes.
           unless _.last(response)? then return
 
+          # Record fetch time.
+          @lastFetch = new Date().toJSON()
+
           # If server returns nothing, this means we're at the bottom and should
           # stop trying to load new posts.
           if _.isString response
@@ -58,23 +83,28 @@ class exports.Posts extends Backbone.Collection
             @loading(false)
             return
 
-          # If the server returns a post that's newer than any already displayed,
-          # trigger reset on the collection so postViews re-renders.
-          @setMaxOldPostFromCollection()
-          maxNew = _.max(response, (post) -> return moment(post.created).unix())
-          if @maxOld? and maxNew? and @maxOld.get('created') < maxNew.created
-            @maxOld = @first()
-            # Seems we need to wait a bit to let the new post(s) to be added to the collection
-            # to ensure they'll be rendered.
-            _.defer =>
-              @trigger 'reset'
+          # See if the collection needs reset as there's a new post.
+          @resetCollection(response)
 
           # Set the posts collection last created time from the response.
-          @new_last_post = _.last(response)['created']
-          @last_post = @new_last_post if @new_last_post < @last_post or @last_post is ""
+          @newLastPost = _.last(response)['created']
+          @lastPost = @newLastPost if @newLastPost < @lastPost or @lastPost is ""
           @loading(false)
           _.defer =>
             @setCacheIds()
+
+
+  resetCollection: (response) ->
+    # If the server returns a post that's newer than any already displayed,
+    # trigger reset on the collection so postViews re-renders.
+    @setMaxOldPostFromCollection()
+    maxNew = _.max(response, (post) -> return moment(post.created).unix())
+    if @maxOld? and maxNew? and @maxOld.get('created') < maxNew.created
+      @maxOld = @first()
+      # Seems we need to wait a bit to let the new post(s) to be added to the collection
+      # to ensure they'll be rendered.
+      _.defer =>
+        @trigger 'reset'
 
   setCacheIds: ->
     @burry.set('__ids__', _.pluck(@first(10), 'id'))

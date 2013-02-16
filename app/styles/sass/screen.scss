@@ -107,6 +107,7 @@ html {
 
 // Main content wrapper.
 #wrapper {
+  position: relative;
   @media only screen and (min-width: 700px) {
     @include leader(4);
   }

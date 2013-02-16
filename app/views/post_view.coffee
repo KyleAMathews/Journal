@@ -4,15 +4,17 @@ class exports.PostView extends Backbone.View
   className: 'post'
 
   initialize: ->
-    debouncedRender = _.debounce @render, 10
-    @listenTo @model, 'change', debouncedRender
+    @debouncedRender = _.debounce @render, 25
+    @listenTo @model, 'change', @debouncedRender
+
+    window.post = @
 
   events:
     'dblclick': 'doubleclick'
 
   render: =>
     if @model.get('body') isnt "" and @model.get('title') isnt ""
-      @model.renderThings()
+      @model.renderThings(true)
       data = @model.toJSON()
       if @options.page
         data.page = true

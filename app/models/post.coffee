@@ -24,8 +24,8 @@ module.exports = class Post extends Backbone.Model
         return
 
     html = marked(@get('body'))
-    @set rendered_body: html
-    @set rendered_created: moment(@get('created')).format("dddd, MMMM Do YYYY")
+    @set { rendered_body: html }, silent: true
+    @set { rendered_created: moment(@get('created')).format("dddd, MMMM Do YYYY") }, silent: true
 
     # Created a shortened version of the post for postsView
     if @get('body').length > 300
@@ -42,6 +42,6 @@ module.exports = class Post extends Backbone.Model
       unless readMore.length is _.str.trim(@get('body')).length
         readMore += "\n\n[Read more](node/#{ @get('nid') })"
 
-      @set readMore: marked(readMore)
+      @set { readMore: marked(readMore) }, silent: true
     else
-      @set readMore: marked(@get('body'))
+      @set { readMore: marked(@get('body')) }, silent: true

@@ -127,7 +127,9 @@ findByNid = (nid, res, req) ->
 app.get '/posts', (req, res) ->
   Post = mongoose.model 'post'
   created = if req.query.created? then req.query.created else new Date()
-  if req.query.id
+  if req.query.changed
+    recentPostChanges(req, res)
+  else if req.query.id
     findById(req.query.id, res, req)
   else if req.query.nid
     findByNid(req.query.nid, res, req)
@@ -146,6 +148,25 @@ app.get '/posts', (req, res) ->
           res.json posts
         else
           res.json ''
+
+recentPostChanges = (req, res) ->
+  Post = mongoose.model 'post'
+  changed = if req.query.changed? then req.query.changed else new Date()
+  oldest = if req.query.oldest? then req.query.oldest else new Date()
+  Post.find()
+    .where('changed').gt(changed)
+    .where('created').gt(oldest)
+    .notEqualTo('deleted', true)
+    .where( '_user', req.user._id.toString())
+    .desc('created')
+    .run (err, posts) ->
+      console.log 'posts changed query done'
+      unless err or not posts?
+        for post in posts
+          post.setValue('id', post.getValue('_id'))
+        res.json posts
+      else
+        res.json ''
 
 #User = mongoose.model 'user'
 #user = new User()
