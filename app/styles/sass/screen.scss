@@ -115,6 +115,13 @@ html {
 
 #posts {
   position: relative;
+
+  // Can't get button at top of the page to behave.
+  @media only screen and (max-width: 1050px) {
+    h1:first-child {
+      margin-top: 47px;
+    }
+  }
 }
 
 .post {
@@ -126,7 +133,7 @@ html {
   }
   .post-date {
     display: block;
-    margin-bottom: rhythm(-1);
+    margin-bottom: rhythm(-1, 11px);
   }
 }
 

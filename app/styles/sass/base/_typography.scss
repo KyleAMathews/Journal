@@ -61,6 +61,10 @@ h1,h2,h3,h4,h5 {
   }
 }
 
+small {
+  @include adjust-font-size-to(11px, 1);
+}
+
 // For reference, the following is the traditional typographic hierarchy.
 // 6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 21, 24, 36, 48, 60, 72
 // Ref. http://www.markboulton.co.uk/journal/comments/five-simple-steps-to-better-typography-part-4
@@ -68,29 +72,29 @@ h1,h2,h3,h4,h5 {
 // If you'd like to change the size of headers, move all of the following either
 // up or down the hierarchy.
 h1 {
-  @include adjust-font-size-to(36px);
-  @include leader(0.5);
-  @include trailer(0.5);
+  @include adjust-font-size-to(36px, 2);
+  @include leader(2, 36px);
+  @include trailer(2, 36px);
 }
 h2 {
   @include adjust-font-size-to(24px, 1.5);
-  @include leader(1);
-  @include trailer(1);
+  @include leader(1, 24px);
+  @include trailer(1, 24px);
 }
 h3 {
   @include adjust-font-size-to(21px, 1.5);
-  @include leader(1);
-  @include trailer(1);
+  @include leader(1, 21px);
+  @include trailer(1, 21px);
 }
 h4 {
   @include adjust-font-size-to(18px);
-  @include leader(1);
-  @include trailer(1);
+  @include leader(1, 18px);
+  @include trailer(1, 18px);
 }
 h5 {
   @include adjust-font-size-to(16px);
-  @include leader(1);
-  @include trailer(1);
+  @include leader(1, 16px);
+  @include trailer(1, 16px);
 }
 h6 {
   @include adjust-font-size-to(14px);
