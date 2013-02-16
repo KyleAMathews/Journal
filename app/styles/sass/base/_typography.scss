@@ -77,27 +77,27 @@ h1 {
   @include trailer(2, 36px);
 }
 h2 {
-  @include adjust-font-size-to(24px, 1.5);
+  @include adjust-font-size-to(24px, 2);
   @include leader(1, 24px);
   @include trailer(1, 24px);
 }
 h3 {
-  @include adjust-font-size-to(21px, 1.5);
+  @include adjust-font-size-to(21px, 1);
   @include leader(1, 21px);
   @include trailer(1, 21px);
 }
 h4 {
-  @include adjust-font-size-to(18px);
+  @include adjust-font-size-to(18px, 1);
   @include leader(1, 18px);
   @include trailer(1, 18px);
 }
 h5 {
-  @include adjust-font-size-to(16px);
+  @include adjust-font-size-to(16px, 1);
   @include leader(1, 16px);
   @include trailer(1, 16px);
 }
 h6 {
-  @include adjust-font-size-to(14px);
+  @include adjust-font-size-to(14px, 1);
 }
 
 dl, ul, ol {
