@@ -198,7 +198,6 @@ app.post '/attachments', (req, res) ->
 
       # Create smaller version.
       gm(targetPath)
-        .autoOrient()
         .resize('476', '1000000', ">")
         .write(smallPath, (err, stdout, stderr, command) ->
           if err then console.log err
