@@ -6,6 +6,8 @@ class exports.PostsView extends Backbone.View
   id: 'posts'
 
   initialize: ->
+    @debouncedCachePostPositions = _.debounce (=> @cachePostPositions()), 100
+    @listenTo @collection, 'reset add remove', @debouncedCachePostPositions
     @listenTo @collection, 'reset', @render
     @listenTo @collection, 'add', @addOne
     @listenTo @collection, 'loading-posts', @showLoading
@@ -19,6 +21,8 @@ class exports.PostsView extends Backbone.View
       if @$el.is(':hidden') then return
       if distance <= 1500 then @collection.load()
     ), @
+    key('j', => @scrollNext())
+    key('k', => @scrollPrevious())
 
 
   render: =>
@@ -28,8 +32,9 @@ class exports.PostsView extends Backbone.View
     @addAll()
 
     # Time to initial render.
-    _.defer ->
+    _.defer =>
       console.log (new Date().getTime() - performance.timing.navigationStart) / 1000
+      @debouncedCachePostPositions()
 
     @
 
@@ -55,3 +60,19 @@ class exports.PostsView extends Backbone.View
 
   onClose: ->
     app.eventBus.trigger 'postsView:active', false
+
+  cachePostPositions: ->
+    @postPositions = []
+    for post in @$('.post')
+      @postPositions.push $(post).offset().top
+
+  scrollNext: ->
+    curPosition = $(window).scrollTop() + 81
+    nextY = _.find @postPositions, (y) -> curPosition < y
+    window.scrollTo(0, nextY - 80) # 42 px for the header + 36 px for two lines.
+
+  scrollPrevious: ->
+    curPosition = $(window).scrollTop() + 79
+    copyPostPostions = @postPositions.slice(0).reverse()
+    nextY = _.find copyPostPostions, (y) -> curPosition > y
+    window.scrollTo(0, nextY - 80) # 42 px for the header + 36 px for two lines.
