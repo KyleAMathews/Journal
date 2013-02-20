@@ -4,6 +4,9 @@ class exports.PostEditView extends Backbone.View
 
   id: 'post-edit'
 
+  initialize: ->
+    @throttledAutoScroll = _.throttle(@_autoscroll, 200)
+
   events:
     'click .save': 'save'
     'click .delete': 'delete'
@@ -11,6 +14,7 @@ class exports.PostEditView extends Backbone.View
     'click .show-date-edit': 'toggleDateEdit'
     'click .save-draft': 'draftSave'
     'keypress': '_draftSave'
+    'keydown .body textarea': 'throttledAutoScrollCallback'
 
   render: ->
     # If still loading the model.
@@ -41,38 +45,43 @@ class exports.PostEditView extends Backbone.View
         => @$('.show-date-edit').hide()
       )
 
-      # Keep the save button visible by autoscrolling.
-      autoscroll = (e) =>
-        # Measure distance from bottom of textarea to bottom of page.
-        distanceTextareaToTop = $('.body textarea').offset().top - $(document).scrollTop()
-        textareaHeight = @$('.body textarea').height()
-        distanceToBottomFromTextarea = $(window).height() - textareaHeight - distanceTextareaToTop
-
-        # Measure how many values it is from current cursor position to the end of the
-        # textarea.
-        cursorPosition = @$('.body textarea')[0].selectionStart
-        cursorMax = @$('.body textarea')[0].value.length
-        distanceToEnd = cursorMax - cursorPosition
-
-        # Count how many characters there are. We don't want to scroll down until
-        # the person has typed several lines at least.
-        numCharactersTyped = @$('.body textarea').val().length
-
-        # See if the user is editing the title. If so, don't scroll.
-        if $(document.activeElement).parents('.title').length > 0
-          notInTitle = false
-        else
-          notInTitle = true
-
-        # Only scroll if the bottom of the textarea is very near the bottom of the page
-        # and the cursor is within one line distance of the bottom of the textarea.
-        if -50 < distanceToBottomFromTextarea < 50 and distanceToEnd < 80 and
-          numCharactersTyped > 400 and notInTitle
-            $("html, body").animate({ scrollTop: $(document).height()-$(window).height() })
-      throttled = _.throttle(autoscroll, 200)
-      @$('textarea').on('keypress', throttled)
-
     @
+
+  throttledAutoScrollCallback: ->
+    @throttledAutoScroll()
+
+  # Keep the save button visible by autoscrolling.
+  _autoscroll: (e) =>
+    # Measure distance from bottom of textarea to bottom of page.
+    distanceTextareaToTop = $('.body textarea').offset().top - $(document).scrollTop()
+    textareaHeight = @$('.body textarea').height()
+    distanceToBottomFromTextarea = $(window).height() - textareaHeight - distanceTextareaToTop
+
+    # Measure how many values it is from current cursor position to the end of the
+    # textarea.
+    cursorPosition = @$('.body textarea')[0].selectionStart
+    cursorMax = @$('.body textarea')[0].value.length
+    distanceToEnd = cursorMax - cursorPosition
+
+    # Count how many characters there are. We don't want to scroll down until
+    # the person has typed several lines at least.
+    numCharactersTyped = @$('.body textarea').val().length
+
+    # See if the user is editing the title. If so, don't scroll.
+    if $(document.activeElement).parents('.title').length > 0
+      notInTitle = false
+    else
+      notInTitle = true
+
+    # Only scroll down if the bottom of the textarea is very near the bottom of the page
+    # and the cursor is within one line distance of the bottom of the textarea.
+    if -50 < distanceToBottomFromTextarea < 50 and distanceToEnd < 80 and
+      numCharactersTyped > 400 and notInTitle
+        $("html, body").animate({ scrollTop: $(document).height()-$(window).height() })
+
+    # Scroll up if within 80 pixels of the top and we're not already at the top.
+    if cursorPosition < 200
+      $("html, body").animate({ scrollTop: 0 })
 
   errorMessage: (message) ->
     @$('.error').html(message).show()
