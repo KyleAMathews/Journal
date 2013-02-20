@@ -30,10 +30,7 @@ class exports.PostView extends Backbone.View
     @$("img").each ->
       el = $(@)
       if _.str.include el.attr('src'), 'attachments'
-        if Modernizr.touch
-          $(@).wrap("<a href='#{ el.attr('src') + "/original" }' />")
-        else
-          $(@).wrap("<a target='_blank' href='#{ el.attr('src') + "/original" }' />")
+        $(@).wrap("<a target='_blank' href='#{ el.attr('src') + "/original" }' />")
     @
 
   doubleclick: ->
