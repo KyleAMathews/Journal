@@ -9,8 +9,9 @@ class exports.MainRouter extends Backbone.Router
 
   initialize: ->
     # Define global keyboard shortcuts.
-    key('s,/', -> app.router.navigate('search', true))
-    key('h', -> app.router.navigate('', true))
+    key 's,/', => @search()
+    key 'h', => @home()
+    key 'n', => @newPost(true)
 
   routes:
     '': 'home'
@@ -33,12 +34,12 @@ class exports.MainRouter extends Backbone.Router
     postView = new PostView model: post, page: true
     app.views.main.show(postView)
 
-  newPost: ->
+  newPost: (focusTitle = false) ->
     # Scroll to top of page.
     document.body.scrollTop = document.documentElement.scrollTop = 0
     newPost = new Post {}, collection: app.collections.posts
     draftModel = new Draft {}, collection: app.collections.drafts
-    postEditView = new PostEditView model: newPost, draftModel: draftModel
+    postEditView = new PostEditView model: newPost, draftModel: draftModel, focusTitle: focusTitle
     app.views.main.show(postEditView)
 
   editPost: (id) ->
