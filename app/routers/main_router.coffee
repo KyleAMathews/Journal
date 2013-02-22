@@ -8,7 +8,7 @@ SearchView = require 'views/search_view'
 class exports.MainRouter extends Backbone.Router
 
   initialize: ->
-    # Define global keyboard shortcuts.
+    # Define routing keyboard shortcuts.
     key 's,/', => @search()
     key 'h', => @home()
     key 'n', => @newPost(true)

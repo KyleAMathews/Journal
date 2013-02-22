@@ -11,6 +11,7 @@ Search = require 'collections/search'
 # Misc
 require 'backbone_extensions'
 require 'file_drop_handler'
+require 'keyboard_shortcuts'
 
 class exports.Application extends BrunchApplication
   initialize: ->

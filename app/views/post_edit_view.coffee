@@ -40,7 +40,7 @@ class exports.PostEditView extends Backbone.View
 
       _.defer =>
         if @options.focusTitle
-          console.log @$('.title textarea').focus()
+          @$('.title textarea').focus()
 
       # Show the edit button for the date field when hovering.
       @$('.date').hover(
