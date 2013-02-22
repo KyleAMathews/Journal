@@ -1,5 +1,8 @@
 !!! 5
-html(lang='en')
+- if (typeof(manifest) === 'undefined'){
+  manifest = ""
+-}
+html(lang='en', manifest=manifest)
   //<![endif]
   head
     meta(charset='utf-8')
@@ -8,19 +11,10 @@ html(lang='en')
     meta(name='description', content='')
     meta(name='viewport', content='user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0')
     link(rel='stylesheet', href='/css/screen.css', type="text/css", media="screen")
+    link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,800italic,400,800', type="text/css", media="screen")
     //-script(src='javascripts/libs/modernizr-2.5.3.min.js')
   body
     block body
     script(src='/javascripts/vendor.js')
     script(src='/javascripts/app.js')
     script require('initialize');
-    script(type="text/javascript", src="https://www.google.com/jsapi")
-    script(type="text/javascript")
-      google.load("webfont", "1");
-
-      google.setOnLoadCallback(function() {
-        WebFont.load({
-          google: {
-            families: [ 'Open Sans:400,800' ]
-        }});
-      });

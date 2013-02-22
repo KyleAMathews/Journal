@@ -50,7 +50,7 @@ stream.on('error', (err) ->
 # Routes.
 app.get '/', (req, res) ->
   if req.isAuthenticated()
-    res.render 'index'
+    res.render 'index', manifest: '/appcache.appcache'
   else
     res.redirect '/login'
 app.get '/node/:nid', (req, res) ->
@@ -108,7 +108,7 @@ app.get '/logout', (req, res) ->
 findById = (id, res, req) ->
   Post = mongoose.model 'post'
   Post.findById id, (err, post) ->
-    unless err or not post? or post._user.toString() isnt req.user._id.toString()
+    unless err or not post? or post?._user.toString() isnt req.user._id.toString()
       post.setValue('id', post.getValue('_id'))
       res.json post
     else
@@ -119,7 +119,7 @@ findByNid = (nid, res, req) ->
   Post = mongoose.model 'post'
   Post.find { nid: nid }, (err, post) ->
     post = post[0]
-    unless err or not post? or post._user.toString() isnt req.user._id.toString()
+    unless err or not post? or post?._user.toString() isnt req?.user._id.toString()
       post.setValue('id', post.getValue('_id'))
       res.json post
     else
@@ -140,7 +140,7 @@ app.get '/posts', (req, res) ->
       .limit(10)
       .where('created').lt(created)
       .notEqualTo('deleted', true)
-      .where( '_user', req.user._id.toString())
+      .where( '_user', req?.user._id.toString())
       .desc('created')
       .run (err, posts) ->
         console.log 'query done'

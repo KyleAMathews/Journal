@@ -21,16 +21,6 @@ body {
   font-family: 'Open Sans', “Helvetica Neue”, Arial, Helvetica, sans-serif;
 }
 
-h1, h2, #menu-container, small, button {
-  visibility: hidden;
-}
-
-.wf-active {
-  h1, h2, #menu-container, small, button {
-    visibility: visible;
-  }
-}
-
 #post-edit .title {
   @extend %title-font;
 }
