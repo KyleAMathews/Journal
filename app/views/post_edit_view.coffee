@@ -92,8 +92,8 @@ class exports.PostEditView extends Backbone.View
 
   save: ->
     obj = {}
-    obj.title = @$('.title textarea').val()
-    obj.body = @$('.body textarea').val()
+    obj.title = _.str.trim @$('.title textarea').val()
+    obj.body = _.str.trim @$('.body textarea').val()
 
     if obj.title is ""
       return @errorMessage('You are missing your title')
