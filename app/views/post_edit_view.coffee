@@ -140,15 +140,15 @@ class exports.PostEditView extends Backbone.View
 
 
   delete: ->
+    app.collections.posts.remove @model
+    app.collections.posts.sort()
+    app.collections.posts.trigger 'reset'
+    app.router.navigate '/', true
     if @options.draftModel? then @options.draftModel.destroy()
     @model.save({ deleted: true },
       {
         success: =>
-          app.collections.posts.remove @model
-          app.collections.posts.sort()
           app.collections.posts.trigger 'set_cache_ids'
-          app.collections.posts.trigger 'reset'
-          app.router.navigate '/', true
       }
     )
 
