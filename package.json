@@ -3,7 +3,8 @@
   "description": "Multi-user Journal App",
   "version": "0.0.1",
   "engines": {
-    "node": "~0.6.10"
+    "node": "~0.8.14",
+    "npm":  "1.1.x"
   },
   "dependencies": {
     "express": "3.x.x",
