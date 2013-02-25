@@ -1,8 +1,9 @@
+config = require './app_config'
+
 mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost/journal')
+mongoose.connect(config.mongo_url)
 mongoosastic = require('mongoosastic')
 require('mongoose-double')(mongoose)
-config = require './app_config'
 
 # Setup MongoDB schemas.
 Schema = mongoose.Schema
