@@ -12,6 +12,7 @@ Only interesting right now if you want to hack on it.
 
 * [Node.js](http://nodejs.org/) 0.8.x or above
 * [MongoDB](http://www.mongodb.org/)
+* [Redis](http://redis.io/)
 * [ElasticSearch](http://www.elasticsearch.org/)
 * [GraphicsMagick](http://www.graphicsmagick.org/)
 * [Brunch](http://brunch.io/)
