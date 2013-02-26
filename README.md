@@ -18,8 +18,13 @@ Only interesting right now if you want to hack on it.
 * [Brunch](http://brunch.io/)
 * [Compass](http://compass-style.org/)
 
-The app assumes all of the above is installed on one machine. It is possible to run your ElasticSearch instance on a seperate machine. To do this, edit the app_config.coffee file to add the IP address of the server ElasticSearch is running on.
+#### Installing Compass
+This app depends on the latest alpha version of Compass. To install run `gem install compass --pre`
+
+You'll also need to install three other Compass dependencies, `susy`, `compass-normalize`, `sassy-buttons`.
+
+#### Clone repo and compile Coffescript and SCSS files
 
 After installing all of the above, clone this repository. Then run `npm install` to install the various node.js dependencies.
 
-Then to compile the Javascript and CSS, go first to the `/app` directory and run `brunch build` and then to the `app/styles` directory and run `compass compile`
+Then to compile the Javascript and CSS, go first to the root directory and run `brunch build` and then to the `app/styles` directory and run `compass compile`
