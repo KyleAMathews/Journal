@@ -31,11 +31,12 @@ class exports.PostEditView extends Backbone.View
         placeholder: 'Type your title here&hellip;'
         lines: 1
       ).render()
+      lines = Math.min(18, Math.round(($(window).height() - 300) / 21))
       @addChildView new ExpandingTextareaView(
         el: @$('.body')
         edit_text: @model.get('body')
         placeholder: 'Start typing your post here&hellip;'
-        lines: 20
+        lines: lines
       ).render()
 
       _.defer =>
