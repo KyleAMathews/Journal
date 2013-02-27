@@ -5,7 +5,7 @@ class exports.PostEditView extends Backbone.View
   id: 'post-edit'
 
   initialize: ->
-    @throttledAutoScroll = _.throttle(@_autoscroll, 200)
+    @throttledAutoScroll = _.throttle(@_autoscroll, 250)
 
   events:
     'click .save': 'save'
@@ -14,7 +14,7 @@ class exports.PostEditView extends Backbone.View
     'click .show-date-edit': 'toggleDateEdit'
     'click .save-draft': 'draftSave'
     'keypress': '_draftSave'
-    'keydown .body textarea': 'throttledAutoScrollCallback'
+    'keydown .body textarea': 'throttledAutoScroll'
 
   render: ->
     # If still loading the model.
@@ -52,9 +52,6 @@ class exports.PostEditView extends Backbone.View
 
     @
 
-  throttledAutoScrollCallback: ->
-    @throttledAutoScroll()
-
   # Keep the save button visible by autoscrolling.
   _autoscroll: (e) =>
     # Measure distance from bottom of textarea to bottom of page.
@@ -64,8 +61,8 @@ class exports.PostEditView extends Backbone.View
 
     # Measure how many values it is from current cursor position to the end of the
     # textarea.
-    cursorPosition = @$('.body textarea')[0].selectionStart
-    cursorMax = @$('.body textarea')[0].value.length
+    cursorPosition = @$('.body textarea')[0].selectionStart # Num of characters in textarea to cursor position.
+    cursorMax = @$('.body textarea')[0].value.length # Total number of characters entered.
     distanceToEnd = cursorMax - cursorPosition
 
     # Count how many characters there are. We don't want to scroll down until
@@ -85,7 +82,9 @@ class exports.PostEditView extends Backbone.View
         $("html, body").animate({ scrollTop: $(document).height()-$(window).height() })
 
     # Scroll up if within 80 pixels of the top and we're not already at the top.
-    if cursorPosition < 200
+    if cursorPosition < 150 and
+    $(window).scrollTop() > 50 and # Don't scroll up if already at the top.
+    distanceTextareaToTop < 200 # We don't have to scroll up if the body textarea is already well uncovered.
       $("html, body").animate({ scrollTop: 0 })
 
   errorMessage: (message) ->
