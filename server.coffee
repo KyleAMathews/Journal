@@ -38,19 +38,24 @@ stream = Post.synchronize()
 count = 0;
 
 stream.on('data', (err, doc) ->
-    count++
+  count++
 )
 stream.on('close', ->
-    console.log('indexed ' + count + ' documents!')
+  console.log('indexed ' + count + ' documents!')
 )
 stream.on('error', (err) ->
-    console.log(err)
+  return
+  console.log(err)
 )
 
 # Routes.
 app.get '/', (req, res) ->
   if req.isAuthenticated()
-    res.render 'index', manifest: '/appcache.appcache'
+    # TODO this his hacky, replace with real environment variable system.
+    unless process.platform is "darwin" or app.settings.env is "development" # e.g. we're on a mac so developing.
+      res.render 'index', manifest: '/appcache.appcache'
+    else
+      res.render 'index'
   else
     res.redirect '/login'
 app.get '/node/:nid', (req, res) ->
