@@ -3,7 +3,6 @@ module.exports = class Post extends Backbone.Model
   defaults:
     title: ''
     body: ''
-    created: new Date().toISOString()
 
   url: ->
     if @get('id')
@@ -14,6 +13,7 @@ module.exports = class Post extends Backbone.Model
       @collection.url
 
   initialize: ->
+    @set created: new Date().toISOString()
     @on 'request', ->
       if @get('body')? and @get('title')?
         @renderThings(true)
