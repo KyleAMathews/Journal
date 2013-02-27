@@ -45,9 +45,11 @@ class exports.PostsView extends Backbone.View
 
   showLoading: ->
     @$('#loading-posts').show()
+    @$('.js-top-loading').show()
 
   hideLoading: ->
     @$('#loading-posts').hide()
+    @$('.js-top-loading').hide()
 
   addAll: ->
     for post in @collection.models

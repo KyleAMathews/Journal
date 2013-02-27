@@ -1,3 +1,4 @@
+<%- app.templates.throbber('js-top-loading global-loading', '24px') %>
 <a class="button post-action" href="/posts/new">New post</a>
 <div class="posts"></div>
 <div id="loading-posts">
