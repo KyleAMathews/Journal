@@ -73,6 +73,9 @@ class exports.Posts extends Backbone.Collection
         success: (collection, response, options) =>
           @timesLoaded += 1
 
+          # Force a sort as the local cache sometimes confuses the ordering.
+          @sort()
+
           # Backbone.cachingSync always returns the first 10 posts.
           if response[0].id is @first().id
             fromCache = true
