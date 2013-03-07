@@ -16,6 +16,9 @@ class Geolocation
     @error = error
 
   getLatitudeLongitude: ->
-    return latitude: @position.coords.latitude, longitude: @position.coords.longitude
+    if @position?
+      return latitude: @position.coords.latitude, longitude: @position.coords.longitude
+    else
+      return latitude: "", longitude: ""
 
  module.exports = new Geolocation()
