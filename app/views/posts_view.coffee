@@ -33,7 +33,7 @@ class exports.PostsView extends Backbone.View
 
     # Time to initial render.
     _.defer =>
-      console.log (new Date().getTime() - performance.timing.navigationStart) / 1000
+      console.log "rendering postsView", (new Date().getTime() - performance.timing.navigationStart) / 1000
       @debouncedCachePostPositions()
 
     @

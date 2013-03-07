@@ -25,7 +25,6 @@ exports.config =
           'vendor/scripts/underscore.js'
           'vendor/scripts/backbone-0.9.10.js'
           'vendor/scripts/burry.js'
-          'vendor/scripts/backbone.cachingsync.js'
           'vendor/scripts/marked.js'
           'vendor/scripts/moment.js'
           'vendor/scripts/kalendae.js'

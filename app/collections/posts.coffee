@@ -3,7 +3,6 @@ class exports.Posts extends Backbone.Collection
 
   url: '/posts'
   model: Post
-  sync: Backbone.cachingSync(Backbone.sync, 'posts', null, true)
 
   initialize: ->
     @lastPost = ""
@@ -13,6 +12,11 @@ class exports.Posts extends Backbone.Collection
     @postsViewActive = false
     @setMaxOldPostFromCollection = _.once =>
       @maxOld = @max((post) -> return moment(post.get('created')).unix())
+
+    # Try loading posts from localstorage.
+    @burry = new Burry.Store('posts')
+    if @burry.get('__ids__')?
+      @loadFromCache()
 
     app.eventBus.on 'visibilitychange', (state) =>
       if state is "visible"
@@ -51,8 +55,10 @@ class exports.Posts extends Backbone.Collection
         # See if the collection needs reset as there's a new post.
         @resetCollection(response)
 
-
   load: (override = false) ->
+    # We've already loaded everything.
+    if @loadedAllThePosts then return
+
     if not @isLoading or override
       @loading(true)
       # Timeout request after 10 seconds
@@ -71,25 +77,13 @@ class exports.Posts extends Backbone.Collection
         data:
           created: created
         success: (collection, response, options) =>
-          @timesLoaded += 1
-
-          # Force a sort as the local cache sometimes confuses the ordering.
-          @sort()
-
-          # Backbone.cachingSync always returns the first 10 posts.
-          if response[0].id is @first().id
-            fromCache = true
-
-          # Backbone.cacheSync returns junk sometimes.
-          unless _.last(response)? then return
-
           # Record fetch time.
           @lastFetch = new Date().toJSON()
 
           # If server returns nothing, this means we're at the bottom and should
           # stop trying to load new posts.
           if _.isString response
-            app.eventBus.off null, null, @
+            @loadedAllThePosts = true
             @loading(false)
             return
 
@@ -101,13 +95,7 @@ class exports.Posts extends Backbone.Collection
           @lastPost = @newLastPost if @newLastPost < @lastPost or @lastPost is ""
 
           # We're not done loading until the server responds.
-          unless fromCache
-            @loading(false)
-
-          # Special case as our hacky way of detecting if the response is from
-          # localstorage fails on the first load.
-          if @timesLoaded is 2
-            @loading(false)
+          @loading(false)
 
           # Cache all posts by nid.
           for post in @models
@@ -115,7 +103,6 @@ class exports.Posts extends Backbone.Collection
 
           _.defer =>
             @setCacheIds()
-
 
   resetCollection: (response) ->
     # If the server returns a post that's newer than any already displayed,
@@ -130,7 +117,23 @@ class exports.Posts extends Backbone.Collection
         @trigger 'reset'
 
   setCacheIds: ->
-    @burry.set('__ids__', _.pluck(@first(10), 'id'))
+    posts = @first(10)
+    nids = (post.get('nid') for post in posts)
+    @burry.set('__ids__', nids)
 
   cachePost: (post) ->
     @burry.set "posts_pid_#{ post.get('nid') }", post.toJSON()
+
+  loadFromCache: ->
+    postsIds = @burry.get '__ids__'
+    posts = []
+    for nid in postsIds
+      post = @loadNidFromCache(nid)
+      if post?
+        posts.push post
+
+    @reset posts
+    @setMaxOldPostFromCollection()
+
+  loadNidFromCache: (nid) ->
+    return @burry.get "posts_pid_#{ nid }"
