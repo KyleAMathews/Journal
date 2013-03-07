@@ -109,6 +109,10 @@ class exports.Posts extends Backbone.Collection
           if @timesLoaded is 2
             @loading(false)
 
+          # Cache all posts by nid.
+          for post in @models
+            @cachePost(post)
+
           _.defer =>
             @setCacheIds()
 
@@ -127,3 +131,6 @@ class exports.Posts extends Backbone.Collection
 
   setCacheIds: ->
     @burry.set('__ids__', _.pluck(@first(10), 'id'))
+
+  cachePost: (post) ->
+    @burry.set "posts_pid_#{ post.get('nid') }", post.toJSON()

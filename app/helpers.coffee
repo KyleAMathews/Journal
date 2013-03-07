@@ -15,13 +15,8 @@ exports.loadPostModel = (id, nid = false) ->
   if nid
     if app.collections.posts.getByNid(id)
       return app.collections.posts.getByNid(id)
-    else if app.collections.postsCache.getByNid(id)
-      return app.collections.postsCache.getByNid(id)
     else
-      post = new Post( nid: id, id: null )
-      post.fetch( nid: id )
-      app.collections.postsCache.add post
-      return post
+      return app.collections.postsCache.getByNid(id)
   else
     if app.collections.posts.get(id)
       return app.collections.posts.get(id)

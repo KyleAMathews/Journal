@@ -13,9 +13,10 @@ module.exports = class Post extends Backbone.Model
       @collection.url
 
   initialize: ->
-    @on 'request', ->
+    @on 'sync', ->
       if @get('body')? and @get('title')?
         @renderThings(true)
+        app.collections.posts.cachePost(@)
 
   renderThings: (breakCache) ->
     if @get('rendered_body')? and @get('rendered_body') isnt "" and
