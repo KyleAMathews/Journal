@@ -13,7 +13,6 @@ module.exports = class Post extends Backbone.Model
       @collection.url
 
   initialize: ->
-    @set created: new Date().toISOString()
     @on 'request', ->
       if @get('body')? and @get('title')?
         @renderThings(true)

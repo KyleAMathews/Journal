@@ -38,6 +38,7 @@ class exports.MainRouter extends Backbone.Router
     # Scroll to top of page.
     document.body.scrollTop = document.documentElement.scrollTop = 0
     newPost = new Post {}, collection: app.collections.posts
+    newPost.set created: new Date().toISOString()
     draftModel = new Draft {}, collection: app.collections.drafts
     postEditView = new PostEditView model: newPost, draftModel: draftModel, focusTitle: focusTitle
     app.views.main.show(postEditView)
