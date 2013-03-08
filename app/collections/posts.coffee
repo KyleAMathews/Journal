@@ -133,7 +133,6 @@ class exports.Posts extends Backbone.Collection
         posts.push post
 
     @reset posts
-    @setMaxOldPostFromCollection()
 
   loadNidFromCache: (nid) ->
     return @burry.get "posts_pid_#{ nid }"
