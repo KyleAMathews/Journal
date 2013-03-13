@@ -133,6 +133,9 @@ html {
   @include trailer(4);
 
   position: relative;
+  h1 {
+    white-space: pre-wrap; // Preserve any artistic setting of title.
+  }
   p {
     @include force-wrap();
   }
