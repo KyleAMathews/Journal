@@ -8,10 +8,9 @@ Drafts = require 'collections/drafts'
 DraftsIndicatorView = require 'views/drafts_indicator_view'
 Search = require 'collections/search'
 
-# Misc
+# Misc requires.
 require 'backbone_extensions'
 require 'file_drop_handler'
-require 'keyboard_shortcuts'
 
 class exports.Application extends BrunchApplication
   initialize: ->
@@ -60,3 +59,7 @@ class exports.Application extends BrunchApplication
 
 unless location.pathname is '/login'
   window.app = new exports.Application
+
+# Misc requires. Some depend on the app.eventBus being created hence the deferred.
+_.defer ->
+  require 'keyboard_shortcuts'
