@@ -11,6 +11,7 @@ Search = require 'collections/search'
 # Misc requires.
 require 'backbone_extensions'
 require 'file_drop_handler'
+require 'alert_on_appcache_updates'
 
 class exports.Application extends BrunchApplication
   initialize: ->
