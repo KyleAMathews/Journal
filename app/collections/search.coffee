@@ -4,6 +4,7 @@ module.exports = class Search extends Backbone.Collection
   model: Result
 
   query: (query) ->
+    @trigger 'search:started'
     @query_str = query
     start = new Date()
     @reset()
@@ -16,6 +17,8 @@ module.exports = class Search extends Backbone.Collection
         for entry in results.facets.year.entries
           year = moment.utc(entry.time).year()
           console.log year + ": " + entry.count
+
+        @trigger 'search:complete'
 
   # Remove my various bits of state.
   clear: ->
