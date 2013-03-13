@@ -6,7 +6,7 @@ class exports.PostsView extends Backbone.View
   id: 'posts'
 
   initialize: ->
-    @debouncedCachePostPositions = _.debounce (=> @cachePostPositions()), 100
+    @debouncedCachePostPositions = _.debounce (=> @cachePostPositions()), 500
     @listenTo @collection, 'reset add remove', @debouncedCachePostPositions
     @listenTo @collection, 'reset', @render
     @listenTo @collection, 'add', @addOne
