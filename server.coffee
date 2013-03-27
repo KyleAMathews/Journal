@@ -25,9 +25,6 @@ sessionStore = new RedisStore({
   pass: config.redis_url.auth.split(':')[1]
 })
 
-console.log config.redis_url
-console.log "Connected with password \"" +  config.redis_url.auth.split(':')[1] + "\""
-
 # Setup Express middleware.
 app.configure ->
   app.set 'views', __dirname + '/views'
