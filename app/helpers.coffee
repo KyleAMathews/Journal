@@ -46,7 +46,9 @@ exports.scrollPosition = ->
   $(window).scroll(throttled)
 
 exports.search = (query, callback) ->
-  $.getJSON('/search/' + query, (data) -> callback(data))
+  # ajax=true is fix for Chrome bug where clicking back shows JSON result.
+  # http://stackoverflow.com/a/13058747/182702
+  $.getJSON('/search/' + query + "&ajax=true", (data) -> callback(data))
 
 # Misc global stuff
 $ ->

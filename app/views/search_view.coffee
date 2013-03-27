@@ -6,6 +6,8 @@ module.exports = class SearchView extends Backbone.View
 
   initialize: ->
     @listenTo @collection, 'reset', @renderResults
+    @listenTo @collection, 'search:started', @showThrobber
+    @listenTo @collection, 'search:complete', @hideThrobber
 
   events:
     'click button': 'search'
@@ -13,10 +15,10 @@ module.exports = class SearchView extends Backbone.View
 
   render: ->
     @$el.html SearchTemplate()
-    @$('input').val(@collection.query_str)
 
     @renderResults()
     _.defer =>
+      @$('input').val(@collection.query_str)
       @$('input').focus()
     @
 
@@ -42,10 +44,15 @@ module.exports = class SearchView extends Backbone.View
   search: ->
     query = @$('input').val()
     unless query is ""
-      # Show throbber to show activity during long queries.
-      @$('.js-loading').css('display', 'inline-block')
       @collection.query(query)
       app.router.navigate('/search/' + encodeURIComponent(query))
+
+  # Show throbber to show activity during long queries.
+  showThrobber: ->
+    @$('.js-loading').css('display', 'inline-block')
+
+  hideThrobber: ->
+    @$('.js-loading').hide()
 
   searchByEnter: (e) ->
     if e.which is 13 then @search()

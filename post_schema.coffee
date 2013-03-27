@@ -16,8 +16,8 @@ PostSchema = new Schema (
   created: { type: Date, index: true, es_type:'date' }
   changed: { type: Date, index: true, es_type:'date' }
   deleted: { type: Boolean, default: false, index: true }
-  latitude: { type: SchemaTypes.Double, default: null }
-  longitude: { type: SchemaTypes.Double, default: null }
+  latitude: { type: SchemaTypes.Double, default: null, es_type: 'double' }
+  longitude: { type: SchemaTypes.Double, default: null, es_type: 'double' }
   _user: { type: Schema.ObjectId, ref: 'User', index: true }
 )
 

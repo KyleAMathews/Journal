@@ -133,6 +133,9 @@ html {
   @include trailer(4);
 
   position: relative;
+  h1 {
+    white-space: pre-wrap; // Preserve any artistic setting of title.
+  }
   p {
     @include force-wrap();
   }
@@ -369,4 +372,14 @@ input[type="submit"], button, .button {
 @include keyframes(fade) {
   from {opacity: 1;}
   to {opacity: 0.25;}
+}
+.alert-message {
+  background: #EBFFE7;
+  border: 3px solid #27940B;
+  left: rhythm(3);
+  right: rhythm(3);
+  top: rhythm(3);
+
+  padding: rhythm(1);
+  position: absolute;
 }

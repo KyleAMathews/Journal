@@ -54,10 +54,15 @@ class exports.PostEditView extends Backbone.View
 
   # Keep the save button visible by autoscrolling.
   _autoscroll: (e) =>
-    # Measure distance from bottom of textarea to bottom of page.
-    distanceTextareaToTop = $('.body textarea').offset().top - $(document).scrollTop()
+    # Autoscrolling works poorly on touch devices due to small screen plus not really
+    # helpful as user isn't navigating by keyboard.
+    if Modernizr.touch then return
+
+    # Measure distance from top of textarea to the top of the page.
+    distanceTextareaToTop = $('.body textarea').offset().top
     textareaHeight = @$('.body textarea').height()
-    distanceToBottomFromTextarea = $(window).height() - textareaHeight - distanceTextareaToTop
+    # Measure distance from bottom of textarea to bottom of page.
+    distanceToBottomOfWindowFromTextarea = $(window).height() - textareaHeight - (distanceTextareaToTop - $(window).scrollTop())
 
     # Measure how many values it is from current cursor position to the end of the
     # textarea.
@@ -77,15 +82,14 @@ class exports.PostEditView extends Backbone.View
 
     # Only scroll down if the bottom of the textarea is very near the bottom of the page
     # and the cursor is within one line distance of the bottom of the textarea.
-    if -50 < distanceToBottomFromTextarea < 50 and distanceToEnd < 80 and
+    if -50 < distanceToBottomOfWindowFromTextarea < 50 and distanceToEnd < 80 and
       numCharactersTyped > 400 and notInTitle
         $("html, body").animate({ scrollTop: $(document).height()-$(window).height() })
 
     # Scroll up if within 80 pixels of the top and we're not already at the top.
-    if cursorPosition < 150 and
-    $(window).scrollTop() > 50 and # Don't scroll up if already at the top.
-    distanceTextareaToTop < 200 # We don't have to scroll up if the body textarea is already well uncovered.
-      $("html, body").animate({ scrollTop: 0 })
+    if cursorPosition < 5 and
+    $(window).scrollTop() > (distanceTextareaToTop - 150) # Don't scroll up if already near the top.
+      $("html, body").animate({ scrollTop: Math.max(0, distanceTextareaToTop - 150) })
 
   errorMessage: (message) ->
     @$('.error').html(message).show()
