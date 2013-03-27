@@ -21,7 +21,7 @@ PostSchema = new Schema (
   _user: { type: Schema.ObjectId, ref: 'User', index: true }
 )
 
-PostSchema.plugin(mongoosastic, { index: 'journal_posts', host: config.elasticSearchHost })
+PostSchema.plugin(mongoosastic, { index: config.elasticSearchHost.index, host: config.elasticSearchHost.host })
 Post = mongoose.model 'post', PostSchema
 Post.createMapping (err, mapping) ->
   console.log err
