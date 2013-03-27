@@ -19,10 +19,11 @@ _.mixin(_.str.exports())
 app = express()
 
 # Setup RedisStore for sessions
-sessionStore = new RedisStore(->
-  host = config.redis_url.hostname
-  port = config.redis_url.port
-  pass = config.redis_url.auth.split(':')[1])
+sessionStore = new RedisStore({
+  host: config.redis_url.hostname
+  port: config.redis_url.port
+  pass: config.redis_url.auth.split(':')[1]
+})
 
 console.log config.redis_url
 console.log "Connected with password \"" +  config.redis_url.auth.split(':')[1] + "\""
