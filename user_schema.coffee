@@ -1,4 +1,4 @@
-mongoose = require('mongoose')
+config = require './app_config'
 bcrypt = require 'bcrypt'
 
 # dependencies for authentication
@@ -6,7 +6,8 @@ Passport = require('passport')
 LocalStrategy = require('passport-local').Strategy;
 
 # Setup MongoDB connection.
-mongoose.connect('mongodb://localhost/journal')
+mongoose = require('mongoose')
+mongoose.connect(config.mongo_url)
 
 # Setup MongoDB schemas.
 Schema = mongoose.Schema
