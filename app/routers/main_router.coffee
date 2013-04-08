@@ -68,7 +68,5 @@ class exports.MainRouter extends Backbone.Router
 
     # Run query if there is one unless it's the same query as was run last time.
     query = decodeURIComponent query
-    unless query is "" or query is app.collections.search.query_str
+    unless query is app.collections.search.query_str
       app.collections.search.query(query)
-    else
-      app.collections.search.clear()
