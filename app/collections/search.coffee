@@ -20,6 +20,9 @@ module.exports = class Search extends Backbone.Collection
 
         @trigger 'search:complete'
 
+    else
+      @clear()
+
   # Remove my various bits of state.
   clear: ->
     @reset()
