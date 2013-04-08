@@ -4,11 +4,11 @@ module.exports = class Search extends Backbone.Collection
   model: Result
 
   query: (query) ->
-    @trigger 'search:started'
-    @query_str = query
-    start = new Date()
-    @reset()
     unless query is ""
+      @trigger 'search:started'
+      @query_str = query
+      start = new Date()
+      @reset()
       app.util.search query, (results) =>
         @searchtime = new Date() - start
         @total = results.hits.total
@@ -25,8 +25,8 @@ module.exports = class Search extends Backbone.Collection
 
   # Remove my various bits of state.
   clear: ->
-    @reset()
     @searchtime = null
     @max_score = null
     @total = null
     @query_str = null
+    @reset()
