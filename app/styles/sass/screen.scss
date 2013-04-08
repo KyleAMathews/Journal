@@ -163,7 +163,10 @@ input, textarea {
 }
 
 #post-edit {
-  margin-bottom: 300px;
+  @include trailer(10);
+  @media only screen and (max-width: 700px) {
+    @include trailer(5);
+  }
 
   #last-saved {
     float: right;
