@@ -1,3 +1,5 @@
+MenuDropdownView = require 'views/menu_dropdown_view'
+
 module.exports = class MenuBarView extends Backbone.View
 
   initialize: ->
@@ -7,6 +9,7 @@ module.exports = class MenuBarView extends Backbone.View
 
   events:
     'click .home-link': 'travelHome'
+    'click .dropdown-menu': 'toggleDropdown'
 
   travelHome: ->
     app.eventBus.trigger 'menuBar:click-home'
@@ -38,3 +41,16 @@ module.exports = class MenuBarView extends Backbone.View
 
   isVisible: ->
     return @$el.offset().top - @current > -50
+
+  toggleDropdown: ->
+    @$('.dropdown-menu').toggleClass('active')
+    left = $('.dropdown-menu').offset().left
+    menuBarPadding = 14
+    widthDropdown = 252
+    widthIcon = 21
+    left = left - widthDropdown + widthIcon + menuBarPadding
+    @$('ul.dropdown').toggle().css('left', left)
+    if @$('ul.dropdown').is(":visible")
+      if @dropdownView?
+        @dropdownView.close()
+      @dropdown = new MenuDropdownView( el: @$('ul.dropdown') ).render()
