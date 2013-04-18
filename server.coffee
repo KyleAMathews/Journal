@@ -296,18 +296,24 @@ app.del '/posts/:id', (req, res) ->
   res.send 'hello world'
 
 app.get '/drafts', (req, res) ->
-  Draft = mongoose.model 'draft'
-  Draft.find()
-    .where( '_user', req.user._id.toString())
-    .desc('created')
-    .run (err, drafts) ->
-      console.log 'drafts query done'
-      unless err or not drafts?
-        for draft in drafts
-          draft.setValue('id', draft.getValue('_id'))
-        res.json drafts
-      else
-        res.json 'found nothing'
+  if req.isAuthenticated()
+    if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
+      res.render 'index'
+    else
+      Draft = mongoose.model 'draft'
+      Draft.find()
+        .where( '_user', req.user._id.toString())
+        .desc('created')
+        .run (err, drafts) ->
+          console.log 'drafts query done'
+          unless err or not drafts?
+            for draft in drafts
+              draft.setValue('id', draft.getValue('_id'))
+            res.json drafts
+          else
+            res.json 'found nothing'
+  else
+    res.redirect '/login'
 
 app.get '/drafts/:id', (req, res) ->
   if req.isAuthenticated()

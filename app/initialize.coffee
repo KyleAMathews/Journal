@@ -6,7 +6,6 @@
 PostsCache = require 'collections/posts_cache'
 Drafts = require 'collections/drafts'
 MenuBarView = require 'views/menu_bar_view'
-DraftsIndicatorView = require 'views/drafts_indicator_view'
 Search = require 'collections/search'
 
 # Misc requires.
@@ -52,11 +51,6 @@ class exports.Application extends BrunchApplication
     # Create and render our infinity.js postsView.
     postsView = new PostsView collection: app.collections.posts, el: $('#posts')
     postsView.render()
-
-    @views.draftsIndicatorView = new DraftsIndicatorView(
-      el: $('#menu-container .drafts')
-      collection: @collections.drafts
-    ).render()
 
     scrollPosition()
     $(window).on 'click', app.util.clickHandler
