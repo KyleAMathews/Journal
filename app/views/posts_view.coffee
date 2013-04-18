@@ -71,10 +71,12 @@ class exports.PostsView extends Backbone.View
   scrollNext: ->
     curPosition = $(window).scrollTop() + 81
     nextY = _.find @postPositions, (y) -> curPosition < y
-    window.scrollTo(0, nextY - 80) # 42 px for the header + 36 px for two lines.
+    unless _.isUndefined nextY
+      window.scrollTo(0, nextY - 80) # 42 px for the header + 36 px for two lines.
 
   scrollPrevious: ->
     curPosition = $(window).scrollTop() + 79
     copyPostPostions = @postPositions.slice(0).reverse()
-    nextY = _.find copyPostPostions, (y) -> curPosition > y
-    window.scrollTo(0, nextY - 80) # 42 px for the header + 36 px for two lines.
+    prevY = _.find copyPostPostions, (y) -> curPosition > y
+    unless _.isUndefined prevY
+      window.scrollTo(0, prevY - 80) # 42 px for the header + 36 px for two lines.
