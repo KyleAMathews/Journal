@@ -124,7 +124,7 @@ class exports.Posts extends Backbone.Collection
     @burry.set('__ids__', nids)
 
   cachePost: (post) ->
-    @burry.set "posts_pid_#{ post.get('nid') }", post.toJSON()
+    @burry.set post.get('nid'), post.toJSON()
 
   loadFromCache: ->
     postsIds = @burry.get '__ids__'
@@ -138,4 +138,4 @@ class exports.Posts extends Backbone.Collection
     @setMaxNewPostFromCollection()
 
   loadNidFromCache: (nid) ->
-    return @burry.get "posts_pid_#{ nid }"
+    return @burry.get nid
