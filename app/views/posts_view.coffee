@@ -12,11 +12,19 @@ class exports.PostsView extends Backbone.View
     @listenTo @collection, 'add', @addOne
     @listenTo @collection, 'loading-posts', @showLoading
     @listenTo @collection, 'done-loading-posts', @hideLoading
+
     # When an individual post or a postEdit view is loaded, hide.
     @listenTo app.eventBus, 'pane:show', -> @$el.hide()
+
     # We're live, scroll to the last position.
     @listenTo app.eventBus, 'posts:show', -> @scrollLastPostion()
-    app.eventBus.on 'distance:bottom_page', ((distance) =>
+
+    # If the home link is clicked while on the PostsView, scroll to the top.
+    @listenTo app.eventBus, 'menuBar:click-home', =>
+      if @isVisible()
+        $("html, body").animate({ scrollTop: 0 })
+
+    @listenTo app.eventBus, 'distance:bottom_page', ((distance) =>
       # Don't load more posts while the postsView is hidden.
       if @$el.is(':hidden') then return
       if distance <= 1500 then @collection.load()
@@ -80,3 +88,6 @@ class exports.PostsView extends Backbone.View
     prevY = _.find copyPostPostions, (y) -> curPosition > y
     unless _.isUndefined prevY
       window.scrollTo(0, prevY - 80) # 42 px for the header + 36 px for two lines.
+
+  isVisible: ->
+    return @$el.is(':visible')

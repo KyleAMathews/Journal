@@ -9,7 +9,7 @@ module.exports = class MenuBarView extends Backbone.View
     'click .home-link': 'travelHome'
 
   travelHome: ->
-    $("html, body").animate({ scrollTop: 0 })
+    app.eventBus.trigger 'menuBar:click-home'
 
   scrollManagement: =>
     @current = $(window).scrollTop()
