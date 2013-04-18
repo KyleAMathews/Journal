@@ -21,14 +21,11 @@ html {
 
   background: $grey10;
   height: 3em;
+  position: fixed;
+  top: 0;
   width: 100%;
   z-index: 100;
 
-  // Fixed elements stutter on some mobile browsers.
-  @media only screen and (min-width: 700px) {
-    position: fixed;
-    top: 0;
-  }
 
   #menu-container {
     @include adjust-font-size-to(18px, 2);
@@ -108,9 +105,7 @@ html {
 // Main content wrapper.
 #wrapper {
   position: relative;
-  @media only screen and (min-width: 700px) {
-    @include leader(4);
-  }
+  @include leader(4);
 }
 
 #posts {
