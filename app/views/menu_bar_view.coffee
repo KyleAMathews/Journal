@@ -21,12 +21,6 @@ module.exports = class MenuBarView extends Backbone.View
         # We're scrolling up now so reset the menu bar just above the visible
         # window.
         if @scrollingDirection is "down"
-          pos = @current - 50
-          @$el.css('position', 'absolute')
-          unless @isVisible()
-            @$el.css('top', pos + "px")
-        # If the menu bar is even with the top of the window, set to fixed.
-        if @$el.offset().top >= @current
           @$el.css('position', 'fixed').css('top', 0)
         @scrollingDirection = "up"
       else
