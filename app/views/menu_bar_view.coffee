@@ -49,8 +49,11 @@ module.exports = class MenuBarView extends Backbone.View
     widthDropdown = 252
     widthIcon = 21
     left = left - widthDropdown + widthIcon + menuBarPadding
-    @$('ul.dropdown').toggle().css('left', left)
-    if @$('ul.dropdown').is(":visible")
-      if @dropdownView?
-        @dropdownView.close()
-      @dropdown = new MenuDropdownView( el: @$('ul.dropdown') ).render()
+    if @dropdownView?
+      @dropdownView.close()
+      @dropdownView = null
+    else
+      @$('.dropdown-menu').append('<ul class="dropdown"></ul>')
+      @dropdownView = new MenuDropdownView( el: @$('ul.dropdown') ).render()
+      @dropdownView.parent = @
+      @$('ul.dropdown').show()
