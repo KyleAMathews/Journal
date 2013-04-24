@@ -45,10 +45,6 @@ module.exports = class MenuBarView extends Backbone.View
   toggleDropdown: ->
     @$('.dropdown-menu').toggleClass('active')
     left = $('.dropdown-menu').offset().left
-    menuBarPadding = 14
-    widthDropdown = 252
-    widthIcon = 21
-    left = left - widthDropdown + widthIcon + menuBarPadding
     if @dropdownView?
       @dropdownView.close()
       @dropdownView = null
@@ -56,4 +52,9 @@ module.exports = class MenuBarView extends Backbone.View
       @$('.dropdown-menu').append('<ul class="dropdown"></ul>')
       @dropdownView = new MenuDropdownView( el: @$('ul.dropdown') ).render()
       @dropdownView.parent = @
-      @$('ul.dropdown').show()
+
+      menuBarPadding = 14
+      widthDropdown = 252
+      widthIcon = 21
+      left = left - widthDropdown + widthIcon + menuBarPadding
+      @$('ul.dropdown').css('left', left)
