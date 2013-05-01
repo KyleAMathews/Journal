@@ -10,8 +10,8 @@ class exports.MainRouter extends Backbone.Router
 
   initialize: ->
     # Define routing keyboard shortcuts.
-    key 's,/', => @search()
-    key 'h', => @home()
+    key 's,/', => @navigate('search', true)
+    key 'h', => @navigate('', true)
     key 'n', => @newPost(true)
 
   routes:
