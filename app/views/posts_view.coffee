@@ -19,6 +19,12 @@ class exports.PostsView extends Backbone.View
     # We're live, scroll to the last position.
     @listenTo app.eventBus, 'posts:show', -> @scrollLastPostion()
 
+    @listenTo app.eventBus, 'keydown', (keycode) =>
+      if keycode is 74 # j
+        @scrollNext()
+      if keycode is 75 # k
+        @scrollPrevious()
+
     # If the home link is clicked while on the PostsView, scroll to the top.
     @listenTo app.eventBus, 'menuBar:click-home', =>
       if @isVisible()
@@ -29,8 +35,6 @@ class exports.PostsView extends Backbone.View
       if @$el.is(':hidden') then return
       if distance <= 1500 then @collection.load()
     ), @
-    key('j', => @scrollNext())
-    key('k', => @scrollPrevious())
 
 
   render: =>
