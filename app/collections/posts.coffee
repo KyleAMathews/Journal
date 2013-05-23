@@ -123,6 +123,11 @@ class exports.Posts extends Backbone.Collection
     nids = (post.get('nid') for post in posts)
     @burry.set('__ids__', nids)
 
+    # Check that all the posts are cached in localstorage.
+    for post in posts
+      unless @burry.get(post.get('nid'))
+        @burry.set(post.id, post.toJSON())
+
   cachePost: (post) ->
     @burry.set post.get('nid'), post.toJSON()
 
