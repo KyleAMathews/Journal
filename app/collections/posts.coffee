@@ -13,8 +13,8 @@ class exports.Posts extends Backbone.Collection
     @setMaxNewPostFromCollection = =>
       @maxNew = @max((post) -> return moment(post.get('created')).unix())
 
-    # Try loading posts from localstorage.
-    @burry = new Burry.Store('posts')
+    # Try loading posts from localstorage with a default TTL of three weeks.
+    @burry = new Burry.Store('posts', 30240)
     if @burry.get('__ids__')?
       @loadFromCache()
 
@@ -122,11 +122,6 @@ class exports.Posts extends Backbone.Collection
     posts = @first(10)
     nids = (post.get('nid') for post in posts)
     @burry.set('__ids__', nids)
-
-    # Check that all the posts are cached in localstorage.
-    for post in posts
-      unless @burry.get(post.get('nid'))
-        @burry.set(post.id, post.toJSON())
 
   cachePost: (post) ->
     @burry.set post.get('nid'), post.toJSON()
