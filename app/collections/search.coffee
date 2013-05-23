@@ -14,9 +14,9 @@ module.exports = class Search extends Backbone.Collection
         @total = results.hits.total
         @max_score = results.hits.max_score
         @reset(results.hits.hits)
-        for entry in results.facets.year.entries
-          year = moment.utc(entry.time).year()
-          console.log year + ": " + entry.count
+        #for entry in results.facets.year.entries
+          #year = moment.utc(entry.time).year()
+          #console.log year + ": " + entry.count
 
         @trigger 'search:complete'
 

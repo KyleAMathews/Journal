@@ -1,7 +1,6 @@
 mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost/journal')
 mongoosastic = require('mongoosastic')
-require('mongoose-double')(mongoose)
 config = require './app_config'
 
 # Setup MongoDB schemas.
@@ -22,9 +21,9 @@ PostSchema = new Schema (
 
 PostSchema.plugin(mongoosastic, { index: 'journal_posts', host: config.elasticSearchHost })
 Post = mongoose.model 'post', PostSchema
-Post.createMapping (err, mapping) ->
-  console.log err
-  console.log mapping
+#Post.createMapping (err, mapping) ->
+  #console.log err
+  #console.log mapping
 
 DraftSchema = new Schema (
   title: { type: String }
