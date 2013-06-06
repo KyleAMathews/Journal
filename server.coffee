@@ -382,9 +382,11 @@ app.get '/search/:query', (req, res) ->
         size: 40
         query:
           query_string:
-            fields: ['title', 'body']
-            query: req.params.query
+            fields: ['title', 'body'] # search the title and body of posts.
+            default_operator: 'AND' # require all query terms to match
+            query: req.params.query # The query from the REST call.
             use_dis_max: true
+            fuzzy_prefix_length : 3
         filter:
           #and: [
             term:
