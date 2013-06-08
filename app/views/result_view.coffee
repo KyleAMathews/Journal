@@ -3,6 +3,9 @@ module.exports = class ResultView extends Backbone.View
 
   className: 'search-result'
 
+  events:
+    'click .js-link': 'navigate'
+
   render: ->
     if @model.get('highlight').title?[0]?
       title = @model.get('highlight').title?[0]
@@ -16,6 +19,9 @@ module.exports = class ResultView extends Backbone.View
       title: title
       body: body
       created: moment(@model.get('_source').created).format("D MMMM YYYY")
-      link: '/node/' + @model.get('_source').nid
     }
     @
+
+  navigate: ->
+    link = '/node/' + @model.get('_source').nid
+    app.router.navigate(link, true)

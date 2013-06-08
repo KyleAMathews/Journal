@@ -1,3 +1,12 @@
+# Routing keyboard shortcuts.
+key 's,/', => app.router.navigate('search', true)
+key 'h', => app.router.navigate('', true)
+key 'n', => app.router.newPost(true)
+
+# Move around PostsView
+#key('j', -> @scrollNext())
+#key('k', -> @scrollPrevious())
+
 $(document).on 'keydown', 'textarea, input', (e) ->
   if e.which is 27
     $(e.currentTarget).blur()

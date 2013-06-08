@@ -13,8 +13,8 @@ class exports.Posts extends Backbone.Collection
     @setMaxNewPostFromCollection = =>
       @maxNew = @max((post) -> return moment(post.get('created')).unix())
 
-    # Try loading posts from localstorage.
-    @burry = new Burry.Store('posts')
+    # Try loading posts from localstorage with a default TTL of three weeks.
+    @burry = new Burry.Store('posts', 30240)
     if @burry.get('__ids__')?
       @loadFromCache()
 
@@ -111,7 +111,7 @@ class exports.Posts extends Backbone.Collection
     # If the server returns a post that's newer than any already displayed,
     # trigger reset on the collection so postViews re-renders.
     maxNew = _.max(response, (post) -> return moment(post.created).unix())
-    if @maxNew? and maxNew? and @maxNew.get('created') < maxNew.created
+    if @maxNew? and _.isObject(@maxNew) and maxNew? and @maxNew.get('created') < maxNew.created
       @maxNew = @first()
       # Seems we need to wait a bit to let the new post(s) to be added to the collection
       # to ensure they'll be rendered.
@@ -124,7 +124,7 @@ class exports.Posts extends Backbone.Collection
     @burry.set('__ids__', nids)
 
   cachePost: (post) ->
-    @burry.set "posts_pid_#{ post.get('nid') }", post.toJSON()
+    @burry.set post.get('nid'), post.toJSON()
 
   loadFromCache: ->
     postsIds = @burry.get '__ids__'
@@ -138,4 +138,4 @@ class exports.Posts extends Backbone.Collection
     @setMaxNewPostFromCollection()
 
   loadNidFromCache: (nid) ->
-    return @burry.get "posts_pid_#{ nid }"
+    return @burry.get nid

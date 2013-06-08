@@ -37,7 +37,23 @@ p, #post-edit .expanding-textarea textarea, ul, ol, li, pre {
 
 a {
   @include hover-link();
+
   font-weight: bold;
+}
+
+.link {
+  @include hover-link();
+
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.link-color {
+  color: $link_color;
+
+  &:hover, &:focus {
+    color: #09f;
+  }
 }
 
 h1,h2,h3,h4,h5 {

@@ -3,21 +3,17 @@
 {PostEditView} = require 'views/post_edit_view'
 Post = require 'models/post'
 Draft = require 'models/draft'
+DraftsView = require 'views/drafts_view'
 SearchView = require 'views/search_view'
 
 class exports.MainRouter extends Backbone.Router
-
-  initialize: ->
-    # Define routing keyboard shortcuts.
-    key 's,/', => @search()
-    key 'h', => @home()
-    key 'n', => @newPost(true)
 
   routes:
     '': 'home'
     'node/:id': 'post'
     'posts/new': 'newPost'
     'node/:id/edit': 'editPost'
+    'drafts': 'drafts'
     'drafts/:id': 'editDraft'
     'search': 'search'
     'search/:query': 'search'
@@ -50,6 +46,10 @@ class exports.MainRouter extends Backbone.Router
     postEditView = new PostEditView model: post
     app.views.main.show(postEditView)
 
+  drafts: ->
+    draftsView = new DraftsView collection: app.collections.drafts
+    app.views.main.show(draftsView)
+
   editDraft: (id) ->
     draftModel = app.collections.drafts.get(id)
     newPost = new Post
@@ -68,7 +68,5 @@ class exports.MainRouter extends Backbone.Router
 
     # Run query if there is one unless it's the same query as was run last time.
     query = decodeURIComponent query
-    unless query is "" or query is app.collections.search.query_str
+    unless query is app.collections.search.query_str
       app.collections.search.query(query)
-    else
-      app.collections.search.clear()

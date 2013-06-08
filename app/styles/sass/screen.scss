@@ -21,14 +21,11 @@ html {
 
   background: $grey10;
   height: 3em;
+  position: fixed;
+  top: 0;
   width: 100%;
   z-index: 100;
 
-  // Fixed elements stutter on some mobile browsers.
-  @media only screen and (min-width: 700px) {
-    position: fixed;
-    top: 0;
-  }
 
   #menu-container {
     @include adjust-font-size-to(18px, 2);
@@ -37,70 +34,36 @@ html {
     a {
       color: $grey90;
     }
-    .logout {
-      @media only screen and (max-width: 450px) {
-        display: none;
-      }
-
-      float: right;
-    }
-    .drafts {
-      margin-left: 10%;
-      color: $grey60;
-      cursor: pointer;
-      position: relative;
-      display: inline-block;
-      height: 48px;
-      padding: 0 20px;
-      &.active {
-        color: $grey90;
-        .arrow {
-          display: inline;
-        }
-      }
-      &.dropdown-active {
-        background: $grey20;
-        .dropdown {
-          display: block;
-        }
-      }
-      .arrow {
-        display: none;
-        color: $grey80;
-        font-size: 16px;
-        padding-left: 2px;
-      }
-      .dropdown {
-        @include adjust-font-size-to(13px, 1, 18px);
-        @include no-bullets();
-        @include box-shadow(0 3px 7px $grey40);
-        @include leading-border(2px, 0.5);
-        @include padding-trailer(0.5);
-
-        display: none;
-        z-index: 100;
-        border-color: $grey60;
-        width: 300px;
-        position: absolute;
-        left: -30px;
-        padding-left: 0;
-        background: $grey20;
-        margin: 0;
-        li {
-          color: $grey60;
-          padding: rhythm(0.5) rhythm(1);
-          &:hover {
-            background: $grey60;
-            color: $grey10;
-          }
-        }
-        em {
-          @include adjust-font-size-to(11px, 1, 13px);
-        }
-      }
-    }
     .search {
       margin-left: 10%;
+    }
+    .dropdown-menu {
+      @include adjust-font-size-to(36px, 2, 18px);
+      cursor: pointer;
+      float: right;
+
+      ul.dropdown {
+        @include adjust-font-size-to(16px, 1, 36px);
+        @include no-bullets();
+
+        background: $grey20;
+        border-color: $grey10;
+        color: $grey80;
+        margin: 0;
+        padding: rhythm(0.25) 0 rhythm(0.25) 0;
+        position: absolute;
+        top: 45.5px;
+        width: 252px;
+
+        li {
+          color: $grey80;
+          padding: rhythm(0.5) rhythm(1);
+
+          &:hover {
+            background: $grey40;
+          }
+        }
+      }
     }
   }
 }
@@ -108,9 +71,7 @@ html {
 // Main content wrapper.
 #wrapper {
   position: relative;
-  @media only screen and (min-width: 700px) {
-    @include leader(4);
-  }
+  @include leader(4);
 }
 
 #posts {
@@ -143,7 +104,7 @@ html {
     display: block;
     margin-bottom: rhythm(-1, 11px);
   }
-  img {
+  img, video {
     max-width: 100%;
   }
 }
@@ -163,7 +124,10 @@ input, textarea {
 }
 
 #post-edit {
-  margin-bottom: 300px;
+  @include trailer(10);
+  @media only screen and (max-width: 700px) {
+    @include trailer(5);
+  }
 
   #last-saved {
     float: right;

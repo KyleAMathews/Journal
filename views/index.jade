@@ -4,14 +4,9 @@ block body
   div#menu-bar
     #menu-wrapper
       #menu-container
-        a(href="/") Home
-        span(class="drafts") Drafts(
-          span(class="count") 0
-          )
-          span(class='arrow') ▼
-          ul.dropdown
+        a(class="home-link", href="/") Home
         a(href="/search", class="search") Search
-        a(href="/logout", class="logout") Logout
+        span(class="dropdown-menu") +
   div#wrapper
     div#container
     div#posts
