@@ -399,15 +399,15 @@ app.get '/search/:query', (req, res) ->
                 #to: 1293840000000
             #}
             #]
-        #facets:
-          #year:
-            #date_histogram:
-              #field: 'created'
-              #interval: 'year'
-          #month:
-            #date_histogram:
-              #field: 'created'
-              #interval: 'month'
+        facets:
+          year:
+            date_histogram:
+              field: 'created'
+              interval: 'year'
+          month:
+            date_histogram:
+              field: 'created'
+              interval: 'month'
         highlight:
           fields:
             title: {"fragment_size" : 300}

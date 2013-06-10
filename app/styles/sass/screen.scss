@@ -291,7 +291,7 @@ input[type="submit"], button, .button {
 }
 
 .throbber div {
-  @include animation-support(animation, fade 1s linear infinite);
+  @include animation(fade 1s linear infinite);
   @include border-radius(50px);
   @include box-shadow(0 0 3px rgba(0,0,0,0.2));
 
@@ -320,18 +320,18 @@ input[type="submit"], button, .button {
   top: 8px;
 }
 
-.throbber div.bar1 {@include transform(rotate(0deg) translate(0, -142%)); @include animation-support(animation-delay, 0s);}
-.throbber div.bar2 {@include transform(rotate(30deg) translate(0, -142%)); @include animation-support(animation-delay, -0.9167s);}
-.throbber div.bar3 {@include transform(rotate(60deg) translate(0, -142%)); @include animation-support(animation-delay, -0.833s);}
-.throbber div.bar4 {@include transform(rotate(90deg) translate(0, -142%)); @include animation-support(animation-delay, -0.75s);}
-.throbber div.bar5 {@include transform(rotate(120deg) translate(0, -142%)); @include animation-support(animation-delay, -0.667s);}
-.throbber div.bar6 {@include transform(rotate(150deg) translate(0, -142%)); @include animation-support(animation-delay, -0.5833s);}
-.throbber div.bar7 {@include transform(rotate(180deg) translate(0, -142%)); @include animation-support(animation-delay, -0.5s);}
-.throbber div.bar8 {@include transform(rotate(210deg) translate(0, -142%)); @include animation-support(animation-delay, -0.41667s);}
-.throbber div.bar9 {@include transform(rotate(240deg) translate(0, -142%)); @include animation-support(animation-delay, -0.333s);}
-.throbber div.bar10 {@include transform(rotate(270deg) translate(0, -142%)); @include animation-support(animation-delay, -0.25s);}
-.throbber div.bar11 {@include transform(rotate(300deg) translate(0, -142%)); @include animation-support(animation-delay, -0.1667s);}
-.throbber div.bar12 {@include transform(rotate(330deg) translate(0, -142%)); @include animation-support(animation-delay, -0.0833s);}
+.throbber div.bar1 {@include transform(rotate(0deg) translate(0, -142%)); @include animation-delay(0s);}
+.throbber div.bar2 {@include transform(rotate(30deg) translate(0, -142%)); @include animation-delay(-0.9167s);}
+.throbber div.bar3 {@include transform(rotate(60deg) translate(0, -142%)); @include animation-delay(-0.833s);}
+.throbber div.bar4 {@include transform(rotate(90deg) translate(0, -142%)); @include animation-delay(-0.75s);}
+.throbber div.bar5 {@include transform(rotate(120deg) translate(0, -142%)); @include animation-delay(-0.667s);}
+.throbber div.bar6 {@include transform(rotate(150deg) translate(0, -142%)); @include animation-delay(-0.5833s);}
+.throbber div.bar7 {@include transform(rotate(180deg) translate(0, -142%)); @include animation-delay(-0.5s);}
+.throbber div.bar8 {@include transform(rotate(210deg) translate(0, -142%)); @include animation-delay(-0.41667s);}
+.throbber div.bar9 {@include transform(rotate(240deg) translate(0, -142%)); @include animation-delay(-0.333s);}
+.throbber div.bar10 {@include transform(rotate(270deg) translate(0, -142%)); @include animation-delay(-0.25s);}
+.throbber div.bar11 {@include transform(rotate(300deg) translate(0, -142%)); @include animation-delay(-0.1667s);}
+.throbber div.bar12 {@include transform(rotate(330deg) translate(0, -142%)); @include animation-delay(-0.0833s);}
 
 @include keyframes(fade) {
   from {opacity: 1;}
