@@ -1,3 +1,5 @@
+config = require './app_config'
+
 express = require 'express'
 mongoose = require 'mongoose'
 passport = require 'passport'
@@ -16,6 +18,13 @@ _.mixin(_.str.exports())
 
 app = express()
 
+# Setup RedisStore for sessions
+sessionStore = new RedisStore({
+  host: config.redis_url.hostname
+  port: config.redis_url.port
+  pass: config.redis_url.auth.split(':')[1]
+})
+
 # Setup Express middleware.
 app.configure ->
   app.set 'views', __dirname + '/views'
@@ -25,7 +34,7 @@ app.configure ->
   app.use express.responseTime()
   app.use express.bodyParser()
   app.use express.methodOverride()
-  app.use express.session({ store: new RedisStore, secret: 'Make Stuff', cookie: { maxAge: 1209600000 }}) # two weeks
+  app.use express.session({ store: sessionStore, secret: 'Make Stuff', cookie: { maxAge: 1209600000 }}) # two weeks
   app.use passport.initialize()
   app.use passport.session()
   app.use flash()
