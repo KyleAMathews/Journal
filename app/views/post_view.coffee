@@ -7,6 +7,11 @@ class exports.PostView extends Backbone.View
     @debouncedRender = _.debounce @render, 25
     @listenTo @model, 'change', @debouncedRender
 
+    # Unless we're looking at a postView on a single page, set this postView
+    # on the model so it's accessible.
+    unless @options.page
+      @model.view = @
+
     window.post = @
 
   events:

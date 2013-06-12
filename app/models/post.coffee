@@ -45,3 +45,9 @@ module.exports = class Post extends Backbone.Model
       @set { readMore: marked(readMore) }, silent: true
     else
       @set { readMore: marked(@get('body')) }, silent: true
+
+  position: ->
+    if @view
+      return @view.$el.offset().top
+    else
+      return undefined

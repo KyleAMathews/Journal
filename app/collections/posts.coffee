@@ -5,6 +5,7 @@ class exports.Posts extends Backbone.Collection
   model: Post
 
   initialize: ->
+    @currentScrollModel = 0
     @lastPost = ""
     @timesLoaded = 0
     @loading(false)
@@ -139,3 +140,19 @@ class exports.Posts extends Backbone.Collection
 
   loadNidFromCache: (nid) ->
     return @burry.get nid
+
+  posNext: ->
+    model = @at(@currentScrollModel + 1)
+    if model?
+      @currentScrollModel = @currentScrollModel + 1
+      return model.position()
+    else
+      return undefined
+
+  posPrev: ->
+    model = @at(@currentScrollModel - 1)
+    if model?
+      @currentScrollModel = @currentScrollModel - 1
+      return model.position()
+    else
+      return undefined
