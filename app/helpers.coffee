@@ -39,11 +39,9 @@ exports.clickHandler = (e) ->
     app.router.navigate(href, {trigger: true})
 
 exports.scrollPosition = ->
-  currentPosition = ->
+  app.eventBus.on 'distance:scrollTop', ->
     if window.location.pathname is '/'
       app.site.set postsScroll: $(window).scrollTop()
-  throttled = _.throttle(currentPosition, 500)
-  $(window).scroll(throttled)
 
 exports.search = (query, callback) ->
   # ajax=true is fix for Chrome bug where clicking back shows JSON result.
@@ -54,6 +52,7 @@ exports.search = (query, callback) ->
 $ ->
   reportNearBottom = ->
     app.eventBus.trigger 'distance:bottom_page', ($(document).height() - $(window).height()) - $(window).scrollTop()
+    app.eventBus.trigger 'distance:scrollTop', $(window).scrollTop()
   throttled = _.throttle(reportNearBottom, 200)
   $(window).scroll(throttled)
 
