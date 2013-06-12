@@ -36,6 +36,7 @@ class exports.Application extends BrunchApplication
 
     @router = new MainRouter
     @eventBus = _.extend({}, Backbone.Events)
+    @eventBus.on 'all', (eventName, args) -> console.log 'EBUS', eventName, args
 
     @collections.posts = new Posts
     @collections.posts.load(true)
