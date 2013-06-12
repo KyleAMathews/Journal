@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "engines": {
     "node": "~0.8.14",
-    "npm":  "1.1.x"
+    "npm": "1.1.x"
   },
   "dependencies": {
     "express": "3.x.x",
@@ -26,11 +26,11 @@
     "connect-flash": "",
     "appcache-brunch": "",
     "gm": "",
-    "uglify-js-brunch": "1.x.x"
+    "uglify-js-brunch": "1.x.x",
+    "redis": "~0.8.3"
   },
   "devDependencies": {
     "mocha": "1.x.x",
     "expect.js": "0.x.x"
   }
 }
-

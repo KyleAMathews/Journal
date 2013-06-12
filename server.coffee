@@ -4,6 +4,7 @@ express = require 'express'
 mongoose = require 'mongoose'
 passport = require 'passport'
 RedisStore = require('connect-redis')(express)
+redis = require 'redis'
 require './post_schema'
 require './user_schema'
 async = require 'async'
@@ -24,6 +25,9 @@ sessionStore = new RedisStore({
   port: config.redis_url.port
   pass: config.redis_url.auth.split(':')[1]
 })
+
+# Setup redis client
+rclient = redis.createClient()
 
 # Setup Express middleware.
 app.configure ->
@@ -380,6 +384,35 @@ app.get '/search', (req, res) ->
   else
     res.redirect '/login'
 
+recordQuery = (query, user) ->
+  key = "query_#{ user }_#{ (Math.random() * 10000).toString().split('.')[0] }"
+  rclient.set key, query
+  # expire query data after one month.
+  rclient.expire key, 2592000
+
+app.get '/search/queries', (req, res) ->
+  if req.isAuthenticated()
+    if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
+      res.render 'index'
+    else
+      # Fetch all queries stored by this person.
+      rclient.keys("query_#{ req.user._id.toString() }_*", (err, keys) ->
+        rclient.mget keys, (err, values) ->
+          # Group common queries together and sort by count.
+          results = _.groupBy(values)
+          set = []
+          for query, number of results
+            obj = {}
+            obj[query] = number.length
+            set.push(obj)
+          set = _.sortBy set, (query) -> return _.values(query)[0]
+          sortedSet = []
+          for query in set
+            sortedSet.push _.keys(query)[0]
+          sortedSet = sortedSet.reverse()
+          res.json sortedSet
+      )
+
 app.get '/search/:query', (req, res) ->
   if req.isAuthenticated()
     if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
@@ -424,6 +457,9 @@ app.get '/search/:query', (req, res) ->
       }, (err, posts) ->
         if err then console.error err
         res.json posts
+        # Record the query if there's a result.
+        if posts.hits.total > 0
+          recordQuery(req.params.query, req.user._id.toString())
       )
   else
     res.redirect '/login'

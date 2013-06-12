@@ -3,6 +3,14 @@ module.exports = class Search extends Backbone.Collection
 
   model: Result
 
+  initialize: ->
+    @fetchCommonQueries()
+    @on 'search:complete', => @fetchCommonQueries()
+
+  fetchCommonQueries: ->
+    $.getJSON '/search/queries', (data) =>
+      @queries = data
+
   query: (query) ->
     unless query is ""
       @trigger 'search:started'

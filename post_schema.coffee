@@ -19,6 +19,8 @@ PostSchema = new Schema (
   longitude: { type: String, default: "", es_type: 'string' }
   _user: { type: Schema.ObjectId, ref: 'User', index: true }
 )
+
+# Setup Elasticsearch with the posts collection.
 PostSchema.plugin(mongoosastic, config.elasticSearchHost)
 Post = mongoose.model 'post', PostSchema
 #Post.createMapping (err, mapping) ->

@@ -347,3 +347,7 @@ input[type="submit"], button, .button {
   padding: rhythm(1);
   position: absolute;
 }
+
+ul.common-queries {
+  @include leader(0.5);
+}
