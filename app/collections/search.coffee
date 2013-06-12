@@ -36,4 +36,5 @@ module.exports = class Search extends Backbone.Collection
     @max_score = null
     @total = null
     @query_str = null
+    @scrollTop = null
     @reset()

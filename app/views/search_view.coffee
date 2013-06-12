@@ -8,6 +8,9 @@ module.exports = class SearchView extends Backbone.View
     @listenTo @collection, 'reset', @renderResults
     @listenTo @collection, 'search:started', @showThrobber
     @listenTo @collection, 'search:complete', @hideThrobber
+    # Track where on search page the user has scrolled.
+    @listenTo app.eventBus, 'distance:scrollTop', (scrollTop) =>
+      @collection.scrollTop = scrollTop
 
   events:
     'click button': 'search'
@@ -20,6 +23,8 @@ module.exports = class SearchView extends Backbone.View
     _.defer =>
       @$('input').val(@collection.query_str)
       @$('input').focus()
+      if @collection.scrollTop?
+        $(window).scrollTop(@collection.scrollTop)
     @
 
   renderResults: ->
