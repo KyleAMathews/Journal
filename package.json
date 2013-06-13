@@ -22,7 +22,6 @@
     "javascript-brunch": "1.x.x",
     "coffee-script-brunch": "1.x.x",
     "eco-brunch": "1.x.x",
-    "mongoose-double": "",
     "connect-flash": "",
     "appcache-brunch": "",
     "gm": "",
