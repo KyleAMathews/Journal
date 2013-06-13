@@ -21,7 +21,7 @@ PostSchema = new Schema (
 )
 
 # Setup Elasticsearch with the posts collection.
-PostSchema.plugin(mongoosastic, config.elasticSearchHost)
+PostSchema.plugin(mongoosastic, { host: config.elasticSearchHost.href, index: config.elasticSearchHost.index })
 Post = mongoose.model 'post', PostSchema
 #Post.createMapping (err, mapping) ->
   #console.log err

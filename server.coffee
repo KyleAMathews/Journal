@@ -458,7 +458,7 @@ app.get '/search/:query', (req, res) ->
         if err then console.error err
         res.json posts
         # Record the query if there's a result.
-        if posts.hits.total > 0
+        if posts?.hits.total > 0 and not err
           recordQuery(req.params.query, req.user._id.toString())
       )
   else
