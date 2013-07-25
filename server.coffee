@@ -399,7 +399,10 @@ app.get '/search/queries', (req, res) ->
       rclient.keys("query_#{ req.user._id.toString() }_*", (err, keys) ->
         rclient.mget keys, (err, values) ->
           # Group common queries together and sort by count.
-          results = _.groupBy(values)
+          processed = []
+          for value in values
+            processed.push value.trim()
+          results = _.groupBy(processed)
           set = []
           for query, number of results
             obj = {}
