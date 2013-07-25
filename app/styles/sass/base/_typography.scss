@@ -133,3 +133,11 @@ hr {
   height: 1px;
   width: 100%;
 }
+
+blockquote {
+  @include apply-side-rhythm-border('left', 1px, 1);
+
+  border-color: $grey80;
+  font-style: normal;
+  margin-left: rhythm(0.5);
+}
