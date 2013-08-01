@@ -23,9 +23,25 @@ PostSchema = new Schema (
 # Setup Elasticsearch with the posts collection.
 PostSchema.plugin(mongoosastic, config.elasticSearchHost)
 Post = mongoose.model 'post', PostSchema
+# Only need to run below if the index hasn't been created yet.
 #Post.createMapping (err, mapping) ->
   #console.log err
   #console.log mapping
+
+# Synchronize models with Elastic Search.
+Post = mongoose.model 'post'
+stream = Post.synchronize()
+count = 0
+
+stream.on('data', (err, doc) ->
+  count++
+)
+stream.on('close', ->
+  console.log('indexed ' + count + ' documents!')
+)
+stream.on('error', (err) ->
+  console.log('error', err)
+)
 
 DraftSchema = new Schema (
   title: { type: String }

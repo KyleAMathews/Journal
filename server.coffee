@@ -45,22 +45,6 @@ app.configure ->
   app.use app.router
   app.use express.static 'public'
 
-# Synchronize models with Elastic Search.
-Post = mongoose.model 'post'
-stream = Post.synchronize()
-count = 0
-
-stream.on('data', (err, doc) ->
-  count++
-)
-stream.on('close', ->
-  console.log('indexed ' + count + ' documents!')
-)
-stream.on('error', (err) ->
-  console.log(err)
-  return
-)
-
 # Routes.
 app.get '/', (req, res) ->
   if req.isAuthenticated()
@@ -446,9 +430,11 @@ app.get '/search/:query', (req, res) ->
             use_dis_max: true
             fuzzy_prefix_length : 3
         filter:
-          #and: [
-            term:
-              _user: req.user._id.toString()
+          and: [
+            {
+              term:
+                _user: req.user._id.toString()
+            }
             #,
             #{
             #range:
@@ -456,9 +442,12 @@ app.get '/search/:query', (req, res) ->
                 #from: 1262304000000
                 #to: 1293840000000
             #}
-            #]
-            not: # Filter out deleted posts.
-              deleted: true
+            ,
+            {
+              term:
+                deleted: false
+            }
+          ]
         facets:
           year:
             date_histogram:
