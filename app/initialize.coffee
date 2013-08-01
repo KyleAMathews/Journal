@@ -53,6 +53,9 @@ class exports.Application extends BrunchApplication
     postsView = new PostsView collection: app.collections.posts, el: $('#posts')
     postsView.render()
 
+    # Add fastclick.js to prevent 300 ms delay on click event on mobile browsers.
+    FastClick.attach(document.body)
+
     scrollPosition()
     $(window).on 'click', app.util.clickHandler
 
