@@ -457,6 +457,8 @@ app.get '/search/:query', (req, res) ->
                 #to: 1293840000000
             #}
             #]
+            not: # Filter out deleted posts.
+              deleted: true
         facets:
           year:
             date_histogram:
