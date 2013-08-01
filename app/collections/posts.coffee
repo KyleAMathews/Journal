@@ -98,9 +98,16 @@ class exports.Posts extends Backbone.Collection
           # We're not done loading until the server responds.
           @loading(false)
 
-          # Cache all posts by nid.
+          # Cache all posts by nid if there's no more recent local changes.
           for post in @models
-            @cachePost(post)
+            # There's offline changes, replace what we loaded from the server
+            # with the local changes.
+            if @burry.get(post.get('nid'))?.changed > post.get('changed')
+              console.log @burry.get(post.get('nid'))
+              console.log post.toJSON()
+              @get(post.id).set(@burry.get(post.get('nid')))
+            else
+              @cachePost(post)
 
           _.defer =>
             @setCacheIds()

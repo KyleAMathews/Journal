@@ -120,23 +120,27 @@ class exports.PostEditView extends Backbone.View
 
     # Save it.
     @$('.js-loading').css('display', 'inline-block')
-    @model.save(obj, success: @modelSynced)
+    @model.save(obj,
+      success: @modelSynced
+      error: @modelSynced
+    )
 
   # Once the model is done syncing, cleanup the draft model
   # force a re-render of postsView and go back.
   modelSynced: (model, response, options) =>
+    console.log 'inside modelSynced'
+    console.log model
+    console.log @options
     if @options.draftModel?
       @options.draftModel.destroy()
       newPost = true
     @model.collection.add @model, silent: true
     app.collections.posts.trigger 'reset'
 
-    # Save model in localstorage and update the Posts collection localstorage cache.
-    app.collections.posts.burry.set(model.id, model.toJSON())
+    # Update the Posts collection localstorage cache.
     app.collections.posts.setCacheIds()
 
-    # Going back, in the case of a new post, means back to the home page which isn't the
-    # expected behavior when creating a new post.
+    # Going back, except when creating a new post, means going back to the home page.
     unless newPost
       window.history.back()
     else

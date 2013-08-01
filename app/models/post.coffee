@@ -13,6 +13,7 @@ module.exports = class Post extends Backbone.Model
       @collection.url
 
   initialize: ->
+    super()
     @on 'sync', ->
       if @get('body')? and @get('title')?
         @renderThings(true)

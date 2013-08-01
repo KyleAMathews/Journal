@@ -62,7 +62,7 @@ class exports.MainRouter extends Backbone.Router
     postEditView = new PostEditView model: newPost, draftModel: draftModel
     app.views.main.show(postEditView)
 
-  search: (query = "") ->
+  search: (query = "", reset = false) ->
     searchView = new SearchView collection: app.collections.search
     app.views.main.show(searchView)
 

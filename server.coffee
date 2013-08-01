@@ -71,6 +71,14 @@ app.get '/', (req, res) ->
       res.render 'index'
   else
     res.redirect '/login'
+
+# Simple ping route so client can detect if it's online or not.
+app.get '/ping', (req, res) ->
+  if req.isAuthenticated()
+    res.send(200)
+  else
+    res.send(403)
+
 app.get '/node/:nid', (req, res) ->
   if req.isAuthenticated()
     if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
@@ -278,7 +286,8 @@ app.post '/posts', (req, res) ->
 
       unless post.created?
         post.created = new Date()
-      post.changed = post.created
+      unless post.changed?
+        post.changed = post.created
       post.save (err) ->
         unless err
           res.json id: post._id, created: post.created, nid: post.nid
