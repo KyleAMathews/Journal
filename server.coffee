@@ -297,16 +297,29 @@ app.put '/posts/:id', (req, res) ->
       post.save (err) ->
         if err
           console.error err
-          res.json 400, error: "The post wasn't saved correctly"
+          res.json 500, error: "The post wasn't saved correctly"
         res.json {
           saved: true
           changed: post.changed
         }
     else
-      console.error 'update error', err
+      console.log 'update error', err
 
 app.del '/posts/:id', (req, res) ->
-  res.send 'hello world'
+  Post = mongoose.model 'post'
+  Post.findById req.params.id, (err, post) ->
+    unless err or not post? or post._user.toString() isnt req.user._id.toString()
+      post.changed = new Date()
+      post.deleted = true
+      post.save (err) ->
+        if err
+          console.error err
+          res.json 500, error: "The post wasn't saved correctly"
+        res.json {
+          deleted: true
+        }
+    else
+      console.log 'update error', err
 
 app.get '/drafts', (req, res) ->
   if req.isAuthenticated()
