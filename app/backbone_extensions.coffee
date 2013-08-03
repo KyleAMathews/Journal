@@ -24,7 +24,7 @@ Backbone.View.prototype.addChildView = (childView) ->
 
 Backbone.Model.prototype.saveLocal = ->
   if @collection.burry?
-    @collection.burry.set(@id, @toJSON())
+    @collection.burry.set(@get('nid'), @toJSON())
 
 #Backbone.Model.prototype._save = Backbone.Model.prototype.save
 #Backbone.Model.prototype.save = ->
@@ -75,4 +75,3 @@ Backbone.Model.prototype.saveLocal = ->
       #else if @get('needsSynced')
         #console.log 'saving model that needs synced', @get('title'), @constructor.name
         #@save()
-

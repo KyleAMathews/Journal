@@ -9,10 +9,14 @@ class exports.Posts extends Backbone.Collection
     @lastPost = ""
     @timesLoaded = 0
     @loading(false)
-    @on 'set_cache_ids', @setCacheIds
     @postsViewActive = false
     @setMaxNewPostFromCollection = =>
       @maxNew = @max((post) -> return moment(post.get('created')).unix())
+
+    # Remove post from cache when it's removed from the collection.
+    @on 'remove', (model) ->
+      @setCacheIds()
+      @burry.remove(model.get('nid'))
 
     # Try loading posts from localstorage with a default TTL of three weeks.
     @burry = new Burry.Store('posts', 30240)

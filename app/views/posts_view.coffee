@@ -64,6 +64,8 @@ class exports.PostsView extends Backbone.View
     for post in @collection.models
       @addOne post
 
+  # TODO make this function smarter about order i.e. it knows index of post
+  # so render post in that place within its views.
   addOne: (post) =>
     postView = new PostView model: post
     postView.render()

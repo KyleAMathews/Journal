@@ -153,12 +153,7 @@ class exports.PostEditView extends Backbone.View
     app.collections.posts.trigger 'reset'
     app.router.navigate '/', true
     if @options.draftModel? then @options.draftModel.destroy()
-    @model.destroy(
-      {
-        success: =>
-          app.collections.posts.trigger 'set_cache_ids'
-      }
-    )
+    @model.destroy()
 
   cancel: ->
     window.history.back()
