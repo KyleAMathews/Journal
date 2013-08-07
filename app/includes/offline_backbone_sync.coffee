@@ -156,7 +156,11 @@ app.state.on 'change:online', (model, online) ->
 
     # Grab the post model and update and save it.
     else if operation is "PUT"
-      app.collections.posts.getByNid(model.nid)?.set(model).save()
+      if app.collections.posts.getByNid(model.nid)?
+        app.collections.posts.getByNid(model.nid).set(model).save()
+      else
+        model = app.util.loadPostModel(model.nid, true)
+        realModel.once('sync', -> realModel.set(model).save())
 
     # Find the post model and delete it.
     else if operation is "DELETE"
