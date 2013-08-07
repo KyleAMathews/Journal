@@ -61,7 +61,7 @@ class exports.PostsView extends Backbone.View
     @$('.js-top-loading').hide()
 
   addAll: ->
-    for post in @collection.models
+    for post in @collection.getPosts()
       @addOne post
 
   # TODO make this function smarter about order i.e. it knows index of post

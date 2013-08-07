@@ -118,6 +118,9 @@ class exports.PostEditView extends Backbone.View
       obj.latitude = pos.latitude
       obj.longitude = pos.longitude
 
+    # Not a draft anymore.
+    @model.set('draft', false)
+
     # Save it.
     @$('.js-loading').css('display', 'inline-block')
     @model.save(obj,
@@ -125,15 +128,12 @@ class exports.PostEditView extends Backbone.View
       error: @modelSynced
     )
 
-  # Once the model is done syncing, cleanup the draft model
+  # Once the model is done syncing,
   # force a re-render of postsView and go back.
   modelSynced: (model, response, options) =>
     console.log 'inside modelSynced'
     console.log model
     console.log @options
-    if @options.draftModel?
-      @options.draftModel.destroy()
-      newPost = true
     @model.collection.add @model, silent: true
     app.collections.posts.trigger 'reset'
 
@@ -141,7 +141,7 @@ class exports.PostEditView extends Backbone.View
     app.collections.posts.setCacheIds()
 
     # Going back, except when creating a new post, means going back to the home page.
-    unless newPost
+    unless @options.newPost
       window.history.back()
     else
       app.router.navigate '/node/' + @model.get('nid'), true
@@ -152,7 +152,6 @@ class exports.PostEditView extends Backbone.View
     app.collections.posts.sort()
     app.collections.posts.trigger 'reset'
     app.router.navigate '/', true
-    if @options.draftModel? then @options.draftModel.destroy()
     @model.destroy()
 
   cancel: ->
@@ -163,7 +162,8 @@ class exports.PostEditView extends Backbone.View
     @$('.date-edit').show()
 
   _draftSave: ->
-    if @options.draftModel?
+    # Save if this is a new post or a draft.
+    if @options.newPost or @model.get('draft')
       # Autosave two seconds after last time user types.
       clearTimeout(@saveDraftAfterDelay)
       @saveDraftAfterDelay = setTimeout(@draftSave, 2000)
@@ -172,21 +172,17 @@ class exports.PostEditView extends Backbone.View
         @draftSave()
 
   draftSave: (e) =>
-    if @options.draftModel?
-      obj = {}
-      obj.title = @$('.title textarea').val()
-      obj.body = @$('.body textarea').val()
-      @options.draftModel.save(obj,
-        {
-          # Indicate in UI that the draft was saved.
-          success: (model) =>
-            # Merge changes into drafts collection.
-            app.collections.drafts.add(model, merge: true)
-
-            # Update (or show) the "last saved" message.
-            @$('#last-saved').html "Last saved at " + new moment().format('h:mm:ss a')
-        }
-      )
+    @model.set('title', @$('.title textarea').val())
+    @model.set('body', @$('.body textarea').val())
+    @model.set('draft', true)
+    @model.save(null,
+      {
+        # Indicate in UI that the draft was saved.
+        success: (model) =>
+          # Update (or show) the "last saved" message.
+          @$('#last-saved').html "Last saved at " + new moment().format('h:mm:ss a')
+      }
+    )
 
   onClose: ->
     clearTimeout(@saveDraftAfterDelay)

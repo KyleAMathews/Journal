@@ -1,12 +1,5 @@
 # TODO
 #
-# Remove drafts
-#
-# create the new post with current draft logic with draft flas set to true (and scrub draft posts from elasticsearch results).
-# run an update script which converts all drafts into posts w/ flag set to true
-# Change drafts api call to get all models with draft set to true and regular
-# POSTS get should ignore draft models.
-#
 # Load still unsaved new posts so when reloading the app so can load and edit multiple times even though
 # the app has been offline the whole time.
 #

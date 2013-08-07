@@ -29,6 +29,17 @@ class exports.Posts extends Backbone.Collection
         if moment().diff(moment(@lastFetch), 'minutes') > 15
           @loadChangesSinceLastFetch()
 
+    # Load drafts
+    @fetchDrafts()
+
+  getPosts: ->
+    @filter (post) ->
+      post.get('draft') is false
+
+  getDrafts: ->
+    @filter (post) ->
+      post.get('draft') is true
+
   getByNid: (nid) ->
     nid = parseInt(nid, 10)
     return @find (post) -> post.get('nid') is nid
@@ -131,7 +142,7 @@ class exports.Posts extends Backbone.Collection
         @trigger 'reset'
 
   setCacheIds: ->
-    posts = @first(10)
+    posts = @getPosts().slice(0, 10)
     nids = (post.get('nid') for post in posts)
     @burry.set('__ids__', nids)
 
@@ -167,3 +178,9 @@ class exports.Posts extends Backbone.Collection
       return model.position()
     else
       return undefined
+
+  fetchDrafts: ->
+    $.getJSON('/posts?draft=true', (drafts) =>
+      @add drafts
+      @trigger 'sync:drafts'
+    )

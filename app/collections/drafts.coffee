@@ -6,7 +6,18 @@ module.exports = class Drafts extends Backbone.Collection
   model: Draft
 
   initialize: ->
-    @burry = new Burry.Store('drafts', 30240)
+    # Convert old stand alone drafts into new post drafts.
+    @on 'sync', =>
+      for draft in @models
+        app.collections.posts.create({
+          title: draft.get('title')
+          body: draft.get('body')
+          created: draft.get('created')
+          changed: draft.get('changed')
+          draft: true
+        })
+        draft.destroy()
+
 
   comparator: (model, model2) ->
     if model.get('created') is model2.get('created') then return 0

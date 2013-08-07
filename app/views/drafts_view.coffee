@@ -5,10 +5,10 @@ module.exports = class DraftsView extends Backbone.View
   className: "drafts-page"
 
   initialize: ->
-    @listenTo @collection, 'reset', @render
+    @listenTo @collection, 'sync:drafts', @render
 
   events:
-    'click li': 'gotoDraftEditPage'
+    'click a': 'clickHandler'
 
   render: ->
     @$el.html DraftsTemplate()
@@ -16,9 +16,11 @@ module.exports = class DraftsView extends Backbone.View
     @
 
   addAll: ->
-    for draft in @collection.models
-      @$('ul').append("<li class='link link-color' data-draft-id='#{ draft.get('id')}'>#{ draft.get 'title' } <em>#{ moment(draft.get('created')).fromNow() }</em></li>")
+    for draft in @collection.getDrafts()
+      @$('ul').append("<li class='link'><a href='node/#{ draft.get('nid') }'>#{ draft.get 'title' } <em>#{ moment(draft.get('created')).fromNow() }</em></a></li>")
 
-  gotoDraftEditPage: (e) ->
-    draftId = $(e.target).closest('li').data('draft-id')
-    app.router.navigate('drafts/' + draftId, true)
+  clickHandler: (e) ->
+    e.preventDefault()
+    href = $(e.currentTarget).attr('href')
+    app.router.navigate(href, {trigger: true})
+
