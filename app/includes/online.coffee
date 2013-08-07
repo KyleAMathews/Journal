@@ -8,14 +8,11 @@ class Online
 
     app.state.on 'change:online', (model, online) =>
       console.log 'online state changed', online
-      # If we go offline, try pinging the server every 15 seconds until we detect
+      # If we go offline, try pinging the server until we detect
       # we've reconnected.
-      if online
-        clearInterval(@id)
-      else
-        @ping()
+      unless online
         @pingWait = 1000
-        setTimeout(@ping, @pingWait)
+        @ping()
 
   ping: =>
     @lastPing = new Date()
@@ -27,7 +24,7 @@ class Online
       error: (result) =>
         app.state.set 'online', false
 
-        # Back off interval between pings until two minutes.
+        # Back off interval between pings until the interval reaches two minutes.
         unless @pingWait >= 120000
           @pingWait = @pingWait * 1.5
         else

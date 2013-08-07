@@ -6,6 +6,7 @@
 PostsCache = require 'collections/posts_cache'
 Drafts = require 'collections/drafts'
 MenuBarView = require 'views/menu_bar_view'
+OfflineStatusView = require 'views/offline_status_view'
 Search = require 'collections/search'
 State = require 'models/state'
 
@@ -50,6 +51,7 @@ class exports.Application extends BrunchApplication
 
 
     new MenuBarView el: $('#menu-bar')
+    new OfflineStatusView el: $('.offline-status')
 
     @views.main = new MainView el: $('#container')
 

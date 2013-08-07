@@ -1,8 +1,5 @@
 # TODO
 #
-# Load still unsaved new posts so when reloading the app so can load and edit multiple times even though
-# the app has been offline the whole time.
-#
 # When the site goes offline, add a header at top saying as much + (if there's space) explain
 # that changes will be synced when we come online again.
 

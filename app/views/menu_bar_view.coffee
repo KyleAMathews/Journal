@@ -7,6 +7,8 @@ module.exports = class MenuBarView extends Backbone.View
     if Modernizr.touch
       $(window).on 'scroll', @throttledScroll
 
+    @listenTo app.state, 'change:online', @toggleOnlineStatus
+
   events:
     'click .home-link': 'travelHome'
     'click .dropdown-menu': 'toggleDropdown'
