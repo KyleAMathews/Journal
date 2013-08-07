@@ -1,9 +1,3 @@
-# TODO
-#
-# When the site goes offline, add a header at top saying as much + (if there's space) explain
-# that changes will be synced when we come online again.
-
-
 # Map from CRUD to HTTP for our default `Backbone.sync` implementation.
 methodMap =
   'create': 'POST',
@@ -46,21 +40,18 @@ Backbone.sync = (method, model, options = {}) ->
 
   error = options.error
   options.error = (xhr) ->
-    console.log xhr # TODO set app state to offline if status is 0
     if xhr.status is 0
-      console.log "We're offline!!!"
       app.state.set('online', false)
       saveOfflineChanges(model, _.extend(params, options))
     if error then error(model, xhr, options)
     model.trigger('error', model, xhr, options)
 
   # if we're online (or we don't know yet), do normal sync.
-  if app.state.get('online') or not app.state.get('online')?
+  if app.state.isOnline()
     if params.type in ['POST', 'PUT', 'PATCH']
       # Persist changes locally.
       @saveLocal()
 
-    console.log _.extend(params, options)
     # Make the request, allowing the user to override any Ajax options.
     xhr = options.xhr = Backbone.ajax(_.extend(params, options))
     model.trigger('request', model, xhr, options)
@@ -74,11 +65,8 @@ saveOfflineChanges = (model, options) ->
   if options.type is "GET" then return
   unless model.constructor.name is 'Post' then return
 
-  console.log model, options
-
   # Ensure there's a created date.
   unless model.get('created')?
-    console.log 'setting created'
     model.set('created', new Date().toJSON())
 
   model.set('changed', new Date().toJSON())
@@ -102,8 +90,6 @@ app.state.on 'change:online', (model, online) ->
     model._key = key
 
     operations.push model
-
-  console.log operations
 
   # If there was multiple operations done on the same post, merge those
   # operations together. We do this as if we create a post offline and then modify
@@ -131,29 +117,49 @@ app.state.on 'change:online', (model, online) ->
 
     return model
 
-  console.log operations
-
   for model in operations
     operation = model._operation
     key = model._key
     model._operation = null
     model._key = null
 
-    # TODO get jquery ajax promise and only remove key if sync is successful.
+    # TODO get jquery promise and only remove key if sync is successful.
+    # Save the post to the server. If the post model is still in memory, use
+    # that.
     if operation is 'POST'
       # Delete temp version of post from the Posts collection cache.
       app.collections.posts.burry.remove(key.split('::')[2])
+      app.collections.posts.remove
 
-      # Delete our temporary IDs so that model.save will still create the model
-      # on the server.
-      model.id = null
-      model.nid = null
-      console.log 'creating new post', model
-      app.collections.posts.create model
+      # If this post is being edited right now, save that model.
+      if app.models.editing?.get('nid') is model.nid
+        app.models.editing.id = null
+        app.models.editing.unset('nid')
+        app.models.editing.save()
+      # Else if the post is in the posts collection (which it will be if we've
+      # saved it already offline), save that model.
+      else if app.collections.posts.getByNid(model.nid)?
+        # Delete our temporary IDs so that model.save will still create the model
+        # on the server.
+        model = app.collections.posts.getByNid(model.nid)
+        model.id = null
+        model.unset('nid')
+        # Ensure post is added to cached list of most recent posts so it shows
+        # up right away on refreshing the app.
+        model.once 'sync', -> app.collections.posts.setCacheIds()
+        model.save()
+      else
+        # Delete our temporary IDs so that model.save will still create the model
+        # on the server.
+        model.id = null
+        model.nid = null
+        app.collections.posts.create model
 
+    # Grab the post model and update and save it.
     else if operation is "PUT"
-      app.collections.posts.getByNid(model.nid).set(model).save()
+      app.collections.posts.getByNid(model.nid)?.set(model).save()
 
+    # Find the post model and delete it.
     else if operation is "DELETE"
       # If the model is in the posts collection, delete it immediatly.
       if app.collections.posts.getByNid(model.nid)?
@@ -161,10 +167,9 @@ app.state.on 'change:online', (model, online) ->
       # Else load it off the server and then destroy it.
       else
         model = app.util.loadPostModel(model.nid, true)
-        model.once('sync', -> if model.destroy then model.destroy())
+        model.once('sync', -> if model.destroy? then model.destroy())
 
-    # Remove every burry operation on this post.
-    nid = key.split('::')[2]
+    # Remove any key with this nid.
     for id in burry.keys()
-      if _.str.contains(id, nid)
+      if _.str.contains id, key.split('::')[2]
         burry.remove(id)

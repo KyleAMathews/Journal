@@ -7,7 +7,6 @@ class Online
     document.addEventListener("onLineChange", @ping)
 
     app.state.on 'change:online', (model, online) =>
-      console.log 'online state changed', online
       # If we go offline, try pinging the server until we detect
       # we've reconnected.
       unless online
@@ -21,6 +20,7 @@ class Online
       success: (result) =>
         @pingWait = 1000
         app.state.set 'online', true
+
       error: (result) =>
         app.state.set 'online', false
 
@@ -31,4 +31,4 @@ class Online
           @pingWait = 120000
         setTimeout(@ping, @pingWait)
 
-new Online()
+app.online = new Online()

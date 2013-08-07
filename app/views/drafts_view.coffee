@@ -17,7 +17,7 @@ module.exports = class DraftsView extends Backbone.View
 
   addAll: ->
     for draft in @collection.getDrafts()
-      @$('ul').append("<li class='link'><a href='node/#{ draft.get('nid') }'>#{ draft.get 'title' } <em>#{ moment(draft.get('created')).fromNow() }</em></a></li>")
+      @$('ul').append("<li class='link'><a href='node/#{ draft.get('nid') }/edit'>#{ draft.get 'title' } <em>#{ moment(draft.get('created')).fromNow() }</em></a></li>")
 
   clickHandler: (e) ->
     e.preventDefault()

@@ -14,7 +14,7 @@ class exports.Posts extends Backbone.Collection
       @maxNew = @max((post) -> return moment(post.get('created')).unix())
 
     # Remove post from cache when it's removed from the collection.
-    @on 'remove', (model) ->
+    @on 'add remove', (model) ->
       @setCacheIds()
       @burry.remove(model.get('nid'))
 
@@ -59,7 +59,7 @@ class exports.Posts extends Backbone.Collection
   # Load all posts (newer than our oldest post) created or changed since the last fetch.
   loadChangesSinceLastFetch: ->
     # If we're offline, return.
-    unless app.state.get('online') then return
+    unless app.state.isOnline() then return
 
     @fetch
       update: true
@@ -76,7 +76,7 @@ class exports.Posts extends Backbone.Collection
 
   load: (override = false) ->
     # If we're offline, return.
-    unless app.state.get('online') then return
+    unless app.state.isOnline() then return
 
     # We've already loaded everything.
     if @loadedAllThePosts then return
@@ -186,6 +186,8 @@ class exports.Posts extends Backbone.Collection
       return undefined
 
   fetchDrafts: ->
+    unless app.state.isOnline() then return
+
     $.getJSON('/posts?draft=true', (drafts) =>
       @add drafts
       @trigger 'sync:drafts'

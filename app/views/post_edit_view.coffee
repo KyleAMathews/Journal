@@ -6,6 +6,7 @@ class exports.PostEditView extends Backbone.View
 
   initialize: ->
     @throttledAutoScroll = _.throttle(@_autoscroll, 250)
+    app.models.editing = @model
 
   events:
     'click .save': 'save'
@@ -171,7 +172,7 @@ class exports.PostEditView extends Backbone.View
       if @keystrokecounter % 20 is 0
         @draftSave()
 
-  draftSave: (e) =>
+  draftSave: () =>
     @model.set('title', @$('.title textarea').val())
     @model.set('body', @$('.body textarea').val())
     @model.set('draft', true)
@@ -186,3 +187,4 @@ class exports.PostEditView extends Backbone.View
 
   onClose: ->
     clearTimeout(@saveDraftAfterDelay)
+    app.models.editing = null
