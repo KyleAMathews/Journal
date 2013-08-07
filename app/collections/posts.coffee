@@ -58,6 +58,9 @@ class exports.Posts extends Backbone.Collection
 
   # Load all posts (newer than our oldest post) created or changed since the last fetch.
   loadChangesSinceLastFetch: ->
+    # If we're offline, return.
+    unless app.state.get('online') then return
+
     @fetch
       update: true
       remove: false
@@ -72,6 +75,9 @@ class exports.Posts extends Backbone.Collection
         @resetCollection(response)
 
   load: (override = false) ->
+    # If we're offline, return.
+    unless app.state.get('online') then return
+
     # We've already loaded everything.
     if @loadedAllThePosts then return
 
