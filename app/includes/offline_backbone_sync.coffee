@@ -41,6 +41,9 @@ Backbone.sync = (method, model, options = {}) ->
 
   success = options.success
   options.success = (resp) ->
+    # A successful Ajax request means we're online.
+    app.state.set('online', true)
+
     if success then success(model, resp, options)
     model.trigger('sync', model, resp, options)
 
@@ -54,8 +57,8 @@ Backbone.sync = (method, model, options = {}) ->
     if error then error(model, xhr, options)
     model.trigger('error', model, xhr, options)
 
-  # if we're online, do normal sync.
-  if app.state.get('online')
+  # if we're online (or we don't know yet), do normal sync.
+  if app.state.get('online') or not app.state.get('online')?
     if params.type in ['POST', 'PUT', 'PATCH']
       # Persist changes locally.
       @saveLocal()

@@ -53,7 +53,6 @@ class exports.Application extends BrunchApplication
 
     @views.main = new MainView el: $('#container')
 
-    # Create and render our infinity.js postsView.
     postsView = new PostsView collection: app.collections.posts, el: $('#posts')
     postsView.render()
 
