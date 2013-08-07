@@ -145,7 +145,7 @@ input, textarea {
 
     width: 100%;
     .expandingText textarea {
-      @include adjust-font-size-to(36px);
+      @include adjust-font-size-to(24px);
       @extend %title-font;
 
       border: 0;
