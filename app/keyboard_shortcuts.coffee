@@ -1,7 +1,7 @@
 # Routing keyboard shortcuts.
 key 's,/', => app.router.navigate('search', true)
 key 'h', => app.router.navigate('', true)
-key 'n', => app.router.newPost(true)
+key 'n', => app.router.newPost(true, true)
 
 # Move around PostsView
 #key('j', -> @scrollNext())
