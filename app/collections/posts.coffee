@@ -67,6 +67,10 @@ class exports.Posts extends Backbone.Collection
       data:
         changed: @lastFetch
         oldest: @lastPost
+      error: (xhr) =>
+        @loading(false)
+        if status is 0
+          app.state.set('online', false)
       success: (collection, response, options) =>
         # Record fetch time.
         @lastFetch = new Date().toJSON()
@@ -98,6 +102,10 @@ class exports.Posts extends Backbone.Collection
         remove: false
         data:
           created: created
+        error: (xhr) =>
+          @loading(false)
+          if status is 0
+            app.state.set('online', false)
         success: (collection, response, options) =>
           # Record fetch time.
           @lastFetch = new Date().toJSON()

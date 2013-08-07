@@ -129,7 +129,6 @@ app.state.on 'change:online', (model, online) ->
     if operation is 'POST'
       # Delete temp version of post from the Posts collection cache.
       app.collections.posts.burry.remove(key.split('::')[2])
-      app.collections.posts.remove
 
       # If this post is being edited right now, save that model.
       if app.models.editing?.get('nid') is model.nid
