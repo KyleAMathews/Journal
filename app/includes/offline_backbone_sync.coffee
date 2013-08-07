@@ -1,5 +1,10 @@
 # TODO
 #
+# make the site offline state checking smarter (e.g. check for changes to navigation.onLine and
+# do an automatic backoff of how soon I'll check if we're online again and
+# show that up top ala gmail—go to max of 3 minutes perhaps and let people
+# check manually).
+#
 # Remove drafts
 #
 # create the new post with current draft logic with draft flas set to true (and scrub draft posts from elasticsearch results).
@@ -7,16 +12,8 @@
 # Change drafts api call to get all models with draft set to true and regular
 # POSTS get should ignore draft models.
 #
-# save new post models created offline into the localstorage so they're loaded
-# when reloading the app so can load and edit multiple times even though
+# Load still unsaved new posts so when reloading the app so can load and edit multiple times even though
 # the app has been offline the whole time.
-#
-# set site state to offline and make sure everything still works that way.
-#
-# make the site state checking smarter (e.g. check for changes to navigation.onLine and
-# do an automatic backoff of how soon I'll check if we're online again and
-# show that up top ala gmail—go to max of 3 minutes perhaps and let people
-# check manually).
 
 
 # Map from CRUD to HTTP for our default `Backbone.sync` implementation.
@@ -61,6 +58,7 @@ Backbone.sync = (method, model, options = {}) ->
     console.log xhr # TODO set app state to offline if status is 0
     if xhr.status is 0
       console.log "We're offline!!!"
+      app.state.set('online', false)
       saveOfflineChanges(model, _.extend(params, options))
     if error then error(model, xhr, options)
     model.trigger('error', model, xhr, options)
@@ -78,6 +76,8 @@ Backbone.sync = (method, model, options = {}) ->
     return xhr
   else
     saveOfflineChanges(model, _.extend(params, options))
+    if success then success(model, { status: 200 }, options)
+    model.trigger('sync', model, { status: 200 }, options)
 
 saveOfflineChanges = (model, options) ->
   if options.type is "GET" then return
@@ -148,7 +148,7 @@ app.state.on 'change:online', (model, online) ->
     model._operation = null
     model._key = null
 
-    # TODO get jquery promise and only remove key if sync is successful.
+    # TODO get jquery ajax promise and only remove key if sync is successful.
     if operation is 'POST'
       # Delete temp version of post from the Posts collection cache.
       app.collections.posts.burry.remove(key.split('::')[2])
@@ -170,6 +170,10 @@ app.state.on 'change:online', (model, online) ->
       # Else load it off the server and then destroy it.
       else
         model = app.util.loadPostModel(model.nid, true)
-        model.once('sync', -> model.destroy())
+        model.once('sync', -> if model.destroy then model.destroy())
 
-    burry.remove(key)
+    # Remove every burry operation on this post.
+    nid = key.split('::')[2]
+    for id in burry.keys()
+      if _.str.contains(id, nid)
+        burry.remove(id)
