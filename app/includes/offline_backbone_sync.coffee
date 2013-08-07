@@ -1,10 +1,5 @@
 # TODO
 #
-# make the site offline state checking smarter (e.g. check for changes to navigation.onLine and
-# do an automatic backoff of how soon I'll check if we're online again and
-# show that up top ala gmail—go to max of 3 minutes perhaps and let people
-# check manually).
-#
 # Remove drafts
 #
 # create the new post with current draft logic with draft flas set to true (and scrub draft posts from elasticsearch results).
@@ -14,6 +9,9 @@
 #
 # Load still unsaved new posts so when reloading the app so can load and edit multiple times even though
 # the app has been offline the whole time.
+#
+# When the site goes offline, add a header at top saying as much + (if there's space) explain
+# that changes will be synced when we come online again.
 
 
 # Map from CRUD to HTTP for our default `Backbone.sync` implementation.

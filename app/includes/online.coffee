@@ -1,5 +1,8 @@
 class Online
   constructor: ->
+    # TODO verify actual event name.
+    document.addEventListener("onLineChange", @ping)
+
     app.state.on 'change:online', (model, online) =>
       console.log 'online state changed', online
       # If we go offline, try pinging the server every 15 seconds until we detect
