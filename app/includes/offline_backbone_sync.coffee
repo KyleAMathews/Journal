@@ -43,6 +43,9 @@ Backbone.sync = (method, model, options = {}) ->
     if xhr.status is 0
       app.state.set('online', false)
       saveOfflineChanges(model, _.extend(params, options))
+    # The user isn't logged in. Redirect to login page.
+    else if xhr.status is 401
+      window.location = "/login"
     if error then error(model, xhr, options)
     model.trigger('error', model, xhr, options)
 
