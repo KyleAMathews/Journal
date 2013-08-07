@@ -162,8 +162,9 @@ app.state.on 'change:online', (model, online) ->
       if app.collections.posts.getByNid(model.nid)?
         app.collections.posts.getByNid(model.nid).set(model).save()
       else
-        model = app.util.loadPostModel(model.nid, true)
-        realModel.once('sync', -> realModel.set(model).save())
+        do ->
+          realModel = app.util.loadPostModel(model.nid, true)
+          realModel.once('sync', -> realModel.set(model).save())
 
     # Find the post model and delete it.
     else if operation is "DELETE"
@@ -172,8 +173,9 @@ app.state.on 'change:online', (model, online) ->
         app.collections.posts.getByNid(model.nid).destroy()
       # Else load it off the server and then destroy it.
       else
-        model = app.util.loadPostModel(model.nid, true)
-        model.once('sync', -> if model.destroy? then model.destroy())
+        do ->
+          realModel = app.util.loadPostModel(model.nid, true)
+          realModel.once('sync', -> if realModel.destroy? then realModel.destroy())
 
     # Remove any key with this nid.
     for id in burry.keys()
