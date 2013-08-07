@@ -7,17 +7,23 @@ class Online
       if online
         clearInterval(@id)
       else
-        #@ping()
-        @id = setInterval(@ping, 1500)
+        @ping()
+        @pingWait = 1000
+        setTimeout(@ping, @pingWait)
 
   ping: =>
+    @lastPing = new Date()
     $.ajax
       url: '/ping'
-      success: (result) ->
-        console.log result
+      success: (result) =>
         app.state.set 'online', true
-      error: (result) ->
-        console.log result
+      error: (result) =>
         app.state.set 'online', false
+        # Back off interval between pings until two minutes.
+        unless @pingWait >= 120000
+          @pingWait = @pingWait * 1.5
+        else
+          @pingWait = 120000
+        setTimeout(@ping, @pingWait)
 
 new Online()
