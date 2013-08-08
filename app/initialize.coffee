@@ -6,7 +6,9 @@
 PostsCache = require 'collections/posts_cache'
 Drafts = require 'collections/drafts'
 MenuBarView = require 'views/menu_bar_view'
+OfflineStatusView = require 'views/offline_status_view'
 Search = require 'collections/search'
+State = require 'models/state'
 
 # Misc requires.
 require 'backbone_extensions'
@@ -18,11 +20,15 @@ class exports.Application extends BrunchApplication
     # Mixin Underscore.String functions.
     _.mixin(_.str.exports())
 
+    @eventBus = _.extend({}, Backbone.Events)
+    @eventBus.on 'all', (eventName, args) -> console.log 'EBUS', eventName, args
     @collections = {}
+    @models = {}
     @views = {}
     @util = {}
     @templates = {}
     @geolocation = require 'geolocation'
+    @state = new State()
 
     @util.loadPostModel = loadPostModel
     @util.clickHandler = clickHandler
@@ -35,8 +41,6 @@ class exports.Application extends BrunchApplication
     @site = new Backbone.Model
 
     @router = new MainRouter
-    @eventBus = _.extend({}, Backbone.Events)
-    @eventBus.on 'all', (eventName, args) -> console.log 'EBUS', eventName, args
 
     @collections.posts = new Posts
     @collections.posts.load(true)
@@ -46,10 +50,10 @@ class exports.Application extends BrunchApplication
     @collections.search = new Search
 
     new MenuBarView el: $('#menu-bar')
+    new OfflineStatusView el: $('.offline-status')
 
     @views.main = new MainView el: $('#container')
 
-    # Create and render our infinity.js postsView.
     postsView = new PostsView collection: app.collections.posts, el: $('#posts')
     postsView.render()
 
@@ -65,3 +69,5 @@ unless location.pathname is '/login'
 # Misc requires. Some depend on the app.eventBus being created hence the deferred.
 _.defer ->
   require 'keyboard_shortcuts'
+  require 'includes/online'
+  require 'includes/offline_backbone_sync'

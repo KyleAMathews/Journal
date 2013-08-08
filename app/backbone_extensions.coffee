@@ -21,3 +21,7 @@ Backbone.View.prototype.addChildView = (childView) ->
   if !@children then @children = []
   @children.push childView
   return childView
+
+Backbone.Model.prototype.saveLocal = ->
+  if @collection.burry?
+    @collection.burry.set(@get('nid'), @toJSON())

@@ -68,6 +68,18 @@ html {
   }
 }
 
+.offline-status {
+  background: rgba(255, 255, 163, 0.7);
+  display: none;
+  height: 3em;
+  line-height: 3em;
+  position: fixed;
+  text-align: center;
+  top: 3em;
+  width: 100%;
+  z-index: 10;
+}
+
 // Main content wrapper.
 #wrapper {
   position: relative;
@@ -133,7 +145,7 @@ input, textarea {
 
     width: 100%;
     .expandingText textarea {
-      @include adjust-font-size-to(36px);
+      @include adjust-font-size-to(24px);
       @extend %title-font;
 
       border: 0;
