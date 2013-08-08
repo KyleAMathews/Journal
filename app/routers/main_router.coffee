@@ -28,10 +28,7 @@ class exports.MainRouter extends Backbone.Router
     postView = new PostView model: post, page: true
     app.views.main.show(postView)
 
-  newPost: (focusTitle = false, replaceUrl = false) ->
-    if replaceUrl
-      app.router.navigate('posts/new')
-
+  newPost: (focusTitle = false) ->
     # Scroll to top of page.
     document.body.scrollTop = document.documentElement.scrollTop = 0
     newPost = new Post {}, collection: app.collections.posts

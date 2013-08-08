@@ -49,7 +49,6 @@ class exports.Application extends BrunchApplication
     @collections.drafts.fetch()
     @collections.search = new Search
 
-
     new MenuBarView el: $('#menu-bar')
     new OfflineStatusView el: $('.offline-status')
 

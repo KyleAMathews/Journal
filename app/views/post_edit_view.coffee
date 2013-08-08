@@ -132,9 +132,6 @@ class exports.PostEditView extends Backbone.View
   # Once the model is done syncing,
   # force a re-render of postsView and go back.
   modelSynced: (model, response, options) =>
-    console.log 'inside modelSynced'
-    console.log model
-    console.log @options
     @model.collection.add @model, silent: true
     app.collections.posts.trigger 'reset'
 

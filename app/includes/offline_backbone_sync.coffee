@@ -7,7 +7,7 @@ methodMap =
   'read':   'GET'
 
 # Local storage.
-window.a = burry = new Burry.Store('offline_changes')
+window.offline_changes = burry = new Burry.Store('offline_changes')
 
 # Persist changes made while the app is offline to localstorage so these changes
 # can be replyed when we come back online.
@@ -61,11 +61,14 @@ Backbone.sync = (method, model, options = {}) ->
     return xhr
   else
     saveOfflineChanges(model, _.extend(params, options))
+    # Simulate success.
     if success then success(model, { status: 200 }, options)
     model.trigger('sync', model, { status: 200 }, options)
 
 saveOfflineChanges = (model, options) ->
+  # No changes to save.
   if options.type is "GET" then return
+  # Only save posts for now.
   unless model.constructor.name is 'Post' then return
 
   # Ensure there's a created date.
@@ -85,6 +88,7 @@ app.state.on 'change:online', (model, online) ->
   if online and burry.keys().length > 0
     replayChanges()
 
+# Replay operations performed by the user offline so to persist them to the server.
  window.replayChanges = ->
   operations = []
   for key in burry.keys()
@@ -135,6 +139,8 @@ app.state.on 'change:online', (model, online) ->
 
       # If this post is being edited right now, save that model.
       if app.models.editing?.get('nid') is model.nid
+        # Delete our temporary IDs so that model.save will still create the model
+        # on the server.
         app.models.editing.id = null
         app.models.editing.unset('nid')
         app.models.editing.save()

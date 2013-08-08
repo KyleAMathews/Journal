@@ -56,7 +56,7 @@ class exports.Posts extends Backbone.Collection
       @trigger 'done-loading-posts'
       @isLoading = false
 
-  errorHandler: (models, xhr) =>
+  fetchErrorHandler: (models, xhr) =>
     @loading(false)
     if xhr.status is 0
       app.state.set('online', false)
@@ -74,7 +74,7 @@ class exports.Posts extends Backbone.Collection
       data:
         changed: @lastFetch
         oldest: @lastPost
-      error: @errorHandler
+      error: @fetchErrorHandler
       success: (collection, response, options) =>
         # Record fetch time.
         @lastFetch = new Date().toJSON()
@@ -106,7 +106,7 @@ class exports.Posts extends Backbone.Collection
         remove: false
         data:
           created: created
-        error: @errorHandler
+        error: @fetchErrorHandler
         success: (collection, response, options) =>
           # Record fetch time.
           @lastFetch = new Date().toJSON()
@@ -128,9 +128,9 @@ class exports.Posts extends Backbone.Collection
           # We're not done loading until the server responds.
           @loading(false)
 
-          # Cache all posts by nid if there's no more recent local changes.
+          # Cache all posts by nid unless there are local changes that are more recent.
           for post in @models
-            # There's offline changes, replace what we loaded from the server
+            # There's offline changes. Replace what we loaded from the server
             # with the local changes.
             if @burry.get(post.get('nid'))?.changed > post.get('changed')
               console.log @burry.get(post.get('nid'))

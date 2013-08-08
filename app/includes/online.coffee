@@ -3,8 +3,8 @@ class Online
     # Check on app load if we're actually online or not.
     @ping()
 
-    # TODO verify actual event name.
-    document.addEventListener("onLineChange", @ping)
+    document.addEventListener('online',  @ping)
+    document.addEventListener('offline',  @ping)
 
     app.state.on 'change:online', (model, online) =>
       # If we go offline, try pinging the server until we detect
