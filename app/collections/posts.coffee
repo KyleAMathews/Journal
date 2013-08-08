@@ -9,10 +9,14 @@ class exports.Posts extends Backbone.Collection
     @lastPost = ""
     @timesLoaded = 0
     @loading(false)
-    @on 'set_cache_ids', @setCacheIds
     @postsViewActive = false
     @setMaxNewPostFromCollection = =>
       @maxNew = @max((post) -> return moment(post.get('created')).unix())
+
+    # Remove post from cache when it's removed from the collection.
+    @on 'add remove', (model) ->
+      @setCacheIds()
+      @burry.remove(model.get('nid'))
 
     # Try loading posts from localstorage with a default TTL of three weeks.
     @burry = new Burry.Store('posts', 30240)
@@ -24,6 +28,17 @@ class exports.Posts extends Backbone.Collection
         # Calculate time since last fetch.
         if moment().diff(moment(@lastFetch), 'minutes') > 15
           @loadChangesSinceLastFetch()
+
+    # Load drafts
+    @fetchDrafts()
+
+  getPosts: ->
+    @filter (post) ->
+      post.get('draft') is false
+
+  getDrafts: ->
+    @filter (post) ->
+      post.get('draft') is true
 
   getByNid: (nid) ->
     nid = parseInt(nid, 10)
@@ -41,14 +56,25 @@ class exports.Posts extends Backbone.Collection
       @trigger 'done-loading-posts'
       @isLoading = false
 
+  fetchErrorHandler: (models, xhr) =>
+    @loading(false)
+    if xhr.status is 0
+      app.state.set('online', false)
+    else if xhr.status is 401
+      window.location = "/login"
+
   # Load all posts (newer than our oldest post) created or changed since the last fetch.
   loadChangesSinceLastFetch: ->
+    # If we're offline, return.
+    unless app.state.isOnline() then return
+
     @fetch
       update: true
       remove: false
       data:
         changed: @lastFetch
         oldest: @lastPost
+      error: @fetchErrorHandler
       success: (collection, response, options) =>
         # Record fetch time.
         @lastFetch = new Date().toJSON()
@@ -57,6 +83,9 @@ class exports.Posts extends Backbone.Collection
         @resetCollection(response)
 
   load: (override = false) ->
+    # If we're offline, return.
+    unless app.state.isOnline() then return
+
     # We've already loaded everything.
     if @loadedAllThePosts then return
 
@@ -77,6 +106,7 @@ class exports.Posts extends Backbone.Collection
         remove: false
         data:
           created: created
+        error: @fetchErrorHandler
         success: (collection, response, options) =>
           # Record fetch time.
           @lastFetch = new Date().toJSON()
@@ -98,9 +128,16 @@ class exports.Posts extends Backbone.Collection
           # We're not done loading until the server responds.
           @loading(false)
 
-          # Cache all posts by nid.
+          # Cache all posts by nid unless there are local changes that are more recent.
           for post in @models
-            @cachePost(post)
+            # There's offline changes. Replace what we loaded from the server
+            # with the local changes.
+            if @burry.get(post.get('nid'))?.changed > post.get('changed')
+              console.log @burry.get(post.get('nid'))
+              console.log post.toJSON()
+              @get(post.id).set(@burry.get(post.get('nid')))
+            else
+              @cachePost(post)
 
           _.defer =>
             @setCacheIds()
@@ -120,7 +157,7 @@ class exports.Posts extends Backbone.Collection
         @trigger 'reset'
 
   setCacheIds: ->
-    posts = @first(10)
+    posts = @getPosts().slice(0, 10)
     nids = (post.get('nid') for post in posts)
     @burry.set('__ids__', nids)
 
@@ -156,3 +193,11 @@ class exports.Posts extends Backbone.Collection
       return model.position()
     else
       return undefined
+
+  fetchDrafts: ->
+    unless app.state.isOnline() then return
+
+    $.getJSON('/posts?draft=true', (drafts) =>
+      @add drafts
+      @trigger 'sync:drafts'
+    )

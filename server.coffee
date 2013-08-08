@@ -55,6 +55,14 @@ app.get '/', (req, res) ->
       res.render 'index'
   else
     res.redirect '/login'
+
+# Simple ping route so client can detect if it's online or not.
+app.get '/ping', (req, res) ->
+  if req.isAuthenticated()
+    res.send(200)
+  else
+    res.send(403)
+
 app.get '/node/:nid', (req, res) ->
   if req.isAuthenticated()
     if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
@@ -129,29 +137,37 @@ findByNid = (nid, res, req) ->
       res.json 'found nothing'
 
 app.get '/posts', (req, res) ->
-  Post = mongoose.model 'post'
-  created = if req.query.created? then req.query.created else new Date()
-  if req.query.changed
-    recentPostChanges(req, res)
-  else if req.query.id
-    findById(req.query.id, res, req)
-  else if req.query.nid
-    findByNid(req.query.nid, res, req)
+  unless req.isAuthenticated()
+    res.send(401)
   else
-    Post.find()
-      .limit(10)
-      .where('created').lt(created)
-      .notEqualTo('deleted', true)
-      .where( '_user', req?.user._id.toString())
-      .desc('created')
-      .run (err, posts) ->
-        console.log 'query done'
-        unless err or not posts?
-          for post in posts
-            post.setValue('id', post.getValue('_id'))
-          res.json posts
-        else
-          res.json ''
+    Post = mongoose.model 'post'
+    created = if req.query.created? then req.query.created else new Date()
+    # If user wants only posts changed after a certain date.
+    if req.query.changed
+      recentPostChanges(req, res)
+    # If the user only wants draft posts.
+    else if req.query.draft
+      postDrafts(req, res)
+    else if req.query.id
+      findById(req.query.id, res, req)
+    else if req.query.nid
+      findByNid(req.query.nid, res, req)
+    else
+      Post.find()
+        .limit(10)
+        .where('created').lt(created)
+        .notEqualTo('deleted', true)
+        .notEqualTo('draft', true)
+        .where( '_user', req?.user._id.toString())
+        .desc('created')
+        .run (err, posts) ->
+          console.log 'query done'
+          unless err or not posts?
+            for post in posts
+              post.setValue('id', post.getValue('_id'))
+            res.json posts
+          else
+            res.json ''
 
 recentPostChanges = (req, res) ->
   Post = mongoose.model 'post'
@@ -165,6 +181,22 @@ recentPostChanges = (req, res) ->
     .desc('created')
     .run (err, posts) ->
       console.log 'posts changed query done'
+      unless err or not posts?
+        for post in posts
+          post.setValue('id', post.getValue('_id'))
+        res.json posts
+      else
+        res.json ''
+
+postDrafts = (req, res) ->
+  Post = mongoose.model 'post'
+  Post.find()
+    .notEqualTo('deleted', true)
+    .where('draft', true)
+    .where( '_user', req?.user._id.toString())
+    .desc('created')
+    .run (err, posts) ->
+      console.log 'query done'
       unless err or not posts?
         for post in posts
           post.setValue('id', post.getValue('_id'))
@@ -262,7 +294,8 @@ app.post '/posts', (req, res) ->
 
       unless post.created?
         post.created = new Date()
-      post.changed = post.created
+      unless post.changed?
+        post.changed = post.created
       post.save (err) ->
         unless err
           res.json id: post._id, created: post.created, nid: post.nid
@@ -446,6 +479,7 @@ app.get '/search/:query', (req, res) ->
             {
               term:
                 deleted: false
+                draft: false
             }
           ]
         facets:
