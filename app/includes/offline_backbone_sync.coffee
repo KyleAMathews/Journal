@@ -89,12 +89,15 @@ app.state.on 'change:online', (model, online) ->
     replayChanges()
 
 # Replay operations performed by the user offline so to persist them to the server.
- window.replayChanges = ->
+window.replayChanges = ->
+  unless app.state.isOnline() then return
+
   operations = []
   for key in burry.keys()
     model = burry.get(key)
     model._operation = key.split('::')[1]
     model._key = key
+    model._order = key.split('::')[0]
 
     operations.push model
 
@@ -117,7 +120,11 @@ app.state.on 'change:online', (model, online) ->
       if 'DELETE' in _.pluck(modelGroup, '_operation')
         winningOperation = "DELETE"
 
+    # Before merging all the operations, sort them by the order they were completed
+    # so the latest of each edits are retained.
+    modelGroup = _.sortBy modelGroup, (model) -> return parseInt model._order, 10
     model = _.extend.apply this, modelGroup
+    model._order = null # Not needed anymore.
 
     if modelGroup.length > 1
       model._operation = winningOperation
