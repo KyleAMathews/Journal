@@ -138,57 +138,58 @@ window.replayChanges = ->
     model._key = null
 
     # TODO get jquery promise and only remove key if sync is successful.
-    # Save the post to the server. If the post model is still in memory, use
-    # that.
-    if operation is 'POST'
-      # Delete temp version of post from the Posts collection cache.
-      app.collections.posts.burry.remove(key.split('::')[2])
+    switch operation
+      when "POST"
+        # Save the post to the server. If the post model is still in memory, use
+        # that.
+        # Delete temp version of post from the Posts collection cache.
+        app.collections.posts.burry.remove(key.split('::')[2])
 
-      # If this post is being edited right now, save that model.
-      if app.models.editing?.get('nid') is model.nid
-        # Delete our temporary IDs so that model.save will still create the model
-        # on the server.
-        app.models.editing.id = null
-        app.models.editing.unset('nid')
-        app.models.editing.save()
-      # Else if the post is in the posts collection (which it will be if we've
-      # saved it already offline), save that model.
-      else if app.collections.posts.getByNid(model.nid)?
-        # Delete our temporary IDs so that model.save will still create the model
-        # on the server.
-        model = app.collections.posts.getByNid(model.nid)
-        model.id = null
-        model.unset('nid')
-        # Ensure post is added to cached list of most recent posts so it shows
-        # up right away on refreshing the app.
-        model.once 'sync', -> app.collections.posts.setCacheIds()
-        model.save()
-      else
-        # Delete our temporary IDs so that model.save will still create the model
-        # on the server.
-        model.id = null
-        model.nid = null
-        app.collections.posts.create model
+        # If this post is being edited right now, save that model.
+        if app.models.editing?.get('nid') is model.nid
+          # Delete our temporary IDs so that model.save will still create the model
+          # on the server.
+          app.models.editing.id = null
+          app.models.editing.unset('nid')
+          app.models.editing.save()
+        # Else if the post is in the posts collection (which it will be if we've
+        # saved it already offline), save that model.
+        else if app.collections.posts.getByNid(model.nid)?
+          # Delete our temporary IDs so that model.save will still create the model
+          # on the server.
+          model = app.collections.posts.getByNid(model.nid)
+          model.id = null
+          model.unset('nid')
+          # Ensure post is added to cached list of most recent posts so it shows
+          # up right away on refreshing the app.
+          model.once 'sync', -> app.collections.posts.setCacheIds()
+          model.save()
+        else
+          # Delete our temporary IDs so that model.save will still create the model
+          # on the server.
+          model.id = null
+          model.nid = null
+          app.collections.posts.create model
 
-    # Grab the post model and update and save it.
-    else if operation is "PUT"
-      if app.collections.posts.getByNid(model.nid)?
-        app.collections.posts.getByNid(model.nid).set(model).save()
-      else
-        do ->
-          realModel = app.util.loadPostModel(model.nid, true)
-          realModel.once('sync', -> realModel.set(model).save())
+      # Grab the post model and update and save it.
+      when "PUT"
+        if app.collections.posts.getByNid(model.nid)?
+          app.collections.posts.getByNid(model.nid).set(model).save()
+        else
+          do ->
+            realModel = app.util.loadPostModel(model.nid, true)
+            realModel.once('sync', -> realModel.set(model).save())
 
-    # Find the post model and delete it.
-    else if operation is "DELETE"
-      # If the model is in the posts collection, delete it immediatly.
-      if app.collections.posts.getByNid(model.nid)?
-        app.collections.posts.getByNid(model.nid).destroy()
-      # Else load it off the server and then destroy it.
-      else
-        do ->
-          realModel = app.util.loadPostModel(model.nid, true)
-          realModel.once('sync', -> if realModel.destroy? then realModel.destroy())
+      # Find the post model and delete it.
+      when "DELETE"
+        # If the model is in the posts collection, delete it immediatly.
+        if app.collections.posts.getByNid(model.nid)?
+          app.collections.posts.getByNid(model.nid).destroy()
+        # Else load it off the server and then destroy it.
+        else
+          do ->
+            realModel = app.util.loadPostModel(model.nid, true)
+            realModel.once('sync', -> if realModel.destroy? then realModel.destroy())
 
     # Remove any key with this nid.
     for id in burry.keys()
