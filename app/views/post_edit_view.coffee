@@ -60,7 +60,7 @@ class exports.PostEditView extends Backbone.View
     if Modernizr.touch then return
 
     # Measure distance from top of textarea to the top of the page.
-    distanceTextareaToTop = $('.body textarea').offset().top
+    distanceTextareaToTop = $('.body textarea').offset()?.top
     textareaHeight = @$('.body textarea').height()
     # Measure distance from bottom of textarea to bottom of page.
     distanceToBottomOfWindowFromTextarea = $(window).height() - textareaHeight - (distanceTextareaToTop - $(window).scrollTop())
