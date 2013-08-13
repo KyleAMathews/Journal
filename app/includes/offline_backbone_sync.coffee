@@ -131,13 +131,18 @@ window.replayChanges = ->
 
     return model
 
+  removeOperationOnSuccess = (key) ->
+    for id in burry.keys()
+      if _.str.contains id, key.split('::')[2]
+        burry.remove(id)
+
   for model in operations
     operation = model._operation
     key = model._key
     model._operation = null
     model._key = null
 
-    # TODO get jquery promise and only remove key if sync is successful.
+
     switch operation
       when "POST"
         # Save the post to the server. If the post model is still in memory, use
@@ -151,7 +156,9 @@ window.replayChanges = ->
           # on the server.
           app.models.editing.id = null
           app.models.editing.unset('nid')
-          app.models.editing.save()
+          promise = app.models.editing.save()
+          do (key, promise) ->
+            promise.done -> removeOperationOnSuccess(key)
         # Else if the post is in the posts collection (which it will be if we've
         # saved it already offline), save that model.
         else if app.collections.posts.getByNid(model.nid)?
@@ -163,22 +170,31 @@ window.replayChanges = ->
           # Ensure post is added to cached list of most recent posts so it shows
           # up right away on refreshing the app.
           model.once 'sync', -> app.collections.posts.setCacheIds()
-          model.save()
+          do (key, model) ->
+            promise = model.save()
+            promise.done -> removeOperationOnSuccess(key)
         else
           # Delete our temporary IDs so that model.save will still create the model
           # on the server.
           model.id = null
           model.nid = null
-          app.collections.posts.create model
+          do (key, model) ->
+            newModel = app.collections.posts.create model
+            newModel.once('sync', -> removeOperationOnSuccess(key))
 
       # Grab the post model and update and save it.
       when "PUT"
         if app.collections.posts.getByNid(model.nid)?
-          app.collections.posts.getByNid(model.nid).set(model).save()
+          do (key, model) ->
+            promise = app.collections.posts.getByNid(model.nid).set(model).save()
+            promise.done -> removeOperationOnSuccess(key)
         else
-          do ->
+          do (key, model) ->
             realModel = app.util.loadPostModel(model.nid, true)
-            realModel.once('sync', -> realModel.set(model).save())
+            realModel.once('sync', ->
+              promise = realModel.set(model).save()
+              promise.done -> removeOperationOnSuccess(key)
+            )
 
       # Find the post model and delete it.
       when "DELETE"
@@ -187,11 +203,10 @@ window.replayChanges = ->
           app.collections.posts.getByNid(model.nid).destroy()
         # Else load it off the server and then destroy it.
         else
-          do ->
+          do (key, model) ->
             realModel = app.util.loadPostModel(model.nid, true)
-            realModel.once('sync', -> if realModel.destroy? then realModel.destroy())
-
-    # Remove any key with this nid.
-    for id in burry.keys()
-      if _.str.contains id, key.split('::')[2]
-        burry.remove(id)
+            realModel.once('sync', ->
+              if realModel.destroy?
+                promise = realModel.destroy()
+                promise.done -> removeOperationOnSuccess(key)
+            )
