@@ -5,8 +5,15 @@ class exports.PostView extends Backbone.View
 
   initialize: ->
     @debouncedRender = _.debounce @render, 25
-    @listenTo @model, 'change', @debouncedRender
+    @listenTo @model, 'change sync', @debouncedRender
     @listenTo @model, 'destroy', @remove
+    @listenTo app.state, 'change:online', (model, online) ->
+      # When the app attempts to fetch a model and then detects
+      # (due to the model fetch failing) that it's offline, the PostView
+      # doesn't seem to ever catch this failed sync. So listen for the app
+      # going offline and render.
+      unless online
+        @render()
 
     # Unless we're looking at a postView on a single page, set this postView
     # on the model so it's accessible.
@@ -25,6 +32,8 @@ class exports.PostView extends Backbone.View
       if @options.page
         data.page = true
       @$el.html PostTemplate data
+    else if not app.state.isOnline()
+      @$el.html "<div class='error show'>Sorry, this post can't be loaded while you are offline</div>"
     else
       @$el.html "<h2>Loading post... #{ app.templates.throbber('show', '32px') }</h2>"
 
