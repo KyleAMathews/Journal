@@ -168,6 +168,7 @@ class exports.Posts extends Backbone.Collection
     postsIds = @burry.get '__ids__'
     posts = []
     for nid in postsIds
+      if nid is null then continue
       post = @loadNidFromCache(nid)
       if post?
         posts.push post

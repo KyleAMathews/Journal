@@ -14,6 +14,7 @@ $('body').on 'drop', (e) ->
       createAttachment(file)
 
 createAttachment = (file) ->
+  # TODO use the email address here.
   uid  = ['kylemathews', (new Date).getTime(), 'raw'].join('-');
   console.log uid
 

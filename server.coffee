@@ -297,10 +297,11 @@ app.post '/posts', (req, res) ->
       unless post.changed?
         post.changed = post.created
       post.save (err) ->
-        unless err
+        unless err?
           res.json id: post._id, created: post.created, nid: post.nid
         else
           console.error 'Error creating new post', err
+          res.json(500, err)
 
 app.put '/posts/:id', (req, res) ->
   console.log 'updating an post'
@@ -381,6 +382,7 @@ app.post '/drafts', (req, res) ->
       res.json id: draft._id, created: draft.created, changed: draft.changed
     else
       console.error 'error', err
+      res.json 500, err
 
 app.put '/drafts/:id', (req, res) ->
   console.log 'updating a draft'
@@ -402,7 +404,7 @@ app.del '/drafts/:id', (req, res) ->
   Draft = mongoose.model 'draft'
   Draft.findById req.params.id, (err, draft) ->
     unless err or not draft? or draft._user.toString() isnt req.user._id.toString()
-      console.error draft
+      console.log draft
       draft.remove()
       res.send 'draft successfully deleted'
 
@@ -496,11 +498,14 @@ app.get '/search/:query', (req, res) ->
             title: {"fragment_size" : 300}
             body: {"fragment_size" : 200}
       }, (err, posts) ->
-        if err then console.error err
-        res.json posts
-        # Record the query if there's a result.
-        if posts?.hits.total > 0 and not err
-          recordQuery(req.params.query, req.user._id.toString())
+        if err
+          console.error err
+          res.json 500, err
+        else
+          res.json posts
+          # Record the query if there's a result.
+          if posts?.hits.total > 0 and not err
+            recordQuery(req.params.query, req.user._id.toString())
       )
   else
     res.redirect '/login'
