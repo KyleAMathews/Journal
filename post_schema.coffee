@@ -16,6 +16,7 @@ PostSchema = new Schema (
   changed: { type: Date, index: true, es_type:'date' }
   deleted: { type: Boolean, default: false, index: true, es_type: 'boolean' }
   draft: { type: Boolean, default: false, index: true, es_type: 'boolean' }
+  starred: { type: Boolean, default: false, index: true, es_type: 'boolean' }
   latitude: { type: String, default: "", es_type: 'string' }
   longitude: { type: String, default: "", es_type: 'string' }
   _user: { type: Schema.ObjectId, ref: 'User', index: true }

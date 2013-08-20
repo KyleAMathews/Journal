@@ -24,6 +24,7 @@ class exports.PostView extends Backbone.View
 
   events:
     'dblclick': 'doubleclick'
+    'click span.starred': 'toggleStarred'
 
   render: =>
     if @model.get('body') isnt "" and @model.get('title') isnt ""
@@ -50,3 +51,9 @@ class exports.PostView extends Backbone.View
 
   doubleclick: ->
     app.router.navigate "/node/#{ @model.get('nid') }/edit", true
+
+  toggleStarred: ->
+    if @model.get('starred')
+      @model.save('starred', false)
+    else
+      @model.save('starred', true)

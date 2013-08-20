@@ -148,6 +148,8 @@ app.get '/posts', (req, res) ->
     # If the user only wants draft posts.
     else if req.query.draft
       postDrafts(req, res)
+    else if req.query.starred
+      starredPosts(req, res)
     else if req.query.id
       findById(req.query.id, res, req)
     else if req.query.nid
@@ -196,7 +198,23 @@ postDrafts = (req, res) ->
     .where( '_user', req?.user._id.toString())
     .desc('created')
     .run (err, posts) ->
-      console.log 'query done'
+      console.log 'drafts query done'
+      unless err or not posts?
+        for post in posts
+          post.setValue('id', post.getValue('_id'))
+        res.json posts
+      else
+        res.json ''
+
+starredPosts = (req, res) ->
+  Post = mongoose.model 'post'
+  Post.find()
+    .notEqualTo('deleted', true)
+    .where('starred', true)
+    .where( '_user', req?.user._id.toString())
+    .desc('created')
+    .run (err, posts) ->
+      console.log 'starred query done'
       unless err or not posts?
         for post in posts
           post.setValue('id', post.getValue('_id'))

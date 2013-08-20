@@ -363,3 +363,10 @@ div.show, span.show {
 ul.common-queries {
   @include leader(0.5);
 }
+
+.starred-posts-page {
+  h4 {
+    margin-left: rhythm(-1);
+    margin-bottom: rhythm(0.5, 16px);
+  }
+}

@@ -3,6 +3,7 @@
 {PostEditView} = require 'views/post_edit_view'
 Post = require 'models/post'
 DraftsView = require 'views/drafts_view'
+StarredView = require 'views/starred_view'
 SearchView = require 'views/search_view'
 
 class exports.MainRouter extends Backbone.Router
@@ -13,6 +14,7 @@ class exports.MainRouter extends Backbone.Router
     'posts/new': 'newPost'
     'node/:id/edit': 'editPost'
     'drafts': 'drafts'
+    'starred': 'starred'
     'search': 'search'
     'search/:query': 'search'
 
@@ -44,8 +46,18 @@ class exports.MainRouter extends Backbone.Router
     app.views.main.show(postEditView)
 
   drafts: ->
+    # Scroll to top of page.
+    document.body.scrollTop = document.documentElement.scrollTop = 0
+
     draftsView = new DraftsView collection: app.collections.posts
     app.views.main.show(draftsView)
+
+  starred: ->
+    # Scroll to top of page.
+    document.body.scrollTop = document.documentElement.scrollTop = 0
+
+    starredView = new StarredView collection: app.collections.starred
+    app.views.main.show(starredView)
 
   search: (query = "", reset = false) ->
     searchView = new SearchView collection: app.collections.search

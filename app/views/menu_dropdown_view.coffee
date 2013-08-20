@@ -16,6 +16,7 @@ module.exports = class MenuDropdownView extends Backbone.View
   render: ->
     @$el.html "
       <li data-link='drafts'>Drafts (#{ app.collections.posts.getDrafts().length })</li>
+      <li data-link='starred'>Starred</li>
       <li data-link='logout'>Logout</li>
       "
     @

@@ -2,7 +2,7 @@
   <a class="button post-action" href="node/<%= @nid %>/edit">Edit post</a>
 <% end %>
 <% if @page: %>
-  <h1><%= @title %></h1>
+  <h1><%= @title %></h1><span class="starred"><% if @starred: %>starred<% else: %>not starred<% end %></span>
 <% else: %>
   <h1><a href="node/<%- @nid %>"><%= @title %></a></h1>
 <% end %>
