@@ -19,21 +19,19 @@ _.mixin(_.str.exports())
 
 app = express()
 
-# Setup RedisStore for sessions
-sessionStore = new RedisStore({
-  host: config.redis_url.hostname
-  port: config.redis_url.port
-  pass: config.redis_url.pass
-})
-
 # Setup redis client
-rclient = redis.createClient(config.redis_url.port, config.redis_url.hostname)
+rclient = redis.createClient(config.redis_url.port, config.redis_url.hostname, {auth_pass: config.redis_url.pass})
 
 if config.redis_url.pass
   rclient.auth(config.redis_url.pass, (err) ->
     if (err)
       throw err
   )
+
+# Setup RedisStore for sessions
+sessionStore = new RedisStore({
+  client: rclient
+})
 
 # Setup Express middleware.
 app.configure ->
