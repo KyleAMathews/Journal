@@ -23,11 +23,17 @@ app = express()
 sessionStore = new RedisStore({
   host: config.redis_url.hostname
   port: config.redis_url.port
-  pass: config.redis_url.auth.split(':')[1]
+  pass: config.redis_url.pass
 })
 
 # Setup redis client
-rclient = redis.createClient()
+rclient = redis.createClient(config.redis_url.port, config.redis_url.hostname)
+
+if config.redis_url.pass
+  rclient.auth(config.redis_url.pass, (err) ->
+    if (err)
+      throw err
+  )
 
 # Setup Express middleware.
 app.configure ->
@@ -450,8 +456,9 @@ app.get '/search/queries', (req, res) ->
         rclient.mget keys, (err, values) ->
           # Group common queries together and sort by count.
           processed = []
-          for value in values
-            processed.push value.trim()
+          if values?
+            for value in values
+              processed.push value.trim()
           results = _.groupBy(processed)
           set = []
           for query, number of results
