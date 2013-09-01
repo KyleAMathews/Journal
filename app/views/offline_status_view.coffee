@@ -5,7 +5,6 @@ module.exports = class OfflineStatusView extends Backbone.View
     @render()
 
   render: ->
-    @$el.show().transition({ y: '-3em' }, 0)
     if $(document).width() > 650
       @$el.html("App is offline. All changes made while offline will be saved to the server once you reconnect.")
     else
@@ -14,8 +13,8 @@ module.exports = class OfflineStatusView extends Backbone.View
 
   toggleOnlineStatus: (model, online) ->
     if online
-      @$el.transition({ y: '-3em' })
+      @$el.transition({ y: '0' }, => @$el.css('top', '-3em'))
       $('#wrapper').transition({ y: '0' })
     else
-      @$el.transition({ y: 0 })
+      @$el.css('top', 0).transition({ y: '3em' })
       $('#wrapper').transition({ y: '3em' })
