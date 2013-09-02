@@ -2,11 +2,12 @@
   <a class="button post-action" href="node/<%= @nid %>/edit">Edit post</a>
 <% end %>
 <% if @page: %>
-  <h1><%= @title %></h1><span class="starred"><% if @starred: %>starred<% else: %>not starred<% end %></span>
+  <h1><%= @title %></h1>
 <% else: %>
   <h1><a href="node/<%- @nid %>"><%= @title %></a></h1>
 <% end %>
-<small class="post-date"><%- @rendered_created %></small>
+<small class="post-date"><%- @rendered_created %>
+  <span class="star <% if @starred: %>icon-star<% else: %>icon-star empty<% end %>"></span></small>
 <% if @page: %>
 <%- @rendered_body %>
 <% else: %>

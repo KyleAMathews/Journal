@@ -4,7 +4,7 @@ class exports.PostView extends Backbone.View
   className: 'post'
 
   initialize: ->
-    @debouncedRender = _.debounce @render, 25
+    @debouncedRender = _.debounce @render, 50, true
     @listenTo @model, 'change sync', @debouncedRender
     @listenTo @model, 'destroy', @remove
     @listenTo app.state, 'change:online', (model, online) ->
@@ -24,7 +24,7 @@ class exports.PostView extends Backbone.View
 
   events:
     'dblclick': 'doubleclick'
-    'click span.starred': 'toggleStarred'
+    'click span.star': 'toggleStar'
 
   render: =>
     if @model.get('body') isnt "" and @model.get('title') isnt ""
@@ -52,7 +52,7 @@ class exports.PostView extends Backbone.View
   doubleclick: ->
     app.router.navigate "/node/#{ @model.get('nid') }/edit", true
 
-  toggleStarred: ->
+  toggleStar: ->
     if @model.get('starred')
       @model.save('starred', false)
     else
