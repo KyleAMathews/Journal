@@ -39,12 +39,15 @@ html {
       margin-left: 10%;
     }
     .dropdown-menu {
-      @include adjust-font-size-to(36px, 2, 18px);
+      @include adjust-font-size-to(25px, 2, 18px);
       cursor: pointer;
       float: right;
+      &:hover {
+        color: $grey80;
+      }
 
       ul.dropdown {
-        @include adjust-font-size-to(16px, 1, 36px);
+        @include adjust-font-size-to(16px, 1, 25px);
         @include no-bullets();
 
         background: $grey20;
@@ -53,7 +56,7 @@ html {
         margin: 0;
         padding: rhythm(0.25) 0 rhythm(0.25) 0;
         position: absolute;
-        top: 45.5px;
+        top: 41.5px;
         width: 252px;
 
         li {
