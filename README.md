@@ -15,6 +15,8 @@ Only interesting right now if you want to hack on it.
 * [Redis](http://redis.io/)
 * [ElasticSearch](http://www.elasticsearch.org/)
 * [GraphicsMagick](http://www.graphicsmagick.org/)
+ 
+#### Development Dependencies
 * [Brunch](http://brunch.io/)
 * [Compass](http://compass-style.org/)
 
