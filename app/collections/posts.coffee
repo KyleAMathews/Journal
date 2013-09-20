@@ -113,7 +113,7 @@ class exports.Posts extends Backbone.Collection
 
           # If server returns nothing, this means we're at the bottom and should
           # stop trying to load new posts.
-          if _.isString response
+          if response.length is 0
             @loadedAllThePosts = true
             @loading(false)
             return
