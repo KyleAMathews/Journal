@@ -4,7 +4,6 @@
 {PostsView} = require 'views/posts_view'
 {Posts} = require 'collections/posts'
 PostsCache = require 'collections/posts_cache'
-Drafts = require 'collections/drafts'
 Starred = require 'collections/starred'
 MenuBarView = require 'views/menu_bar_view'
 OfflineStatusView = require 'views/offline_status_view'
@@ -47,8 +46,6 @@ class exports.Application extends BrunchApplication
     @collections.posts.load(true)
     @collections.postsCache = new PostsCache
     @collections.starred = new Starred
-    @collections.drafts = new Drafts
-    @collections.drafts.fetch()
     @collections.search = new Search
 
     new MenuBarView el: $('#menu-bar')

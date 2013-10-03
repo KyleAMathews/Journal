@@ -42,7 +42,7 @@ stream.on('close', ->
   console.log('indexed ' + count + ' documents!')
 )
 stream.on('error', (err) ->
-  console.log('error', err)
+  #console.log('error', err)
 )
 
 DraftSchema = new Schema (
