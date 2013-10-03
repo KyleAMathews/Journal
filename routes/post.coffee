@@ -1,23 +1,8 @@
 mongoose = require 'mongoose'
 
 # nid routes.
-exports.getNidPost = (req, res) ->
-  if req.isAuthenticated()
-    if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
-      res.render 'index'
-    else
-      findByNid(req.params.nid, res)
-  else
-    res.redirect '/login'
-
 exports.getNidPostEdit = (req, res) ->
-  if req.isAuthenticated()
-    if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
-      res.render 'index'
-    else
-      findByNid(req.params.nid, res)
-  else
-    res.redirect '/login'
+  findByNid(req.params.nid, res)
 
 exports.post = (req, res) ->
   console.log 'saving new post'
@@ -87,54 +72,39 @@ exports.delete = (req, res) ->
       console.log 'update error', err
 
 exports.list = (req, res) ->
-  unless req.isAuthenticated()
-    res.send(401)
+  Post = mongoose.model 'post'
+  created = if req.query.created? then req.query.created else new Date()
+  # If user wants only posts changed after a certain date.
+  if req.query.changed
+    recentPostChanges(req, res)
+  # If the user only wants draft posts.
+  else if req.query.draft
+    postDrafts(req, res)
+  else if req.query.starred
+    starredPosts(req, res)
+  else if req.query.id
+    findById(req.query.id, res, req)
+  else if req.query.nid
+    findByNid(req.query.nid, res, req)
   else
-    Post = mongoose.model 'post'
-    created = if req.query.created? then req.query.created else new Date()
-    # If user wants only posts changed after a certain date.
-    if req.query.changed
-      recentPostChanges(req, res)
-    # If the user only wants draft posts.
-    else if req.query.draft
-      postDrafts(req, res)
-    else if req.query.starred
-      starredPosts(req, res)
-    else if req.query.id
-      findById(req.query.id, res, req)
-    else if req.query.nid
-      findByNid(req.query.nid, res, req)
-    else
-      Post.find()
-        .limit(10)
-        .where('created').lt(created)
-        .notEqualTo('deleted', true)
-        .notEqualTo('draft', true)
-        .where( '_user', req?.user._id.toString())
-        .desc('created')
-        .run (err, posts) ->
-          console.log 'query done'
-          unless err or not posts?
-            for post in posts
-              post.setValue('id', post.getValue('_id'))
-            res.json posts
-          else
-            res.json ''
+    Post.find()
+      .limit(10)
+      .where('created').lt(created)
+      .notEqualTo('deleted', true)
+      .notEqualTo('draft', true)
+      .where( '_user', req?.user._id.toString())
+      .desc('created')
+      .run (err, posts) ->
+        console.log 'query done'
+        unless err or not posts?
+          for post in posts
+            post.setValue('id', post.getValue('_id'))
+          res.json posts
+        else
+          res.json ''
 
 exports.getPost = (req, res) ->
-  if req.isAuthenticated()
-    if req.headers.accept? and req.headers.accept.indexOf('text/html') isnt -1
-      res.render 'index'
-    else
-      findById(req.params.id, res, req)
-  else
-    res.redirect '/login'
-
-exports.newPost = (req, res) ->
-  if req.isAuthenticated()
-    res.render 'index'
-  else
-    res.redirect '/login'
+  findById(req.params.id, res, req)
 
 findById = (id, res, req) ->
   Post = mongoose.model 'post'
