@@ -1,4 +1,5 @@
 config = require '../app_config'
+mongoose = require 'mongoose'
 redis = require 'redis'
 rclient = redis.createClient(config.redis_url.port, config.redis_url.hostname, {auth_pass: config.redis_url.pass})
 _ = require 'underscore'
