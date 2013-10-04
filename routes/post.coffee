@@ -1,7 +1,7 @@
 mongoose = require 'mongoose'
 
 # nid routes.
-exports.getNidPostEdit = (req, res) ->
+exports.getNidPost = (req, res) ->
   findByNid(req.params.nid, res)
 
 exports.post = (req, res) ->

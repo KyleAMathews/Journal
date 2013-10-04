@@ -65,7 +65,7 @@ app.get '/', (req, res) ->
 
 # Sessions.
 app.get '/ping', sessions.ping
-app.get '/login', sessions.ping
+app.get '/login', sessions.login
 app.post '/login', passport.authenticate('local',
   {
     successRedirect: '/'

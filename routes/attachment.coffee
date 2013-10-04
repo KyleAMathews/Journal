@@ -5,6 +5,7 @@ gm = require 'gm'
 exports.post = (req, res) ->
   Attachment = mongoose.model 'attachment'
   tmpFile = req.files.attachment.file.path
+  # TODO need real usernames... plus the user object needs loaded into the dashboard.
   targetPath = './attachments/kylemathews/' + req.files.attachment.file.name
   smallPath = './attachments/kylemathews/small/' + req.files.attachment.file.name
 
