@@ -1,0 +1,65 @@
+{
+  "name": "journal",
+  "version": "0.0.0",
+  "homepage": "https://github.com/KyleAMathews/Journal",
+  "authors": [
+    "Kyle Mathews <mathews.kyle@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "console-polyfill": "~0.1.0",
+    "jquery": "~2.0.3",
+    "underscore": "~1.5.2",
+    "backbone": "~1.0.0",
+    "burry": "*",
+    "jquery.transit": "~0.9.9",
+    "keymaster": "*",
+    "kalendae": "~0.4.1",
+    "moment": "~2.3.1",
+    "marked": "~0.2.9",
+    "jquery.expanding-textareas": "*",
+    "fastclick": "~0.6.10",
+    "underscore.string": "~2.3.3"
+  },
+  "overrides": {
+    "backbone": {
+      "dependencies": {
+        "underscore": "*",
+        "jquery": "*"
+      },
+      "main": "backbone.js"
+    },
+    "underscore": {
+      "main": "underscore.js"
+    },
+    "burry": {
+      "main": "burry.js"
+    },
+    "jquery.transit": {
+      "main": "jquery.transit.js"
+    },
+    "keymaster": {
+      "main": "keymaster.js"
+    },
+    "kalendae": {
+      "main": "build/kalendae.js"
+    },
+    "marked": {
+      "main": "lib/marked.js"
+    },
+    "underscore.string": {
+      "main": "lib/underscore.string.js"
+    }
+  },
+  "resolutions": {
+    "moment": "~2.3.1"
+  }
+}

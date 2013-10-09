@@ -133,8 +133,6 @@ class exports.Posts extends Backbone.Collection
             # There's offline changes. Replace what we loaded from the server
             # with the local changes.
             if @burry.get(post.get('nid'))?.changed > post.get('changed')
-              console.log @burry.get(post.get('nid'))
-              console.log post.toJSON()
               @get(post.id).set(@burry.get(post.get('nid')))
             else
               @cachePost(post)

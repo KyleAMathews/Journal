@@ -35,12 +35,12 @@ Backbone.sync = (method, model, options = {}) ->
     # A successful Ajax request means we're online.
     app.state.set('online', true)
 
-    if success then success(model, resp, options)
+    if success then success(resp)
     model.trigger('sync', model, resp, options)
 
   error = options.error
   options.error = (xhr) ->
-    if xhr.status is 0
+    if xhr.status is 404
       saveOfflineChanges(model, _.extend(params, options))
       app.state.set('online', false)
     # The user isn't logged in. Redirect to login page.
