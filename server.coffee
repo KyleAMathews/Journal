@@ -39,7 +39,10 @@ app = express()
 
 # Assign views to use the ECT templating language.
 ECT = require('ect')
-ectRenderer = ECT({ watch: true, root: __dirname + '/views' })
+ectRenderer = ECT({
+  watch: true
+  root: __dirname + '/views'
+})
 app.engine('ect', ectRenderer.render)
 
 # Setup Express middleware.
@@ -56,26 +59,10 @@ app.configure ->
   app.use passport.initialize()
   app.use passport.session()
   app.use flash()
+  app.use require './middleware/set_vars_on_locals'
   app.use require './middleware/require_login'
   app.use require './middleware/detect_html_request'
   app.use app.router
-
-# Routes.
-app.all('*', (req, res, next) ->
-  if req.user?
-    app.locals.currentuser = req.user
-  else
-    app.locals.currentuser = {}
-    app.locals.currentuser.name = "Login to your"
-  next()
-)
-
-app.get '/', (req, res) ->
-  # TODO this his hacky, replace with real environment variable system.
-  unless process.platform is "darwin" or app.settings.env is "development" # e.g. we're on a mac so developing.
-    res.render 'index', manifest: '/appcache.appcache'
-  else
-    res.render 'index'
 
 # Sessions.
 app.get '/ping', sessions.ping

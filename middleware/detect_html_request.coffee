@@ -5,6 +5,10 @@ module.exports = (req, res, next) ->
       next()
     # Otherwise render index.
     else
-      res.render 'index'
+      # TODO this his hacky, replace with real environment variable system.
+      unless process.platform is "darwin" or app.settings.env is "development" # e.g. we're on a mac so developing.
+        res.render 'index', manifest: '/appcache.appcache'
+      else
+        res.render 'index'
   else
     next()
