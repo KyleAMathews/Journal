@@ -56,7 +56,7 @@ Passport.use new LocalStrategy usernameField: 'email', (email, password, done) -
   console.log User
   User.authenticate email, password, (err, user, message) ->
     if err then console.err err
-    return done(err, user, message);
+    return done(err, user, message)
 
 # serialize user on login
 Passport.serializeUser (user, done) ->

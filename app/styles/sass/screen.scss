@@ -291,6 +291,9 @@ div.show, span.show {
   color: #DD2020;
   display: none;
   font-weight: bold;
+  &.show {
+    display: block;
+  }
 }
 
 // Remove tap hightlight on webkit mobile browsers.

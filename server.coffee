@@ -37,10 +37,15 @@ sessionStore = new RedisStore({
 
 app = express()
 
+# Assign views to use the ECT templating language.
+ECT = require('ect')
+ectRenderer = ECT({ watch: true, root: __dirname + '/views' })
+app.engine('ect', ectRenderer.render)
+
 # Setup Express middleware.
 app.configure ->
+  app.set 'view engine', 'ect'
   app.set 'views', __dirname + '/views'
-  app.set 'view engine', 'jade'
   app.use express.compress()
   app.use express.static 'public'
   app.use express.cookieParser()
@@ -50,12 +55,21 @@ app.configure ->
   app.use express.session({ store: sessionStore, secret: 'Make Stuff', cookie: { maxAge: 1209600000 }}) # two weeks
   app.use passport.initialize()
   app.use passport.session()
+  app.use flash()
   app.use require './middleware/require_login'
   app.use require './middleware/detect_html_request'
-  app.use flash()
   app.use app.router
 
 # Routes.
+app.all('*', (req, res, next) ->
+  if req.user?
+    app.locals.currentuser = req.user
+  else
+    app.locals.currentuser = {}
+    app.locals.currentuser.name = "Login to your"
+  next()
+)
+
 app.get '/', (req, res) ->
   # TODO this his hacky, replace with real environment variable system.
   unless process.platform is "darwin" or app.settings.env is "development" # e.g. we're on a mac so developing.

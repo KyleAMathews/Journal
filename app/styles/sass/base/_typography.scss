@@ -109,6 +109,9 @@ h6 {
 dl, ul, ol {
   margin: rhythm(1) 0;
   padding: 0 0 0 rhythm(1);
+  &.no-bullets {
+    @include no-bullets();
+  }
 }
 
 // Style placeholders in inputs/textareas.

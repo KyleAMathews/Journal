@@ -5,7 +5,6 @@ exports.getNidPost = (req, res) ->
   findByNid(req.params.nid, res)
 
 exports.post = (req, res) ->
-  console.log 'saving new post'
   Post = mongoose.model 'post'
   post = new Post()
   for k,v of req.body
