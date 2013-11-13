@@ -1,4 +1,4 @@
-FROM kyma/nodejs-base
+FROM kyma/docker-nodejs-base
 MAINTAINER Kyle Mathews "mathews.kyle@gmail.com"
 
 # Install Graphicsmagick
