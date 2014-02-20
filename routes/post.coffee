@@ -1,11 +1,11 @@
-mongoose = require 'mongoose'
+config = require '../app_config'
 
 # nid routes.
 exports.getNidPost = (req, res) ->
   findByNid(req.params.nid, res)
 
 exports.post = (req, res) ->
-  Post = mongoose.model 'post'
+  Post = config.mongoose.model 'post'
   post = new Post()
   for k,v of req.body
     post[k] = v
@@ -36,7 +36,7 @@ exports.post = (req, res) ->
 
 exports.put = (req, res) ->
   console.log 'updating an post'
-  Post = mongoose.model 'post'
+  Post = config.mongoose.model 'post'
   Post.findById req.params.id, (err, post) ->
     unless err or not post? or post._user.toString() isnt req.user._id.toString()
       for k,v of req.body
@@ -55,7 +55,7 @@ exports.put = (req, res) ->
       console.log 'update error', err
 
 exports.delete = (req, res) ->
-  Post = mongoose.model 'post'
+  Post = config.mongoose.model 'post'
   Post.findById req.params.id, (err, post) ->
     unless err or not post? or post._user.toString() isnt req.user._id.toString()
       post.changed = new Date()
@@ -71,7 +71,7 @@ exports.delete = (req, res) ->
       console.log 'update error', err
 
 exports.list = (req, res) ->
-  Post = mongoose.model 'post'
+  Post = config.mongoose.model 'post'
   created = if req.query.created? then req.query.created else new Date()
   # If user wants only posts changed after a certain date.
   if req.query.changed
@@ -106,7 +106,7 @@ exports.getPost = (req, res) ->
   findById(req.params.id, res, req)
 
 findById = (id, res, req) ->
-  Post = mongoose.model 'post'
+  Post = config.mongoose.model 'post'
   Post.findById id, (err, post) ->
     unless err or not post? or post?._user.toString() isnt req.user._id.toString()
       post.setValue('id', post.getValue('_id'))
@@ -116,7 +116,7 @@ findById = (id, res, req) ->
       res.json 'found nothing'
 
 findByNid = (nid, res, req) ->
-  Post = mongoose.model 'post'
+  Post = config.mongoose.model 'post'
   Post.find { nid: nid }, (err, post) ->
     post = post[0]
     unless err or not post? or post?._user.toString() isnt req?.user._id.toString()
@@ -127,7 +127,7 @@ findByNid = (nid, res, req) ->
       res.json 'found nothing'
 
 recentPostChanges = (req, res) ->
-  Post = mongoose.model 'post'
+  Post = config.mongoose.model 'post'
   changed = if req.query.changed? then req.query.changed else new Date()
   oldest = if req.query.oldest? then req.query.oldest else new Date()
   Post.find()
@@ -146,7 +146,7 @@ recentPostChanges = (req, res) ->
         res.json ''
 
 postDrafts = (req, res) ->
-  Post = mongoose.model 'post'
+  Post = config.mongoose.model 'post'
   Post.find()
     .notEqualTo('deleted', true)
     .where('draft', true)
@@ -162,7 +162,7 @@ postDrafts = (req, res) ->
         res.json ''
 
 starredPosts = (req, res) ->
-  Post = mongoose.model 'post'
+  Post = config.mongoose.model 'post'
   Post.find()
     .notEqualTo('deleted', true)
     .where('starred', true)

@@ -5,12 +5,8 @@ bcrypt = require 'bcrypt'
 Passport = require('passport')
 LocalStrategy = require('passport-local').Strategy;
 
-# Setup MongoDB connection.
-mongoose = require('mongoose')
-mongoose.connect(config.mongo_url)
-
 # Setup MongoDB schemas.
-Schema = mongoose.Schema
+Schema = config.mongoose.Schema
 
 toLower = (v) ->
   return v.toLowerCase()
@@ -49,8 +45,8 @@ UserSchema.statics.authenticate = (email, password, callback) ->
       callback null, user
 
 # Define local strategy for Passport
-mongoose.model 'user', UserSchema
-User = mongoose.model 'user'
+config.mongoose.model 'user', UserSchema
+User = config.mongoose.model 'user'
 Passport.use new LocalStrategy usernameField: 'email', (email, password, done) ->
   console.log 'inside something'
   console.log User

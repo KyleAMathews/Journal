@@ -1,9 +1,9 @@
-mongoose = require 'mongoose'
+config = require '../app_config'
 fs = require 'fs'
 gm = require 'gm'
 
 exports.post = (req, res) ->
-  Attachment = mongoose.model 'attachment'
+  Attachment = config.mongoose.model 'attachment'
   tmpFile = req.files.attachment.file.path
   # TODO need real usernames... plus the user object needs loaded into the dashboard.
   targetPath = './attachments/kylemathews/' + req.files.attachment.file.name
@@ -41,7 +41,7 @@ exports.post = (req, res) ->
       )
 
 exports.getSmall = (req, res) ->
-  Attachment = mongoose.model 'attachment'
+  Attachment = config.mongoose.model 'attachment'
   Attachment.find({ uid: req.params.id })
     .run (err, attachments) ->
       if err then console.log err
@@ -51,7 +51,7 @@ exports.getSmall = (req, res) ->
         res.send "File not found", 404
 
 exports.getOriginal = (req, res) ->
-  Attachment = mongoose.model 'attachment'
+  Attachment = config.mongoose.model 'attachment'
   Attachment.find({ uid: req.params.id })
     .run (err, attachments) ->
       if err then console.log err

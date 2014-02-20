@@ -1,7 +1,6 @@
 config = require './app_config'
 
 express = require 'express'
-mongoose = require 'mongoose'
 passport = require 'passport'
 RedisStore = require('connect-redis')(express)
 redis = require 'redis'

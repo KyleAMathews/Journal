@@ -1,13 +1,11 @@
 config = require './app_config'
 
-mongoose = require('mongoose')
-mongoose.connect(config.mongo_url)
 mongoosastic = require('mongoosastic')
 
 # Setup MongoDB schemas.
-Schema = mongoose.Schema
+Schema = config.mongoose.Schema
 
-SchemaTypes = mongoose.Schema.Types
+SchemaTypes = config.mongoose.Schema.Types
 PostSchema = new Schema (
   title: { type: String, required: true, es_boost:2.0 }
   body: { type: String, required: true }
@@ -24,14 +22,14 @@ PostSchema = new Schema (
 
 # Setup Elasticsearch with the posts collection.
 PostSchema.plugin(mongoosastic, config.elasticSearchHost)
-Post = mongoose.model 'post', PostSchema
+Post = config.mongoose.model 'post', PostSchema
 # Only need to run below if the index hasn't been created yet.
 #Post.createMapping (err, mapping) ->
   #console.log err
   #console.log mapping
 
 # Synchronize models with Elastic Search.
-Post = mongoose.model 'post'
+Post = config.mongoose.model 'post'
 stream = Post.synchronize()
 count = 0
 
@@ -53,7 +51,7 @@ DraftSchema = new Schema (
   _user: { type: Schema.ObjectId, ref: 'User', index: true }
 )
 
-mongoose.model 'draft', DraftSchema
+config.mongoose.model 'draft', DraftSchema
 
 AttachmentSchema = new Schema (
   path: { type: String }
@@ -63,4 +61,4 @@ AttachmentSchema = new Schema (
   _user: { type: Schema.ObjectId, ref: 'User', index: true }
 )
 
-mongoose.model 'attachment', AttachmentSchema
+config.mongoose.model 'attachment', AttachmentSchema
