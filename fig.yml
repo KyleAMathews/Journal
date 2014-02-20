@@ -1,0 +1,13 @@
+web:
+  image: kyma/journal
+  ports:
+    - 3000:3000
+  links:
+    - db
+    - redis
+db:
+  image: kyma/docker-mongodb
+  volumes:
+    - /data/db:/data/db
+redis:
+  image: kyma/docker-redis
