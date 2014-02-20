@@ -1,4 +1,5 @@
 url = require("url")
+redis = require 'redis'
 
 # Set these environmental variables to specify Mongo, Redis, and ElasticSearch
 # servers different than the defaults. Env variables that can be set are
@@ -15,14 +16,24 @@ config.mongoose = require('mongoose')
 if process.env.MONGO_URL?
   config.mongo_url = process.env.MONGO_URL
 else if process.env.JOURNAL_DB_1_PORT?
-  config.mongo_url = "mongodb://#{ process.env.JOURNAL_DB_1_PORT_27017_TCP_ADDR }:#{ process.env.JOURNAL_DB_1_PORT }/journal"
+  config.mongo_url = "mongodb://#{ process.env.JOURNAL_DB_1_PORT_27017_TCP_ADDR }:#{ process.env.JOURNAL_DB_1_PORT_27017_TCP_PORT }/journal"
 else
  config.mongo_url = "mongodb://127.0.0.1:27017/journal"
 config.mongoose.connect(config.mongo_url)
 
-config.redis_url = process.env.REDIS_URL ? "redis://bogususer:@localhost"          #Bogus user to set a blank default password
+if process.env.REDIS_URL?
+  config.redis_url = url.parse(process.env.REDIS_URL)
+else if process.env.JOURNAL_REDIS_1_PORT?
+  config.redis_url = "redis://#{ process.env.JOURNAL_REDIS_1_PORT_6379_TCP_ADDR }:#{ process.env.JOURNAL_REDIS_1_PORT_6379_TCP_PORT }"
+else
+  config.redis_url = process.env.REDIS_URL ? "redis://bogususer:@localhost"
+
 config.redis_url = url.parse(config.redis_url)
-config.redis_url.pass = config.redis_url.auth.split(':')[1]
+unless config.redis_url.auth?
+  config.redis_url.auth = "bogususer:"
+
+config.rclient = redis.createClient(config.redis_url.port, config.redis_url.hostname, {auth_pass: config.redis_url.pass})
+config.rclient.auth(config.redis_url.auth.split(':')[1])
 
 config.elasticSearchHost = process.env.ELASTICSEARCH_URL ? 'http://localhost'
 config.elasticSearchHost = url.parse(config.elasticSearchHost)

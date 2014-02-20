@@ -20,18 +20,9 @@ post = require './routes/post'
 search = require './routes/search'
 sessions = require './routes/session_management'
 
-# Setup redis client
-rclient = redis.createClient(config.redis_url.port, config.redis_url.hostname, {auth_pass: config.redis_url.pass})
-
-if config.redis_url.pass
-  rclient.auth(config.redis_url.pass, (err) ->
-    if (err)
-      throw err
-  )
-
 # Setup RedisStore for sessions
 sessionStore = new RedisStore({
-  client: rclient
+  client: config.rclient
 })
 
 app = express()

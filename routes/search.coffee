@@ -1,18 +1,16 @@
 config = require '../app_config'
-redis = require 'redis'
-rclient = redis.createClient(config.redis_url.port, config.redis_url.hostname, {auth_pass: config.redis_url.pass})
 _ = require 'underscore'
 
 recordQuery = (query, user) ->
   key = "query_#{ user }_#{ (Math.random() * 10000).toString().split('.')[0] }"
-  rclient.set key, query
+  config.rclient.set key, query
   # expire query data after one month.
-  rclient.expire key, 2592000
+  config.rclient.expire key, 2592000
 
 exports.getQueries = (req, res) ->
   # Fetch all queries stored by this person.
-  rclient.keys("query_#{ req.user._id.toString() }_*", (err, keys) ->
-    rclient.mget keys, (err, values) ->
+  config.rclient.keys("query_#{ req.user._id.toString() }_*", (err, keys) ->
+    config.rclient.mget keys, (err, values) ->
       # Group common queries together and sort by count.
       processed = []
       if values?
