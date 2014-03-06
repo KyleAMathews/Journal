@@ -2,30 +2,33 @@
   "name": "journal",
   "description": "Multi-user Journal App",
   "version": "0.0.1",
+  "author": "mathews.kyle@gmail.com",
   "dependencies": {
-    "express": "3.x.x",
-    "underscore.string": "x.x.x",
-    "moment": "2.x.x",
-    "underscore": "1.x.x",
-    "mongoose": "3.x.x",
-    "bcrypt": "0.x.x",
-    "mongoosastic": "0.x.x",
-    "connect-redis": "1.x.x",
+    "appcache-brunch": "~1.7.0",
     "async": "0.2.x",
+    "bcrypt": "0.x.x",
+    "coffee-script-brunch": "1.x.x",
+    "connect": "~2.14.1",
+    "connect-flash": "",
+    "connect-redis": "0.x.x",
+    "eco-brunch": "1.x.x",
+    "ect": "~0.5.4",
+    "express": "3.x.x",
+    "gm": "",
+    "javascript-brunch": "1.x.x",
+    "moment": "2.x.x",
+    "mongoosastic": "0.x.x",
+    "mongoose": "3.x.x",
     "passport": "0.x.x",
     "passport-local": "0.x.x",
-    "javascript-brunch": "1.x.x",
-    "coffee-script-brunch": "1.x.x",
-    "eco-brunch": "1.x.x",
-    "connect-flash": "",
-    "appcache-brunch": "~1.7.0",
-    "gm": "",
-    "uglify-js-brunch": "1.x.x",
     "redis": "~0.10.0",
-    "ect": "~0.5.4"
+    "uglify-js-brunch": "1.x.x",
+    "underscore": "1.x.x",
+    "underscore.string": "x.x.x"
   },
   "devDependencies": {
-    "mocha": "1.x.x",
-    "expect.js": "0.x.x"
-  }
+    "expect.js": "0.x.x",
+    "mocha": "1.x.x"
+  },
+  "repository": "https://github.com/KyleAMathews/Journal.git"
 }
