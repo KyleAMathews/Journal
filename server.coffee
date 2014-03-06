@@ -2,7 +2,7 @@ config = require './app_config'
 
 express = require 'express'
 passport = require 'passport'
-RedisStore = require('connect-redis')(express)
+MemoryStore = express.session.MemoryStore
 redis = require 'redis'
 require './user_schema'
 require './post_schema'
@@ -19,11 +19,6 @@ attachment = require './routes/attachment'
 post = require './routes/post'
 search = require './routes/search'
 sessions = require './routes/session_management'
-
-# Setup RedisStore for sessions
-sessionStore = new RedisStore({
-  client: config.rclient
-})
 
 app = express()
 
@@ -45,7 +40,7 @@ app.configure ->
   app.use express.responseTime()
   app.use express.bodyParser()
   app.use express.methodOverride()
-  app.use express.session({ store: sessionStore, secret: 'Make Stuff', cookie: { maxAge: 1209600000 }}) # two weeks
+  app.use express.session({ store: new MemoryStore(), secret: 'Make Stuff', cookie: { maxAge: 1209600000 }}) # two weeks
   app.use passport.initialize()
   app.use passport.session()
   app.use flash()

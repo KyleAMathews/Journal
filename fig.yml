@@ -9,5 +9,3 @@ db:
   image: kyma/docker-mongodb
   volumes:
     - /data/db:/data/db
-redis:
-  image: kyma/docker-redis
