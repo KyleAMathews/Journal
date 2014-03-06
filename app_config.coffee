@@ -15,16 +15,16 @@ config = new EventEmitter()
 config.mongoose = require('mongoose')
 if process.env.MONGO_URL?
   config.mongo_url = process.env.MONGO_URL
-else if process.env.JOURNAL_DB_1_PORT?
-  config.mongo_url = "mongodb://#{ process.env.JOURNAL_DB_1_PORT_27017_TCP_ADDR }:#{ process.env.JOURNAL_DB_1_PORT_27017_TCP_PORT }/journal"
+else if process.env.DB_1_PORT_27017_TCP_ADDR?
+  config.mongo_url = "mongodb://#{ process.env.DB_1_PORT_27017_TCP_ADDR }:#{ process.env.DB_1_PORT_27017_TCP_PORT }/journal"
 else
  config.mongo_url = "mongodb://127.0.0.1:27017/journal"
 config.mongoose.connect(config.mongo_url)
 
 if process.env.REDIS_URL?
   config.redis_url = url.parse(process.env.REDIS_URL)
-else if process.env.JOURNAL_REDIS_1_PORT?
-  config.redis_url = "redis://#{ process.env.JOURNAL_REDIS_1_PORT_6379_TCP_ADDR }:#{ process.env.JOURNAL_REDIS_1_PORT_6379_TCP_PORT }"
+else if process.env.REDIS_1_PORT_6379_TCP_ADDR?
+  config.redis_url = "redis://#{ process.env.REDIS_1_PORT_6379_TCP_ADDR }:#{ process.env.REDIS_1_PORT_6379_TCP_PORT }"
 else
   config.redis_url = process.env.REDIS_URL ? "redis://bogususer:@localhost"
 
