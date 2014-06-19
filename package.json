@@ -7,14 +7,21 @@
     "appcache-brunch": "~1.7.0",
     "async": "0.2.x",
     "bcrypt": "0.x.x",
+    "coffee-script": "^1.7.1",
     "coffee-script-brunch": "1.x.x",
     "connect": "~2.14.1",
     "connect-flash": "",
     "eco-brunch": "1.x.x",
     "ect": "~0.5.4",
+    "event-stream": "^3.1.5",
     "express": "3.x.x",
     "gm": "",
+    "good": "^2.1.2",
+    "hapi": "^6.0.2",
     "javascript-brunch": "1.x.x",
+    "joi": "^4.6.1",
+    "lab": "^3.2.1",
+    "lout": "^5.0.0",
     "moment": "2.x.x",
     "mongoosastic": "0.x.x",
     "mongoose": "3.x.x",
@@ -29,5 +36,9 @@
     "expect.js": "0.x.x",
     "mocha": "1.x.x"
   },
-  "repository": "https://github.com/KyleAMathews/Journal.git"
+  "repository": "https://github.com/KyleAMathews/Journal.git",
+  "scripts": {
+    "test": "./node_modules/.bin/lab"
+  }
+
 }
