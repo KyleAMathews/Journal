@@ -15,6 +15,11 @@ server.pack.register [
     plugin: require './plugins/posts'
   },
   {
+    plugin: require 'hapi-single-page-app-plugin'
+    options:
+      exclude: ['docs.*']
+  },
+  {
     plugin: require 'good'
     options:
       subcribers:
