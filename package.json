@@ -21,6 +21,8 @@
     "javascript-brunch": "1.x.x",
     "joi": "^4.6.1",
     "lab": "^3.2.1",
+    "leveldown": "^0.10.2",
+    "levelup": "^0.18.5",
     "lout": "^5.0.0",
     "moment": "2.x.x",
     "mongoosastic": "0.x.x",
@@ -40,5 +42,4 @@
   "scripts": {
     "test": "./node_modules/.bin/lab"
   }
-
 }
