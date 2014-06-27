@@ -1,16 +1,11 @@
+React = require 'react'
+Link = require('react-nested-router').Link
 request = require 'superagent'
 
 module.exports = React.createClass
-  componentDidMount: ->
-    console.log 'yo'
-    request
-      .get('/posts')
-      .set('Accept', 'application/json')
-      .end (err, res) ->
-        console.log res.body
-
+  displayName: 'App'
   render: ->
     <div>
-      <h1>Hello World!</h1>
-      <p>I mean, what else is there to worry about?</p>
+      <div><Link to="index">Home</Link></div>
+      {@props.activeRoute}
     </div>

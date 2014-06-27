@@ -27,10 +27,24 @@ exports.register = (plugin, options, next) ->
         reply array
       )
 
+  postOptions =
+    validate:
+      params:
+        id: Joi.number().integer().max(999999).min(1).required()
+    handler: (request, reply) ->
+      key = createKey(pad(request.params.id))
+      postsDb.get(key, (err, body) ->
+        reply(body)
+      )
+
   plugin.route
     path: "/posts"
     method: "GET"
     config: postsOptions
+  plugin.route
+    path: "/posts/{id}"
+    method: "GET"
+    config: postOptions
 
   next()
 
