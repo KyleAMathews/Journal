@@ -1,0 +1,31 @@
+.headroom {
+  @include transition(transform 200ms linear);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: gray(10%);
+  height: rhythm(1.5);
+  padding: rhythm(0.25) 0;
+  &--pinned {
+    transform: translateY(0%);
+  }
+  &--unpinned {
+    transform: translateY(-125%);
+  }
+  &__links {
+    @include container(24em);
+  }
+  &__link {
+    color: gray(90%);
+    font-weight: bold;
+    &:hover, &:active {
+      color: gray(80%);
+    }
+  }
+}
+
+.main-section {
+  @include container(24em);
+  margin-top: rhythm(3);
+}

@@ -14,7 +14,7 @@ module.exports = React.createClass
   fetchPosts: ->
     request
       .get('/posts')
-      .query('start': @state.start, limit: 20)
+      .query('start': @state.start, limit: 40)
       .set('Accept', 'application/json')
       .end (err, res) =>
         @setState posts: @state.posts.concat res.body

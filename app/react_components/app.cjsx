@@ -4,8 +4,23 @@ request = require 'superagent'
 
 module.exports = React.createClass
   displayName: 'App'
+
+  componentDidMount: ->
+    headerEl = document.querySelector(".headroom")
+    headroom  = new Headroom(headerEl, {
+      tolerance: 5
+      offset: 405
+    })
+    headroom.init()
+
   render: ->
     <div>
-      <div><Link to="index">Home</Link></div>
-      {@props.activeRoute}
+      <div className="headroom">
+        <div className="headroom__links">
+          <Link className="headroom__link" to="index">Home</Link>
+        </div>
+      </div>
+      <div className="main-section">
+        {@props.activeRoute}
+      </div>
     </div>

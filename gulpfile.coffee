@@ -57,7 +57,7 @@ gulp.task 'default', ->
 gulp.task 'build', ['scripts', 'css']
 
 gulp.task 'watch', ['css', 'connect'], ->
-  gulp.watch(['app/styles/*', 'app/react_components/**/*.scss'], ['css'])
+  gulp.watch(['app/styles/**/*', 'app/react_components/**/*.scss'], ['css'])
 
   # https://github.com/gulpjs/gulp/blob/master/docs/recipes/fast-browserify-builds-with-watchify.md
   bundler = watchify('./app/index.cjsx', {
