@@ -1,7 +1,10 @@
 Hapi = require 'hapi'
 Joi = require 'joi'
 
-server = new Hapi.Server(8080, 'localhost')
+server = new Hapi.Server(8081, 'localhost', {
+  json:
+    space: 4
+})
 
 # Port the react example over and pull from here
 # For caching latest, just store in localstorage as "latest" and pull that first
