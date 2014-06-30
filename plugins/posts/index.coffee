@@ -14,20 +14,20 @@ memwatch.on 'stats', (info) ->
 postsDb = levelQuery levelup './postsdb', valueEncoding: 'json'
 postsDb.query.use(pathEngine())
 postsDb.ensureIndex('id')
-postsDb.ensureIndex('changed')
+postsDb.ensureIndex('updated_at')
 
 exports.register = (plugin, options, next) ->
   postsOptions =
     validate:
       query:
         limit: Joi.number().integer().max(5000).default(10)
-        changed_since: Joi.string()
+        updated_since: Joi.string()
         start: Joi.string().default(new Date().toJSON())
     handler: (request, reply) ->
       # User is querying for all posts changed since a certain date.
-      if request.query.changed_since?
+      if request.query.updated_since?
         ids = []
-        postsDb.indexes['changed'].createIndexStream(start:request.query.changed_since)
+        postsDb.indexes['updated_at'].createIndexStream(start:request.query.updated_since)
           .on 'data', (data) ->
             ids.push data.value
           .on 'end', ->

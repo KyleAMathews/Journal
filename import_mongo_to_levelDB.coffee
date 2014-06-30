@@ -17,10 +17,16 @@ MongoClient.connect('mongodb://69.164.194.245:27017/journal', (err, db) ->
     console.log count
   collection.find().toArray (err, results) ->
     for post in results
+      console.log post._user
+      console.log post
       delete post._id
       delete post._user
       post.id = post.nid
       delete post.nid
+      post.created_at = post.created
+      post.updated_at = post.changed
+      delete post.created
+      delete post.changed
       console.log post
-      postsDb.put createKey(pad(post.id)), post
+      postsDb.put post.created_at, post
 )
