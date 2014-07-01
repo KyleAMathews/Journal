@@ -1,4 +1,5 @@
 gulp = require 'gulp'
+gutil = require('gulp-util')
 open = require 'open'
 connect = require 'gulp-connect'
 source = require('vinyl-source-stream')
@@ -11,17 +12,17 @@ isProduction = process.env.NODE_ENV is "production"
 
 # React code
 gulp.task('scripts', ->
-    return gulp.src('client.coffee', read: false)
-        .pipe($.browserify({
-            insertGlobals: true
-            extensions: ['.cjsx', 'coffee']
-            transform: 'coffee-reactify'
-            debug: !isProduction
-        }))
-        .pipe($.if(isProduction, $.uglify()))
-        .pipe($.rename('bundle.js'))
-        .pipe(gulp.dest('public/'))
-        .pipe($.size())
+  return gulp.src('client.coffee', read: false)
+    .pipe($.browserify({
+      insertGlobals: true
+      extensions: ['.cjsx', 'coffee']
+      transform: 'coffee-reactify'
+      debug: !isProduction
+    }))
+    .pipe($.if(isProduction, $.uglify()))
+    .pipe($.rename('bundle.js'))
+    .pipe(gulp.dest('public/'))
+    .pipe($.size())
 )
 
 # CSS
@@ -35,7 +36,8 @@ gulp.task('css', ->
       comments: false
       bundle_exec: true
       time: true
-      require: ['susy', 'modular-scale', 'normalize-scss', 'sass-css-importer', 'breakpoint']
+      require: ['susy', 'modular-scale', 'normalize-scss',
+        'sass-css-importer', 'breakpoint']
     }))
     .on('error', (err) ->
       console.log err
@@ -62,10 +64,15 @@ gulp.task 'watch', ['css', 'connect'], ->
   # https://github.com/gulpjs/gulp/blob/master/docs/recipes/fast-browserify-builds-with-watchify.md
   bundler = watchify('./app/index.cjsx', {
     extensions: ['.coffee', '.cjsx']
+    'ignore-missing': true
   })
+  bundler.ignore 'typewise'
   bundler.transform('coffee-reactify')
   rebundle = ->
     return bundler.bundle({debug: !isProduction})
+      .on("error", (err) ->
+        gutil.log("Browserify error:", err)
+      )
       .pipe(source('bundle.js'))
       .pipe(gulp.dest('./public'))
       .pipe($.connect.reload())
