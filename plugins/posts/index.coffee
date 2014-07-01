@@ -11,7 +11,8 @@ memwatch.on 'stats', (info) ->
   console.log info
   console.log info.current_base / 1024 / 1024 + " MB"
 
-postsDb = levelQuery levelup './postsdb', valueEncoding: 'json'
+db = levelup('./postsdb', valueEncoding: 'json')
+postsDb = levelQuery(db)
 postsDb.query.use(pathEngine())
 postsDb.ensureIndex('id')
 postsDb.ensureIndex('updated_at')
@@ -23,19 +24,23 @@ exports.register = (plugin, options, next) ->
         limit: Joi.number().integer().max(5000).default(10)
         updated_since: Joi.string()
         start: Joi.string().default(new Date().toJSON())
+        until: Joi.string().default(new Date().toJSON())
     handler: (request, reply) ->
       # User is querying for all posts changed since a certain date.
       if request.query.updated_since?
         ids = []
-        postsDb.indexes['updated_at'].createIndexStream(start:request.query.updated_since)
+        postsDb.indexes['updated_at'].createIndexStream(
+            start: request.query.updated_since
+            end: request.query.until
+          )
           .on 'data', (data) ->
             ids.push data.value
           .on 'end', ->
             async.map ids, ((id, cb) -> postsDb.get(id, cb)), (err, results) ->
-              reply results
+              reply results.reverse()
 
       else
-        postsDb.createValueStream(
+        db.createValueStream(
           reverse: true
           limit: request.query.limit
           start: request.query.start
