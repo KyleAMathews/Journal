@@ -28,16 +28,16 @@ exports.register = (plugin, options, next) ->
       validate:
         query:
           limit: Joi.number().integer().max(5000).default(10)
-          updated_since: Joi.string()
-          start: Joi.string().default(new Date().toJSON())
-          until: Joi.string()
+          updated_since: Joi.date()
+          start: Joi.date().default(new Date().toJSON())
+          until: Joi.date()
       handler: (request, reply) ->
         # User is querying for all posts changed since a certain date.
         if request.query.updated_since?
           ids = []
           postsDb.indexes['updated_at'].createIndexStream(
-              start: request.query.updated_since
-              end: request.query.until
+              start: request.query.updated_since.toJSON()
+              end: request.query.until.toJSON()
             )
             .on 'data', (data) ->
               ids.push data.value
@@ -49,7 +49,7 @@ exports.register = (plugin, options, next) ->
           db.createValueStream(
             reverse: true
             limit: request.query.limit
-            start: request.query.start
+            start: request.query.start.toJSON()
           ).pipe(es.writeArray (err, array) ->
             reply array
           )
