@@ -19,7 +19,7 @@ MongoClient.connect('mongodb://69.164.194.245:27017/journal', (err, db) ->
   collection.find().toArray (err, results) ->
     for post in results
       console.log post._user
-      console.log post
+      #console.log post
       delete post._id
       delete post._user
       post.id = post.nid

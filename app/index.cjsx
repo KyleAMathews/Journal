@@ -7,6 +7,10 @@ Index = require './react_components/index'
 Post = require './react_components/post'
 eventBus = require './event_bus'
 
+# Assign some convenient js libraries to the Window
+if window?
+  window._ = require 'underscore'
+
 Posts = require './posts'
 
 React.renderComponent((
