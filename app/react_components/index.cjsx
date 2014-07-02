@@ -1,45 +1,55 @@
 React = require 'react'
 Link = require('react-nested-router').Link
 request = require 'superagent'
+moment = require 'moment'
+_ = require 'underscore'
+
 SetInterval = require '../mixins/set_interval'
 eventBus = require '../event_bus'
+postsDAO = require '../posts'
 
 module.exports = React.createClass
   displayName: 'Index'
   getInitialState: ->
     return {
       posts: []
-      start: 9999999
+      start: new Date().toJSON()
       loading: false
     }
 
-  fetchPosts: ->
+  nextPage: ->
     @setState loading: true
-    request
-      .get('/posts')
-      .query('start': @state.start, limit: 40)
-      .set('Accept', 'application/json')
-      .end (err, res) =>
-        @setState posts: @state.posts.concat res.body
-        @setState start: res.body.pop().id - 1
-        @setState loading: false
+    postsDAO.nextPage offset: @state.posts.length, (newPosts) =>
+      @setState {
+        posts: @state.posts.concat newPosts
+        loading: false
+      }
 
   componentDidMount: ->
-    @fetchPosts()
-    eventBus.on 'scrollBottom', (distance) =>
-      if distance < 1000 and not @state.loading
-        @fetchPosts()
+    @nextPage()
+    throttled = _.throttle ((distance) =>
+      if distance < 2000 and not @state.loading
+        @nextPage()
+    ), 250
+
+    eventBus.on 'scrollBottom', throttled
 
   componentWillUnmount: ->
     eventBus.off()
 
   render: ->
-    posts = @state.posts.map (post) ->
-      <li key={post.id}><Link to="post" postId={post.id}>{post.title}</Link></li>
+    months = {}
+    posts = []
+    for post in @state.posts
+      month = moment(post.get('created_at')).format('MMMM YYYY')
+      unless months[month]?
+        posts.push <h2 className="posts-index__month" key={month}>{month}</h2>
+        months[month] = true
+      posts.push <li key={post.id}><Link to="post" postId={post.id}>{post.get('title')}</Link></li>
+
     return (
-      <div>
-        <h1>All the posts</h1>
-        <ul>
+      <div className="posts-index">
+        <ul className="posts-index__list">
           {posts}
         </ul>
       </div>

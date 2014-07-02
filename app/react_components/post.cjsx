@@ -1,6 +1,9 @@
 React = require 'react'
 request = require 'superagent'
 marked = require('marked')
+moment = require 'moment'
+
+postsDAO = require '../posts'
 
 module.exports = React.createClass
   getInitialState: ->
@@ -10,11 +13,8 @@ module.exports = React.createClass
     }
 
   componentDidMount: ->
-    request
-      .get("/posts/#{@props.params.postId}")
-      .set('Accept', 'application/json')
-      .end (err, res) =>
-        @setState res.body
+    postsDAO.getPost @props.params.postId, (post) =>
+      @setState post
 
   render: ->
     <div>

@@ -2,6 +2,7 @@ REMOTE_ADDRESS = "69.164.194.245:"
 MongoClient = require('mongodb').MongoClient
 levelup = require 'levelup'
 postsDb = levelup './postsdb', valueEncoding: 'json'
+moment = require 'moment'
 _ = require 'underscore'
 
 createKey = (id) ->
@@ -23,8 +24,8 @@ MongoClient.connect('mongodb://69.164.194.245:27017/journal', (err, db) ->
       delete post._user
       post.id = post.nid
       delete post.nid
-      post.created_at = post.created
-      post.updated_at = post.changed
+      post.created_at = moment(post.created).toJSON()
+      post.updated_at = moment(post.changed).toJSON()
       delete post.created
       delete post.changed
       console.log post

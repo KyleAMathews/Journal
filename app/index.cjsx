@@ -7,6 +7,8 @@ Index = require './react_components/index'
 Post = require './react_components/post'
 eventBus = require './event_bus'
 
+Posts = require './posts'
+
 React.renderComponent((
   <Route handler={App} location="history">
     <Route name="index" path="/" handler={Index} />

@@ -66,15 +66,14 @@ gulp.task 'watch', ['css', 'connect'], ->
     extensions: ['.coffee', '.cjsx']
     'ignore-missing': true
   })
-  bundler.ignore 'typewise'
   bundler.transform('coffee-reactify')
   rebundle = ->
     return bundler.bundle({debug: !isProduction})
+      .pipe(source('bundle.js'))
+      .pipe(gulp.dest('./public'))
       .on("error", (err) ->
         gutil.log("Browserify error:", err)
       )
-      .pipe(source('bundle.js'))
-      .pipe(gulp.dest('./public'))
       .pipe($.connect.reload())
 
   bundler.on('update', rebundle)
