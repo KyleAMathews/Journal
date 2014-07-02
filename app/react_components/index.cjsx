@@ -1,8 +1,10 @@
-React = require 'react'
+React = require 'react/addons'
 Link = require('react-nested-router').Link
 request = require 'superagent'
 moment = require 'moment'
 _ = require 'underscore'
+
+PostListItem = require './post_title_list_item'
 
 SetInterval = require '../mixins/set_interval'
 eventBus = require '../event_bus'
@@ -45,7 +47,7 @@ module.exports = React.createClass
       unless months[month]?
         posts.push <h2 className="posts-index__month" key={month}>{month}</h2>
         months[month] = true
-      posts.push <li key={post.id}><Link to="post" postId={post.id}>{post.get('title')}</Link></li>
+      posts.push <PostListItem key={post.id} post={post.toJSON()}></PostListItem>
 
     return (
       <div className="posts-index">
