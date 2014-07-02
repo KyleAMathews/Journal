@@ -24,9 +24,11 @@ module.exports = React.createClass
   # Handle clicks on interlinks between posts.
   handleClick: (e) ->
     e.preventDefault()
-    path = e.target.pathname?.split('/')
-    if path[1] is "posts" and path[2]?
-      Router.transitionTo('post', postId: path[2])
+    # Ignore unless the click was on an A element.
+    if e.target.nodeName is "A"
+      path = e.target.pathname?.split('/')
+      if path[1] is "posts" and path[2]?
+        Router.transitionTo('post', postId: path[2])
 
   render: ->
     <div>
