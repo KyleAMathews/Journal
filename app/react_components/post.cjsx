@@ -14,6 +14,10 @@ module.exports = React.createClass
     }
 
   componentDidMount: ->
+    # Ensure we're at the top of the page.
+    scroll(0,0)
+
+    # Fetch the post data.
     postsDAO.getPost @props.params.postId, (post) =>
       @setState post
 
