@@ -1,0 +1,10 @@
+.posts-index {
+  &__month {
+    margin-top: rhythm(1);
+    margin-bottom: rhythm(1);
+  }
+  &__list {
+    list-style: none;
+    padding: 0;
+  }
+}
