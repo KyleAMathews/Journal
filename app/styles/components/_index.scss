@@ -20,6 +20,7 @@
   &__link {
     color: gray(90%);
     display: inline-block;
+    font-family: $base-font-family;
     font-weight: bold;
     padding: rhythm(0.25) rhythm(0.5);
     &:hover, &:active {
