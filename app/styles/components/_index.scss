@@ -6,7 +6,6 @@
   right: 0;
   background: gray(10%);
   height: rhythm(1.5);
-  padding: rhythm(0.25) 0;
   z-index: 10;
   &--pinned {
     transform: translateY(0%);
@@ -20,9 +19,13 @@
   }
   &__link {
     color: gray(90%);
+    display: inline-block;
     font-weight: bold;
+    padding: rhythm(0.25) rhythm(0.5);
     &:hover, &:active {
-      color: gray(80%);
+      background: gray(25%);
+      color: gray(90%);
+      text-decoration: none;
     }
   }
 }
