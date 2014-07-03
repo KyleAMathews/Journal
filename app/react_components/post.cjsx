@@ -3,6 +3,7 @@ request = require 'superagent'
 marked = require('marked')
 moment = require 'moment'
 Router = require('react-nested-router')
+_ = require 'underscore'
 
 postsDAO = require '../posts'
 
@@ -11,6 +12,7 @@ module.exports = React.createClass
     return {
       title: ''
       body: ''
+      loading: true
     }
 
   componentDidMount: ->
@@ -19,6 +21,7 @@ module.exports = React.createClass
 
     # Fetch the post data.
     postsDAO.getPost @props.params.postId, (post) =>
+      post = _.extend post, loading: false
       @setState post
 
   # Handle clicks on interlinks between posts.
@@ -30,9 +33,17 @@ module.exports = React.createClass
       if path[1] is "posts" and path[2]?
         Router.transitionTo('post', postId: path[2])
 
+  handleDblClick: ->
+    Router.transitionTo('post-edit', postId: @state.id)
+
   render: ->
-    <div>
-      <h1>{@state.title}</h1>
-      <small>{moment(@state.created_at).format('dddd, MMMM Do YYYY, h:mma')}</small>
-      <div onClick={@handleClick} dangerouslySetInnerHTML={__html:marked(@state.body, smartypants:true)}></div>
-    </div>
+    if @state.loading
+      return <div />
+    else
+      return (
+        <div onDoubleClick={@handleDblClick}>
+          <h1>{@state.title}</h1>
+          <small>{moment(@state.created_at).format('dddd, MMMM Do YYYY, h:mma')}</small>
+          <div onClick={@handleClick} dangerouslySetInnerHTML={__html:marked(@state.body, smartypants:true)}></div>
+        </div>
+      )

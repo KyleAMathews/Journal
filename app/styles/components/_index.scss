@@ -7,6 +7,7 @@
   background: gray(10%);
   height: rhythm(1.5);
   padding: rhythm(0.25) 0;
+  z-index: 10;
   &--pinned {
     transform: translateY(0%);
   }
@@ -28,4 +29,5 @@
 .main-section {
   @include container(24em);
   margin-top: rhythm(3);
+  margin-bottom: rhythm(3);
 }

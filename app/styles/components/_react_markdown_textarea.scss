@@ -1,0 +1,50 @@
+.react-markdown-textarea {
+  margin-top: rhythm(1);
+  &__textarea-wrapper {
+    margin-top: rhythm(0.5);
+  }
+  &__textarea {
+    padding: 0;
+    width: 100%;
+  }
+  &__preview {
+    > * {
+      &:first-child {
+        margin-top: 0;
+      }
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+  &__save-button {
+    margin-top: rhythm(1);
+  }
+  &__nav {
+    @include adjust-font-size-to(15px);
+    padding-left: 0;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: rhythm(-0.25);
+    &__item {
+      border: 1px solid;
+      border-color: rgba(0,0,0,0);
+      color: gray(20%);
+      margin-left: rhythm(0.25);
+      margin-bottom: 0;
+      padding: rhythm(0.25) rhythm(0.5);
+      position: relative;
+      &:first-child {
+        margin-left: 0;
+      }
+      &--active {
+        @include border-top-radius(rhythm(0.2));
+        background: white;
+        border: 1px solid;
+        border-bottom: none;
+        border-color: gray(80%);
+        color: gray(30%);
+      }
+    }
+  }
+}

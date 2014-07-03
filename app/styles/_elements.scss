@@ -91,3 +91,8 @@ hr {
   height: 1px;
   width: 100%;
 }
+
+button, input[type="submit"] {
+  @include sassy-button-structure(rhythm(0.375), rhythm(0.75), rhythm(0.25) rhythm(.75));
+  @include sassy-button-gradient('flat', #4ba3cc);
+}

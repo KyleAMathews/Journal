@@ -4,7 +4,7 @@ request = require 'superagent'
 moment = require 'moment'
 _ = require 'underscore'
 
-PostListItem = require './post_title_list_item'
+PostListItem = require './post_list_item'
 
 SetInterval = require '../mixins/set_interval'
 eventBus = require '../event_bus'
