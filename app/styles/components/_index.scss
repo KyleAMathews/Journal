@@ -15,7 +15,7 @@
     transform: translateY(-125%);
   }
   &__links {
-    @include container(24em);
+    @include container(30em);
     padding: 0 rhythm(0.75);
   }
   &__link {
@@ -28,7 +28,7 @@
 }
 
 .main-section {
-  @include container(24em);
+  @include container(30em);
   margin-top: rhythm(3);
   margin-bottom: rhythm(3);
   padding: 0 rhythm(.75);
