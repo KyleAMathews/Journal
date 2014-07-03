@@ -1,0 +1,41 @@
+//
+// Icon Font: fontcustom
+//
+
+@font-face {
+  font-family: "fontcustom";
+  src: font-url("fontcustom_2e17283a6165163f4c6f6f3c9a52f9f7.eot");
+  src: font-url("fontcustom_2e17283a6165163f4c6f6f3c9a52f9f7.eot?#iefix") format("embedded-opentype"),
+       font-url("fontcustom_2e17283a6165163f4c6f6f3c9a52f9f7.woff") format("woff"),
+       font-url("fontcustom_2e17283a6165163f4c6f6f3c9a52f9f7.ttf") format("truetype"),
+       font-url("fontcustom_2e17283a6165163f4c6f6f3c9a52f9f7.svg#fontcustom") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "fontcustom";
+    src: font-url("fontcustom_2e17283a6165163f4c6f6f3c9a52f9f7.svg#fontcustom") format("svg");
+  }
+}
+
+[data-icon]:before { content: attr(data-icon); }
+
+[data-icon]:before,
+.icon-home:before {
+  display: inline-block;
+  font-family: "fontcustom";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+}
+
+.icon-home:before { content: "\f100"; }

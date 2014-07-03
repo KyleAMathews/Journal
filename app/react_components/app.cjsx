@@ -17,7 +17,7 @@ module.exports = React.createClass
     <div>
       <div className="headroom">
         <div className="headroom__links">
-          <Link className="headroom__link" to="index">Home</Link>
+          <Link className="headroom__link" to="index"><span className="icon-home headroom__icon" />Home</Link>
         </div>
       </div>
       <div className="main-section">

@@ -1,0 +1,46 @@
+{
+  "checksum": {
+    "previous": "2e17283a6165163f4c6f6f3c9a52f9f75896dfff2f99589e1dfe40dab7aceb41",
+    "current": "2e17283a6165163f4c6f6f3c9a52f9f75896dfff2f99589e1dfe40dab7aceb41"
+  },
+  "fonts": [
+    "public/fonts/fontcustom_2e17283a6165163f4c6f6f3c9a52f9f7.ttf",
+    "public/fonts/fontcustom_2e17283a6165163f4c6f6f3c9a52f9f7.svg",
+    "public/fonts/fontcustom_2e17283a6165163f4c6f6f3c9a52f9f7.woff",
+    "public/fonts/fontcustom_2e17283a6165163f4c6f6f3c9a52f9f7.eot"
+  ],
+  "glyphs": {
+    "home": {
+      "codepoint": 61696,
+      "source": "app/styles/icons/home.svg"
+    }
+  },
+  "options": {
+    "autowidth": true,
+    "config": "fontcustom.yml",
+    "css_selector": ".icon-{{glyph}}",
+    "debug": false,
+    "font_name": "fontcustom",
+    "force": false,
+    "input": {
+      "templates": "app/styles/icons/fontcustom/templates",
+      "vectors": "app/styles/icons/"
+    },
+    "no_hash": false,
+    "output": {
+      "css": "app/styles/",
+      "fonts": "public/fonts",
+      "preview": "public/fonts"
+    },
+    "preprocessor_path": "",
+    "quiet": false,
+    "templates": [
+      "scss",
+      "preview"
+    ]
+  },
+  "templates": [
+    "app/styles/_fontcustom.scss",
+    "public/fonts/fontcustom-preview.html"
+  ]
+}

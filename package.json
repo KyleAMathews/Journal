@@ -10,6 +10,8 @@
     "coffee-script": "^1.7.1",
     "event-stream": "^3.1.5",
     "gulp": "^3.8.3",
+    "gulp-if": "^1.2.1",
+    "gulp-shell": "^0.2.7",
     "hapi": "^6.0.2",
     "hapi-single-page-app-plugin": "0.0.6",
     "joi": "^4.6.1",
