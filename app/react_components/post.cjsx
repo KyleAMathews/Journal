@@ -3,6 +3,8 @@ request = require 'superagent'
 marked = require('marked')
 moment = require 'moment'
 Router = require('react-nested-router')
+Spinner = require 'react-spinner'
+Link = require('react-nested-router').Link
 _ = require 'underscore'
 
 postsDAO = require '../posts'
@@ -38,11 +40,14 @@ module.exports = React.createClass
 
   render: ->
     if @state.loading
-      return <div />
+      return (
+        <Spinner />
+      )
     else
       return (
-        <div onDoubleClick={@handleDblClick}>
-          <h1>{@state.title}</h1>
+        <div onDoubleClick={@handleDblClick} className="post">
+          <Link className="button post__edit-button" to="post-edit" postId={@state.id} >Edit post</Link>
+          <h1 className="post__title">{@state.title}</h1>
           <small>{moment(@state.created_at).format('dddd, MMMM Do YYYY, h:mma')}</small>
           <div onClick={@handleClick} dangerouslySetInnerHTML={__html:marked(@state.body, smartypants:true)}></div>
         </div>

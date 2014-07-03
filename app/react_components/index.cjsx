@@ -1,5 +1,4 @@
 React = require 'react/addons'
-Link = require('react-nested-router').Link
 request = require 'superagent'
 moment = require 'moment'
 _ = require 'underscore'

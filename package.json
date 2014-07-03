@@ -27,6 +27,7 @@
     "react": "^0.10.0",
     "react-markdown-textarea": "^0.5.0",
     "react-nested-router": "^0.2.0",
+    "react-spinner": "git://github.com/KyleAMathews/react-spinner",
     "react-textarea-autosize": "^0.2.0",
     "superagent": "^0.18.0",
     "underscore": "1.x.x",

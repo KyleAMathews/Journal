@@ -1,0 +1,13 @@
+.post {
+  position: relative;
+  &__edit-button {
+    margin-top: rhythm(0.5);
+    @include breakpoint(1000px) {
+      position: absolute;
+      right: -150px;
+    }
+  }
+  &__title {
+    margin-top: rhythm(1.5);
+  }
+}

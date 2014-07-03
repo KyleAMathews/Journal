@@ -16,6 +16,7 @@
   }
   &__links {
     @include container(24em);
+    padding: 0 rhythm(0.75);
   }
   &__link {
     color: gray(90%);
@@ -30,4 +31,5 @@
   @include container(24em);
   margin-top: rhythm(3);
   margin-bottom: rhythm(3);
+  padding: 0 rhythm(.75);
 }

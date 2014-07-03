@@ -5,6 +5,7 @@ moment = require 'moment'
 Router = require('react-nested-router')
 MarkdownTextarea = require 'react-markdown-textarea'
 ReactTextarea = require 'react-textarea-autosize'
+Spinner = require 'react-spinner'
 _ = require 'underscore'
 
 postsDAO = require '../posts'
@@ -34,7 +35,7 @@ module.exports = React.createClass
   render: ->
     if @state.loading
       return (
-        <div />
+        <Spinner />
       )
     else
       return (
