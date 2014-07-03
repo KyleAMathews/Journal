@@ -34,6 +34,8 @@ module.exports = React.createClass
       path = e.target.pathname?.split('/')
       if path[1] is "posts" and path[2]?
         Router.transitionTo('post', postId: path[2])
+      else
+        window.open e.target.href, '_blank'
 
   handleDblClick: ->
     Router.transitionTo('post-edit', postId: @state.id)
