@@ -41,7 +41,7 @@ module.exports = React.createClass
       return (
         <div className="post-edit" onClick={@handleClick}>
           <h1><ReactTextarea rows=1 className="post-edit__title" ref="title" autosize value={@state.title} onChange={@handleTitleChange} /></h1>
-          <MarkdownTextarea rows=6 initialValue={@state.body} />
+          <MarkdownTextarea rows=1 initialValue={@state.body} />
         </div>
       )
 
