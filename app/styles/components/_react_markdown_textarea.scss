@@ -39,7 +39,7 @@
       }
       &--active {
         @include border-top-radius(rhythm(0.2));
-        background: white;
+        background: gray(99%);
         border: 1px solid;
         border-bottom: none;
         border-color: gray(80%);
