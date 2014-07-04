@@ -27,23 +27,27 @@
     margin-top: 0;
     margin-bottom: rhythm(-0.25);
     &__item {
+      @include border-radius(rhythm(0.2));
       border: 1px solid;
       border-color: rgba(0,0,0,0);
       color: gray(20%);
       margin-left: rhythm(0.25);
       margin-bottom: 0;
-      padding: rhythm(0.25) rhythm(0.5);
+      padding: rhythm(0.25) rhythm(0.75);
       position: relative;
       &:first-child {
         margin-left: 0;
       }
+      &:hover {
+        background: gray(95%);
+      }
       &--active {
-        @include border-top-radius(rhythm(0.2));
         background: gray(99%);
         border: 1px solid;
-        border-bottom: none;
-        border-color: gray(80%);
-        color: gray(30%);
+        border-color: gray(85%);
+        &:hover {
+          background: gray(99%);
+        }
       }
     }
   }
