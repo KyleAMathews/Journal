@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "68c8b5d513a45a14b75c88e3cdf13df482e42aa2f92e80420c2e25591ae42fac",
-    "current": "68c8b5d513a45a14b75c88e3cdf13df482e42aa2f92e80420c2e25591ae42fac"
+    "previous": "ff24a5deaf8cddd9633f9d36a53f2736cffeec4729353920d34d3635965ac8d1",
+    "current": "ff24a5deaf8cddd9633f9d36a53f2736cffeec4729353920d34d3635965ac8d1"
   },
   "fonts": [
-    "public/fonts/fontcustom_68c8b5d513a45a14b75c88e3cdf13df4.ttf",
-    "public/fonts/fontcustom_68c8b5d513a45a14b75c88e3cdf13df4.svg",
-    "public/fonts/fontcustom_68c8b5d513a45a14b75c88e3cdf13df4.woff",
-    "public/fonts/fontcustom_68c8b5d513a45a14b75c88e3cdf13df4.eot"
+    "assets/fonts/fontcustom_ff24a5deaf8cddd9633f9d36a53f2736.ttf",
+    "assets/fonts/fontcustom_ff24a5deaf8cddd9633f9d36a53f2736.svg",
+    "assets/fonts/fontcustom_ff24a5deaf8cddd9633f9d36a53f2736.woff",
+    "assets/fonts/fontcustom_ff24a5deaf8cddd9633f9d36a53f2736.eot"
   ],
   "glyphs": {
     "flat-pencil": {
@@ -33,8 +33,8 @@
     "no_hash": false,
     "output": {
       "css": "app/styles/",
-      "fonts": "public/fonts",
-      "preview": "public/fonts"
+      "fonts": "assets/fonts",
+      "preview": "assets/fonts"
     },
     "preprocessor_path": "",
     "quiet": false,
@@ -45,6 +45,6 @@
   },
   "templates": [
     "app/styles/_fontcustom.scss",
-    "public/fonts/fontcustom-preview.html"
+    "assets/fonts/fontcustom-preview.html"
   ]
 }

@@ -48,11 +48,11 @@ gulp.task('css', ->
 
 # Font compilation
 gulp.task('font', $.shell.task([
-  'fontcustom compile -F'
+  'fontcustom compile'
 ]))
 
 gulp.task('font-base-64', ->
-  gulp.src('public/fonts/*.ttf')
+  gulp.src('assets/fonts/*.ttf')
     .pipe($.rename('fontcustom.ttf'))
     .pipe($.cssfont64())
     .pipe($.rename('_fontcustom_embedded.scss'))
@@ -69,7 +69,7 @@ gulp.task 'connect', -> connect.server({
 gulp.task 'default', ->
   gulp.start 'build'
 
-gulp.task 'build', ['scripts', 'css', 'font']
+gulp.task 'build', ['scripts', 'font', 'font-base-64', 'css']
 
 gulp.task 'watch', ['css', 'connect'], ->
   gulp.watch(['app/styles/**/*', 'app/react_components/**/*.scss'], ['css'])
