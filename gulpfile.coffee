@@ -48,7 +48,7 @@ gulp.task('css', ->
 
 # Font compilation
 gulp.task('font', $.shell.task([
-  'fontcustom compile'
+  'fontcustom compile -F'
 ]))
 
 gulp.task('font-base-64', ->
