@@ -62,7 +62,7 @@ gulp.task('font-base-64', ->
 )
 
 gulp.task('copy-assets', ->
-  gulp.src('assets/*')
+  gulp.src('assets/**')
     .pipe(gulp.dest('public'))
     .pipe($.size())
 )
@@ -82,7 +82,7 @@ gulp.task 'build', ['scripts', 'font', 'font-base-64', 'css', 'copy-assets']
 gulp.task 'watch', ['css', 'connect'], ->
   gulp.watch(['app/styles/**/*', 'app/react_components/**/*.scss'], ['css'])
   gulp.watch(['app/styles/icons/*'], ['font'])
-  gulp.watch(['assets/*'], ['copy-assets'])
+  gulp.watch(['assets/**'], ['copy-assets'])
 
   # Run watchify for fast browserify rebuilds.
   bundler = watchify('./app/bootstrap_and_router.cjsx', {
