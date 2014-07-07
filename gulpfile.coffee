@@ -4,6 +4,7 @@ open = require 'open'
 connect = require 'gulp-connect'
 source = require('vinyl-source-stream')
 watchify = require('watchify')
+browserify = require 'browserify'
 
 # Load plugins
 $ = require('gulp-load-plugins')()
@@ -12,17 +13,18 @@ isProduction = process.env.NODE_ENV is "production"
 
 # React code
 gulp.task('scripts', ->
-  return gulp.src('client.coffee', read: false)
-    .pipe($.browserify({
-      insertGlobals: true
-      extensions: ['.cjsx', 'coffee']
-      transform: 'coffee-reactify'
-      debug: !isProduction
-    }))
-    .pipe($.if(isProduction, $.uglify()))
-    .pipe($.rename('bundle.js'))
-    .pipe(gulp.dest('public/'))
-    .pipe($.size())
+  bundler = browserify('./app/bootstrap_and_router.cjsx', {
+    extensions: ['.cjsx', '.coffee']
+    'ignore-missing': true
+  })
+  bundler.transform('coffee-reactify')
+  bundler.bundle({
+    debug: !isProduction
+  })
+  .on('error', $.util.log)
+  .pipe(source('bundle.js'))
+  .pipe($.if(isProduction, $.streamify($.uglify())))
+  .pipe(gulp.dest('./public'))
 )
 
 # CSS
