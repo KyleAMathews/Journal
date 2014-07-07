@@ -68,18 +68,18 @@ gulp.task 'watch', ['css', 'connect'], ->
   gulp.watch(['app/styles/icons/*'], ['font'])
 
   # https://github.com/gulpjs/gulp/blob/master/docs/recipes/fast-browserify-builds-with-watchify.md
-  bundler = watchify('./app/index.cjsx', {
+  bundler = watchify('./app/bootstrap_and_router.cjsx', {
     extensions: ['.coffee', '.cjsx']
     'ignore-missing': true
   })
   bundler.transform('coffee-reactify')
   rebundle = ->
     return bundler.bundle({debug: !isProduction})
-      .pipe(source('bundle.js'))
-      .pipe(gulp.dest('./public'))
       .on("error", (err) ->
         gutil.log("Browserify error:", err)
       )
+      .pipe(source('bundle.js'))
+      .pipe(gulp.dest('./public'))
       .pipe($.connect.reload())
 
   bundler.on('update', rebundle)

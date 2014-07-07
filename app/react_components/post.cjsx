@@ -7,24 +7,63 @@ Spinner = require 'react-spinner'
 Link = require('react-nested-router').Link
 _ = require 'underscore'
 
-postsDAO = require '../posts'
+Messages = require './messages'
+PostStore = require '../stores/post_store'
+Dispatcher = require '../dispatcher'
 
 module.exports = React.createClass
   getInitialState: ->
-    return {
-      title: ''
-      body: ''
-      loading: true
-    }
+    state =
+      post: post = PostStore.get(@props.params.postId)
+      errors: []
+      loading: false
+
+    if post
+      return state
+    else
+      state.post = {}
+      state.loading = true
+      return state
 
   componentDidMount: ->
     # Ensure we're at the top of the page.
     scroll(0,0)
 
-    # Fetch the post data.
-    postsDAO.getPost @props.params.postId, (post) =>
-      post = _.extend post, loading: false
-      @setState post
+    PostStore.on('change', "post", =>
+      if @state.loading and PostStore.get(@props.params.postId)
+        @setState {
+          post: PostStore.get(@props.params.postId)
+          loading: false
+        }
+    )
+
+    Dispatcher.on 'POST_FETCH_ERROR', "post", (data) =>
+      if data.id is parseInt(@props.params.postId, 10)
+        @setState {
+          loading: false
+          errors: @state.errors.concat [data.message.message]
+        }
+
+  componentWillUnmount: ->
+    PostStore.releaseGroup("post")
+    Dispatcher.releaseGroup("post")
+
+  render: ->
+    if @state.loading
+      return (
+        <Spinner />
+      )
+    else if @state.errors.length > 0
+      <Messages type="errors" messages={@state.errors} />
+    else
+      return (
+        <div onDoubleClick={@handleDblClick} className="post">
+          <Link className="button post__edit-button" to="post-edit" postId={@state.post.id} ><span className="icon-flat-pencil" />Edit post</Link>
+          <h1 className="post__title">{@state.post.title}</h1>
+          <small>{moment(@state.post.created_at).format('dddd, MMMM Do YYYY, h:mma')}</small>
+          <div onClick={@handleClick} dangerouslySetInnerHTML={__html:marked(@state.post.body, smartypants:true)}></div>
+        </div>
+      )
 
   # Handle clicks on interlinks between posts.
   handleClick: (e) ->
@@ -38,19 +77,5 @@ module.exports = React.createClass
         window.open e.target.href, '_blank'
 
   handleDblClick: ->
-    Router.transitionTo('post-edit', postId: @state.id)
+    Router.transitionTo('post-edit', postId: @state.post.id)
 
-  render: ->
-    if @state.loading
-      return (
-        <Spinner />
-      )
-    else
-      return (
-        <div onDoubleClick={@handleDblClick} className="post">
-          <Link className="button post__edit-button" to="post-edit" postId={@state.id} ><span className="icon-flat-pencil" />Edit post</Link>
-          <h1 className="post__title">{@state.title}</h1>
-          <small>{moment(@state.created_at).format('dddd, MMMM Do YYYY, h:mma')}</small>
-          <div onClick={@handleClick} dangerouslySetInnerHTML={__html:marked(@state.body, smartypants:true)}></div>
-        </div>
-      )

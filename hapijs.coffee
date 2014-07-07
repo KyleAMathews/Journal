@@ -2,6 +2,7 @@ Hapi = require 'hapi'
 Joi = require 'joi'
 
 server = new Hapi.Server(8081, 'localhost', {
+  cors: true
   json:
     space: 4
 })

@@ -1,4 +1,16 @@
 .posts-index {
+  &__new-post {
+    margin-top: rhythm(0.5);
+
+    @include breakpoint(1000px) {
+      position: absolute;
+      right: -150px;
+    }
+    .icon-flat-pencil {
+      font-size: 90%;
+      margin-right: rhythm(1/4);
+    }
+  }
   &__month {
     margin-top: rhythm(1);
     margin-bottom: rhythm(1);
