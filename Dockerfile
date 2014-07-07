@@ -2,17 +2,31 @@ FROM kyma/docker-nodejs-base
 MAINTAINER Kyle Mathews "mathews.kyle@gmail.com"
 
 # Install Graphicsmagick
-RUN apt-get install -y graphicsmagick
+RUN apt-get install -y graphicsmagick \
+  fontforge ttfautohint unzip
 
 WORKDIR /app
+ENV DOCKER true
+
+# Install woff-code for fontcustom
+RUN curl -L http://people.mozilla.com/~jkew/woff/woff-code-latest.zip > woff-code-latest.zip
+RUN unzip woff-code-latest.zip -d sfnt2woff && cd sfnt2woff && make && sudo mv sfnt2woff /usr/local/bin/
+
+# Install Gems
+ADD Gemfile /app/Gemfile
+ADD Gemfile.lock /app/Gemfile.lock
+RUN bundle install
+
+# Install Gulp for building assets
+RUN npm install -g cult gulp
+
+# Install node.js modules.
 ADD package.json /app/package.json
 RUN npm install
-ADD bower.json /app/bower.json
-RUN bower install --allow-root
-ADD app /app/app
-ADD config.coffee /app/config.coffee
-RUN brunch build
-RUN cd app/styles; compass compile
+
 ADD . /app
 
-CMD ["coffee", "server.coffee", "3000"]
+# Build web application.
+RUN NODE_ENV=production cult build
+
+#CMD ["coffee", "server.coffee", "3000"]

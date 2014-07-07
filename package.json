@@ -63,6 +63,7 @@
   },
   "repository": "https://github.com/KyleAMathews/Journal.git",
   "scripts": {
-    "test": "./node_modules/.bin/lab"
+    "test": "./node_modules/.bin/lab",
+    "start": "./node_modules/.bin/coffee hapijs.coffee"
   }
 }
