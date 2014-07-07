@@ -61,6 +61,12 @@ gulp.task('font-base-64', ->
     .pipe(gulp.dest('app/styles/'))
 )
 
+gulp.task('copy-assets', ->
+  gulp.src('assets/*')
+    .pipe(gulp.dest('public'))
+    .pipe($.size())
+)
+
 # Connect
 gulp.task 'connect', -> connect.server({
   root: ['public']
@@ -71,13 +77,14 @@ gulp.task 'connect', -> connect.server({
 gulp.task 'default', ->
   gulp.start 'build'
 
-gulp.task 'build', ['scripts', 'font', 'font-base-64', 'css']
+gulp.task 'build', ['scripts', 'font', 'font-base-64', 'css', 'copy-assets']
 
 gulp.task 'watch', ['css', 'connect'], ->
   gulp.watch(['app/styles/**/*', 'app/react_components/**/*.scss'], ['css'])
   gulp.watch(['app/styles/icons/*'], ['font'])
+  gulp.watch(['assets/*'], ['copy-assets'])
 
-  # https://github.com/gulpjs/gulp/blob/master/docs/recipes/fast-browserify-builds-with-watchify.md
+  # Run watchify for fast browserify rebuilds.
   bundler = watchify('./app/bootstrap_and_router.cjsx', {
     extensions: ['.coffee', '.cjsx']
     'ignore-missing': true
