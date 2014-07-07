@@ -119,7 +119,12 @@ exports.register = (plugin, options, next) ->
 
         db.createValueStream()
           .pipe(es.writeArray (err, array) ->
-            newPost.id = 1 + _.max(array, (post) -> post.id).id
+            max = _.max(array, (post) -> post.id).id
+            if max?
+              newId = max + 1
+            else
+              newId = 1
+            newPost.id = newId
 
             # Save
             db.put(newPost.created_at, newPost, (err) ->
