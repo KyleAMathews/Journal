@@ -51,6 +51,14 @@ gulp.task('font', $.shell.task([
   'fontcustom compile'
 ]))
 
+gulp.task('font-base-64', ->
+  gulp.src('public/fonts/*.ttf')
+    .pipe($.rename('fontcustom.ttf'))
+    .pipe($.cssfont64())
+    .pipe($.rename('_fontcustom_embedded.scss'))
+    .pipe(gulp.dest('app/styles/'))
+)
+
 # Connect
 gulp.task 'connect', -> connect.server({
   root: ['public']
