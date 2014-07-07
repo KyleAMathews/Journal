@@ -16,6 +16,7 @@
     "hapi": "^6.0.2",
     "hapi-single-page-app-plugin": "0.0.6",
     "joi": "^4.6.1",
+    "jquery": "^2.1.1",
     "lab": "^3.2.1",
     "level-queryengine": "^3.0.1",
     "level-version": "^0.4.0",
@@ -37,6 +38,7 @@
     "superagent": "^0.18.0",
     "underscore": "1.x.x",
     "underscore.string": "x.x.x",
+    "velocity-animate": "^0.4.1",
     "wildemitter": "^1.0.1"
   },
   "devDependencies": {
