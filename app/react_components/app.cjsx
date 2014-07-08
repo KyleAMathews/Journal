@@ -7,14 +7,6 @@ require 'velocity-animate'
 module.exports = React.createClass
   displayName: 'App'
 
-  componentDidMount: ->
-    headerEl = document.querySelector(".headroom")
-    headroom  = new Headroom(headerEl, {
-      tolerance: 5
-      offset: 405
-    })
-    headroom.init()
-
   handleClickHome: ->
     if document.location.pathname is "/"
       $('body').velocity("scroll", { duration: 1000, offset: -85 })
