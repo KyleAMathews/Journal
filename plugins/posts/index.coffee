@@ -101,6 +101,14 @@ exports.register = (plugin, options, next) ->
       validate:
         params:
           id: Joi.number().integer().max(999999).min(1).required()
+        payload:
+          id: Joi.number().required().min(1).max(999999)
+          title: Joi.string().min(1)
+          body: Joi.string().min(1)
+          created_at: Joi.any()
+          updated_at: Joi.any()
+          deleted: Joi.boolean()
+          starred: Joi.boolean()
       handler: (request, reply) ->
         postsDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
           if array.length is 0
@@ -127,6 +135,15 @@ exports.register = (plugin, options, next) ->
     path: "/posts"
     method: "POST"
     config:
+      validate:
+        payload:
+          id: Joi.string().required()
+          title: Joi.string().min(1)
+          body: Joi.string().min(1)
+          created_at: Joi.any().required()
+          deleted: Joi.boolean().default(false)
+          starred: Joi.boolean().default(false)
+
       handler: (request, reply) ->
         # Create new post and return
         newPost = request.payload
