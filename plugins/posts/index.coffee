@@ -17,6 +17,22 @@ postsDb.query.use(pathEngine())
 postsDb.ensureIndex('id')
 postsDb.ensureIndex('updated_at')
 
+# If there's no posts (e.g. fresh install of the application) add a sample one.
+db.createKeyStream().pipe(es.writeArray (err, array) ->
+  if array.length is 0
+    post =
+      title: "Welcome to your new Journal!"
+      body: "This is a sample post. Try editing this post to see how things work.
+        You can use **Markdown** to format your posts.\n\nIf you find bugs
+        or otherwise need help, [post at an issue on Github](https://github.com/KyleAMathews/Journal/issues?state=open)."
+      created_at: new Date().toJSON()
+      updated_at: new Date().toJSON()
+      id: 1
+      deleted: false
+      starred: false
+    postsDb.put post.created_at, post
+)
+
 exports.register = (plugin, options, next) ->
   #########################################################
   ### GET /posts
