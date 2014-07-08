@@ -11,6 +11,7 @@ Post = require './react_components/post'
 PostEdit = require './react_components/post_edit'
 NewPost = require './react_components/new_post'
 Attribution = require './react_components/attribution'
+Search = require './react_components/search'
 
 # Dispatcher
 Dispatcher = require './dispatcher'
@@ -54,5 +55,6 @@ React.renderComponent((
     <Route name="post" path="/posts/:postId" handler={Post} />
     <Route name="post-edit" path="/posts/:postId/edit" handler={PostEdit} />
     <Route name="attributions" path="/attribution" handler={Attribution} />
+    <Route name="search" path="/search" handler={Search} />
   </Route>
 ), document.body)

@@ -28,6 +28,9 @@
       color: gray(90%);
       text-decoration: none;
     }
+    &.icon-search {
+      font-size: 90%;
+    }
   }
   &__icon {
     margin-right: rhythm(1/4);

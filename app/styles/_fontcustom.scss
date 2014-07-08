@@ -2,7 +2,8 @@
 
 [data-icon]:before,
 .icon-flat-pencil:before,
-.icon-home:before {
+.icon-home:before,
+.icon-search:before {
   display: inline-block;
   font-family: "fontcustom";
   font-style: normal;
@@ -19,3 +20,4 @@
 
 .icon-flat-pencil:before { content: "\f104"; }
 .icon-home:before { content: "\f100"; }
+.icon-search:before { content: "\f105"; }

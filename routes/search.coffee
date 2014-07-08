@@ -63,10 +63,6 @@ exports.makeQuery = (req, res) ->
         }
       ]
     facets:
-      year:
-        date_histogram:
-          field: 'created'
-          interval: 'year'
       month:
         date_histogram:
           field: 'created'

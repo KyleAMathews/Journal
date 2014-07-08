@@ -1,0 +1,47 @@
+Joi = require 'joi'
+elasticsearch = require 'elasticsearch'
+client = new elasticsearch.Client({
+  host: process.env.ELASTICSEARCH_URL
+  #log: 'trace'
+})
+
+exports.register = (plugin, options, next) ->
+  plugin.route
+    path: "/search"
+    method: "GET"
+    config:
+      validate:
+        query:
+          q: Joi.string()
+      handler: (request, reply) ->
+        client.search({
+          index: 'journal_posts'
+          body:
+            query:
+              query_string:
+                fields: ['title', 'body'] # search the title and body of posts.
+                default_operator: 'AND'   # require all query terms to match
+                query: request.query.q    # The query from the REST call.
+                use_dis_max: true
+                fuzzy_prefix_length : 3
+            filter:
+              term:
+                deleted: false
+                draft: false
+            facets:
+              month:
+                date_histogram:
+                  field: 'created'
+                  interval: 'month'
+            highlight:
+              fields:
+                title: {"fragment_size" : 300}
+                body: {"fragment_size" : 200}
+        }).then (body) ->
+          reply body
+
+  next()
+
+exports.register.attributes =
+  name: 'searchAPI'
+  version: '1.0.0'

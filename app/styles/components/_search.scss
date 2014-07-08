@@ -1,0 +1,27 @@
+.search {
+  &__meta {
+    color: gray(70%);
+  }
+  &__input {
+    width: 50%;
+  }
+  &__button {
+    margin-left: rhythm(0.25);
+  }
+  &__spinner {
+    display: inline-block;
+    height: rhythm(7/8);
+    left: 0;
+    margin-left: rhythm(1);
+    top: 18px;
+    width: rhythm(7/8);
+  }
+  &__result {
+    &__title {
+    }
+    &__date {
+      @include adjust-font-size-to(14px);
+      color: gray(70%);
+    }
+  }
+}

@@ -15,7 +15,12 @@ module.exports = React.createClass
     <div>
       <div className="headroom">
         <div onClick={@handleClickHome} className="headroom__links">
-          <Link className="headroom__link" to="posts-index"><span className="icon-home headroom__icon" />Home</Link>
+          <Link className="headroom__link" to="posts-index">
+            <span className="icon-home headroom__icon" />Home
+          </Link>
+          <Link className="headroom__link" to="search">
+            <span className="icon-search headroom__icon" />Search
+          </Link>
         </div>
       </div>
       <div className="main-section">
