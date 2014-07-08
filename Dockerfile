@@ -7,6 +7,8 @@ RUN apt-get install -y graphicsmagick \
 
 WORKDIR /app
 ENV DOCKER true
+ENV NODE_ENV production
+EXPOSE 8081
 
 # Install woff-code for fontcustom
 RUN curl -L http://people.mozilla.com/~jkew/woff/woff-code-latest.zip > woff-code-latest.zip
@@ -27,6 +29,6 @@ RUN npm install
 ADD . /app
 
 # Build web application assets.
-RUN NODE_ENV=production cult build
+RUN cult build
 
 CMD ["node_modules/.bin/coffee", "hapijs.coffee"]
