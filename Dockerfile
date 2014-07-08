@@ -26,7 +26,7 @@ RUN npm install
 
 ADD . /app
 
-# Build web application.
+# Build web application assets.
 RUN NODE_ENV=production cult build
 
-#CMD ["coffee", "server.coffee", "3000"]
+CMD ["node_modules/.bin/coffee", "hapijs.coffee"]
