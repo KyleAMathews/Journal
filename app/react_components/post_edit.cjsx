@@ -100,6 +100,7 @@ module.exports = React.createClass
   handleSave: (value) ->
     post = @state.post
     post.body = value
+    delete post.temp_id
 
     # Validate
     if post.title is "" or post.body is ""
