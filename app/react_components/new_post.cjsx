@@ -8,6 +8,7 @@ Messages = require './messages'
 Dispatcher = require '../dispatcher'
 PostConstants = require '../constants/post_constants'
 PostStore = require '../stores/post_store'
+AppStore = require '../stores/app_store'
 _ = require 'underscore'
 
 module.exports = React.createClass
@@ -22,6 +23,8 @@ module.exports = React.createClass
         title: ''
         body: ''
         created_at: new Date().toJSON()
+        latitude: AppStore.get('coordinates').latitude
+        longitude: AppStore.get('coordinates').longitude
     }
 
   componentDidMount: ->

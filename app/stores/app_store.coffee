@@ -6,6 +6,20 @@ CHANGE_EVENT = "change"
 
 _appState = {}
 
+# Get latitude and longitude
+success = (position) ->
+  AppStore.set 'coordinates', position.coords
+
+error = (error) ->
+  console.log error
+
+# check for Geolocation support
+if navigator.geolocation
+  console.log('Geolocation is supported!')
+  navigator.geolocation.getCurrentPosition success, error
+else
+  console.log('Geolocation is not supported for this Browser/OS version yet.')
+
 class AppStore extends Emitter
   getAll: ->
     return _appState

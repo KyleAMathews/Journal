@@ -109,6 +109,8 @@ exports.register = (plugin, options, next) ->
           updated_at: Joi.any()
           deleted: Joi.boolean()
           starred: Joi.boolean()
+          latitude: Joi.number().min(0).max(90)
+          longitude: Joi.number().min(-180).max(180)
       handler: (request, reply) ->
         postsDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
           if array.length is 0
@@ -143,6 +145,8 @@ exports.register = (plugin, options, next) ->
           created_at: Joi.any().required()
           deleted: Joi.boolean().default(false)
           starred: Joi.boolean().default(false)
+          latitude: Joi.number().min(0).max(90)
+          longitude: Joi.number().min(-180).max(180)
 
       handler: (request, reply) ->
         # Create new post and return
