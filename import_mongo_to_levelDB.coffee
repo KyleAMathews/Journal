@@ -28,6 +28,7 @@ MongoClient.connect('mongodb://69.164.194.245:27017/journal', (err, db) ->
       post.updated_at = moment(post.changed).toJSON()
       delete post.created
       delete post.changed
+      delete post.draft
 
       # Replace http://localhost.*node/#### links
       re = new RegExp(/http:\/\/.*(node)(\/\d+)/g)

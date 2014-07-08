@@ -3,6 +3,7 @@
   &__edit-button {
     margin-top: rhythm(0.5);
     @include breakpoint(1000px) {
+      margin-top: 0;
       position: absolute;
       right: -150px;
     }
@@ -11,7 +12,12 @@
       margin-right: rhythm(1/4);
     }
   }
+  &__date {
+    color: gray(80%);
+    display: block;
+    margin-top: rhythm(2);
+  }
   &__title {
-    margin-top: rhythm(1.5);
+    margin-top: 0;
   }
 }

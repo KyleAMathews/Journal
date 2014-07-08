@@ -5,6 +5,7 @@
     margin-top: rhythm(0.5);
 
     @include breakpoint(1000px) {
+      margin-top: 0;
       position: absolute;
       right: -150px;
     }
