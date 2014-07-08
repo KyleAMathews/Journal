@@ -37,12 +37,18 @@ module.exports = React.createClass
         }
     )
 
-    Dispatcher.on 'POST_FETCH_ERROR', "post", (data) =>
-      if data.id is parseInt(@props.params.postId, 10)
-        @setState {
-          loading: false
-          errors: @state.errors.concat [data.message.message]
-        }
+    PostStore.on('change_error', 'post-edit', =>
+      errors = PostStore.getErrorById(@props.params.postId)
+      unless _.isEmpty(errors)
+        # Look at each class of errors in turn.
+        for errorType, errorTypeErrors of errors
+          # Loop through errors and add them to the errors message array.
+          for data in errorTypeErrors
+            message = data.error
+            unless (@state.errors.some (val) -> val is message)
+              @setState errors: @state.errors.concat [message]
+        @setState loading: false
+    )
 
   componentWillUnmount: ->
     PostStore.releaseGroup("post")

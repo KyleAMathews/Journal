@@ -47,22 +47,29 @@ module.exports = React.createClass
       if @state.saving
         post = PostStore.get(@props.params.postId)
         if post.updated_at > @state.post.updated_at
+          # Post was saved successfully
+          Dispatcher.emit PostConstants.POST_ERROR_DESTROY, @state.post.id
           Router.transitionTo('post', postId: @state.post.id)
     )
-    Dispatcher.on 'POST_UPDATE_ERROR', "post-edit", (data) =>
-      @setState saving: false
-      if data.error?.message?
-        @setState errors: @state.errors.concat ["Saving failed. Message: '#{data.error.message}'"]
-      else if data.body?.message?
-        @setState errors: @state.errors.concat ["Saving failed. Message: '#{data.body.message}'"]
 
-    Dispatcher.on 'POST_FETCH_ERROR', "post-edit", (data) =>
-      if data.id is parseInt(@props.params.postId, 10)
-        Router.transitionTo('posts-index')
+    PostStore.on('change_error', 'post-edit', =>
+      errors = PostStore.getErrorById(@props.params.postId)
+      unless _.isEmpty(errors)
+        @setState saving: false
+        # Look at each class of errors in turn.
+        for errorType, errorTypeErrors of errors
+          # If we can't load the post to edit, just go back to posts-index.
+          if errorType is "POST_FETCH_ERROR"
+            Router.transitionTo('posts-index')
+          # Loop through errors and add them to the errors message array.
+          for data in errorTypeErrors
+            message = "Saving failed. Message: \"#{data.error}\""
+            unless (@state.errors.some (val) -> val is message)
+              @setState errors: @state.errors.concat [message]
+    )
 
   componentWillUnmount: ->
     PostStore.releaseGroup('post-edit')
-    Dispatcher.releaseGroup("post-edit")
 
   componentWillUpdate: ->
     setTimeout((->

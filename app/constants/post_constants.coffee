@@ -15,4 +15,5 @@ module.exports = keyMirror({
   POSTS_FETCH_COMPLETE: null
   POSTS_FETCH_ERROR: null
   POSTS_ADD: null
+  POST_ERROR_DESTROY: null
 })

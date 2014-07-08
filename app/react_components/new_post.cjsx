@@ -23,8 +23,8 @@ module.exports = React.createClass
         title: ''
         body: ''
         created_at: new Date().toJSON()
-        latitude: AppStore.get('coordinates').latitude
-        longitude: AppStore.get('coordinates').longitude
+        latitude: AppStore.get('coordinates')?.latitude
+        longitude: AppStore.get('coordinates')?.longitude
         deleted: false
         starred: false
     }
@@ -33,17 +33,24 @@ module.exports = React.createClass
     @refs.title.getDOMNode().focus()
     PostStore.on('add', 'new-post', (newPost) =>
       if newPost.temp_id is @state.post.id
+        # Post saved successfully. Destroy any errors and move to post view.
+        Dispatcher.emit PostConstants.POST_ERROR_DESTROY, @state.post.id
         Router.transitionTo('post', postId: newPost.id)
     )
-    Dispatcher.on 'POST_CREATE_ERROR', 'new-post', (data) =>
-      @setState saving: false
-      if data.error?.message?
-        @setState errors: @state.errors.concat ["Saving failed. Message: '#{data.error.message}'"]
-      else if data.body?.message?
-        @setState errors: @state.errors.concat ["Saving failed. Message: '#{data.body.message}'"]
+    PostStore.on('change_error', 'new-post', =>
+      errors = PostStore.getErrorById(@state.post.id)
+      unless _.isEmpty(errors)
+        @setState saving: false
+        # Look at each class of errors in turn.
+        for errorType, errorTypeErrors of errors
+          # Loop through errors and add them to the errors message array.
+          for data in errorTypeErrors
+            message = "Saving failed. Message: \"#{data.error}\""
+            unless (@state.errors.some (val) -> val is message)
+              @setState errors: @state.errors.concat [message]
+    )
 
   componentWillUnmount: ->
-    Dispatcher.releaseGroup('new-post')
     PostStore.releaseGroup('new-post')
 
   render: ->
@@ -76,4 +83,7 @@ module.exports = React.createClass
   handleSave: (value) ->
     post = _.extend @state.post, body: value
     Dispatcher.emit PostConstants.POST_CREATE, post
-    @setState saving: true
+    @setState {
+      saving: true
+      errors: []
+    }
