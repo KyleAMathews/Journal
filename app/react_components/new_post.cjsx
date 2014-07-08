@@ -25,6 +25,8 @@ module.exports = React.createClass
         created_at: new Date().toJSON()
         latitude: AppStore.get('coordinates').latitude
         longitude: AppStore.get('coordinates').longitude
+        deleted: false
+        starred: false
     }
 
   componentDidMount: ->
