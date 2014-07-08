@@ -143,7 +143,7 @@ exports.register = (plugin, options, next) ->
             newPost.id = newId
 
             # Save
-            db.put(newPost.created_at, newPost, (err) ->
+            postsDb.put(newPost.created_at, newPost, (err) ->
               # Add back temp_id to newPost
               newPost.temp_id = temp_id
               response = reply(newPost)
