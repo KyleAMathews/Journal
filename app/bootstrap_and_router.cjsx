@@ -33,6 +33,8 @@ Dispatcher.emit PostConstants.POSTS_FETCH
 # Create a handy entrypoint into the various tools and datastores.
 if window
   window._ = require 'underscore'
+  window.moment = require 'moment'
+  window.d3 = require 'd3'
 
   window.app = app = {}
   app.transports = {}

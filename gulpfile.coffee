@@ -21,7 +21,8 @@ gulp.task('scripts', ->
   bundler.bundle({
     debug: !isProduction
   })
-  .on('error', $.util.log)
+  .pipe($.plumber())
+  .on('error', $.notify.onError (error) -> return error.message)
   .pipe(source('bundle.js'))
   .pipe($.if(isProduction, $.streamify($.uglify())))
   .pipe(gulp.dest('./public'))
@@ -30,6 +31,7 @@ gulp.task('scripts', ->
 # CSS
 gulp.task('css', ->
   gulp.src(['app/styles/main.sass'])
+    .pipe($.plumber())
     .pipe($.compass({
       css: 'public/'
       sass: 'app/styles'
@@ -41,9 +43,7 @@ gulp.task('css', ->
       require: ['susy', 'modular-scale', 'normalize-scss',
         'sass-css-importer', 'breakpoint', 'sassy-buttons']
     }))
-    .on('error', (err) ->
-      console.log err
-    )
+    .on('error', $.notify.onError (error) -> return error.message)
     .pipe($.size())
     .pipe(connect.reload())
 )
@@ -92,9 +92,8 @@ gulp.task 'watch', ['css', 'connect'], ->
   bundler.transform('coffee-reactify')
   rebundle = ->
     return bundler.bundle({debug: !isProduction})
-      .on("error", (err) ->
-        gutil.log("Browserify error:", err)
-      )
+      .pipe($.plumber())
+      .on('error', $.notify.onError (error) -> return error.message)
       .pipe(source('bundle.js'))
       .pipe(gulp.dest('./public'))
       .pipe($.connect.reload())

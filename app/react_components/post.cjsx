@@ -65,7 +65,7 @@ module.exports = React.createClass
       return (
         <div onDoubleClick={@handleDblClick} className="post">
           <Link className="button post__edit-button" to="post-edit" postId={@state.post.id} ><span className="icon-flat-pencil" />Edit post</Link>
-          <small className="post__date">{moment(@state.post.created_at).format('dddd, MMMM Do YYYY, h:mma')}</small>
+          <span className="post__date">{moment(@state.post.created_at).format('dddd, MMMM Do YYYY, h:mma')}</span>
           <h1 className="post__title">{@state.post.title}</h1>
           <div onClick={@handleClick} dangerouslySetInnerHTML={__html:marked(@state.post.body, smartypants:true)}></div>
         </div>

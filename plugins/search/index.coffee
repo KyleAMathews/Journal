@@ -39,7 +39,7 @@ exports.register = (plugin, options, next) ->
               month:
                 date_histogram:
                   field: 'created'
-                  interval: 'month'
+                  interval: 'hour'
             highlight:
               fields:
                 title: {"fragment_size" : 300}

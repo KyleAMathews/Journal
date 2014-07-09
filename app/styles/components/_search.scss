@@ -3,10 +3,16 @@
     color: gray(70%);
   }
   &__input {
-    width: 50%;
+    width: 40%;
+    @include breakpoint(500px) {
+      width: 60%;
+    }
   }
   &__button {
     margin-left: rhythm(0.25);
+    // Why is this needed?
+    position: relative;
+    top: -1px;
 
     .icon-search {
       margin-right: rhythm(1/4);
@@ -20,6 +26,24 @@
     margin-left: rhythm(1);
     top: 18px;
     width: rhythm(7/8);
+  }
+  &__histogram {
+    @include adjust-font-size-to(10px);
+    .bar rect {
+      fill: #FF8902;
+      shape-rendering: crispEdges;
+    }
+    .bar text {
+      fill: gray(99%);
+    }
+    .axis path, .axis line {
+      fill: none;
+      stroke: #0973A7;
+      shape-rendering: crispEdges;
+    }
+    .axis text {
+      color: #0973A7;
+    }
   }
   &__result {
     &__title {

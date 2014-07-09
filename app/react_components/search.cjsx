@@ -10,6 +10,7 @@ eventBus = require '../event_bus'
 AppStore = require '../stores/app_store'
 AppConstants = require '../constants/app_constants'
 Dispatcher = require '../dispatcher'
+DateHistogram = require '../date_histogram'
 
 module.exports = React.createClass
   displayName: "Search"
@@ -23,12 +24,16 @@ module.exports = React.createClass
       loading: false
       searching: false
       size: 30
+      activeQuery: ''
     }, data
 
   componentDidMount: ->
     # Query set and no results loaded from cache.
     if @state.query isnt "" and @state.hits.length is 0
       @search()
+
+    @setState width: Math.floor(@getDOMNode().offsetWidth/25) * 25
+    @createCanvas()
 
     @refs.query.getDOMNode().focus()
 
@@ -51,6 +56,11 @@ module.exports = React.createClass
       # to a know history item, there will be cached results and we
       # don't need to transition (again).
       @setState @loadFromCache(newProps.query.q, newProps.query.sort)
+
+  # Redraw our chart when facets data change.
+  componentDidUpdate: (prevProps, prevState) ->
+    if prevState.facets isnt @state.facets
+      @createCanvas()
 
   componentWillUnmount: ->
     eventBus.off()
@@ -77,6 +87,11 @@ module.exports = React.createClass
       </button>
       {if @state.searching then <Spinner className="search__spinner" />}
       {@meta()}
+      {if @state.facets.length > 1
+        <div
+          key={@searchSerializeKey(@state.activeQuery, @state.sort)}
+          className="search__histogram" />
+      }
       {@results()}
     </div>
 
@@ -136,6 +151,7 @@ module.exports = React.createClass
 
     @setState
       searching: true
+      activeQuery: @state.query
 
     searchStart = new Date()
     request
@@ -157,6 +173,7 @@ module.exports = React.createClass
             AppConstants.SEARCH_CACHE,
             @searchSerializeKey(@state.query, @state.sort),
             {
+              activeQuery: @state.query
               query: @state.query
               sort: @state.sort
               hits: @state.hits
@@ -206,6 +223,7 @@ module.exports = React.createClass
     data = AppStore.get(@searchSerializeKey(query, sort))
     unless data?
       data = {
+        activeQuery: query
         query: query
         sort: sort
         hits: []
@@ -218,3 +236,11 @@ module.exports = React.createClass
 
   searchSerializeKey: (query, sort) ->
     "search-#{query}-#{sort}"
+
+  createCanvas: ->
+    if @state.facets.length > 1
+      DateHistogram(
+        values: (@state.facets.map (facet) -> facet.time)
+        selector: ".search__histogram"
+        containerWidth: @state.width
+      )
