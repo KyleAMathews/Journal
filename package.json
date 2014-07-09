@@ -47,7 +47,7 @@
     "raf": "^2.0.1",
     "react": "^0.10.0",
     "react-markdown-textarea": "^0.6.1",
-    "react-nested-router": "^0.2.0",
+    "react-nested-router": "git://github.com/rpflorence/react-nested-router",
     "react-spinner": "^0.1.7",
     "react-textarea-autosize": "^0.2.0",
     "superagent": "^0.18.0",

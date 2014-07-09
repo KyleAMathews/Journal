@@ -7,6 +7,11 @@
   }
   &__button {
     margin-left: rhythm(0.25);
+
+    .icon-search {
+      margin-right: rhythm(1/4);
+      font-size: 90%;
+    }
   }
   &__spinner {
     display: inline-block;
