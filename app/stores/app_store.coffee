@@ -40,4 +40,6 @@ Dispatcher.on '*', (action, args...) ->
   switch action
     when AppConstants.POSTS_INDEX_SCROLL_POSITION_UPDATE
       AppStore.set 'posts_index_scroll_position', args[0]
+    when AppConstants.SEARCH_CACHE
+      AppStore.set args[0], args[1]
 

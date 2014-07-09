@@ -7,23 +7,39 @@ _str = require 'underscore.string'
 request = require 'superagent'
 
 eventBus = require '../event_bus'
+AppStore = require '../stores/app_store'
+AppConstants = require '../constants/app_constants'
+Dispatcher = require '../dispatcher'
 
 module.exports = React.createClass
   displayName: "Search"
   getInitialState: ->
-    {
+    sort = @props.query.sort || 'Best match'
+    if @props.query.q?
+      data = @loadFromCache(@props.query.q, sort)
+    unless data?
+      data = {
+        hits: []
+        facets: []
+        total: 0
+        sort: sort
+        took: undefined
+      }
+    return {
       query: @props.query.q || ""
-      hits: []
-      facets: []
-      total: 0
-      size: 30
-      offset: 0
+      hits: data.hits
+      facets: data.facets
+      total: data.total
       loading: false
+      took: data.took
       searching: false
+      sort: data.sort
+      size: 30
     }
 
   componentDidMount: ->
-    if @state.query isnt ""
+    # Query set and no results loaded from cache.
+    if @state.query isnt "" and @state.hits.length is 0
       @search()
 
     @refs.query.getDOMNode().focus()
@@ -45,6 +61,14 @@ module.exports = React.createClass
 
   render: ->
     <div className="search">
+      <small>Sorting: </small>
+      <select value={@state.sort} onChange={@handleSortChange}>
+        <option>Best match</option>
+        <option>Oldest first</option>
+        <option>Newest first</option>
+      </select>
+      <br />
+      <br />
       <input
         className="search__input"
         ref="query"
@@ -75,7 +99,7 @@ module.exports = React.createClass
         body = result.highlight.body[0]
       else
         body = _str.prune(result._source.body, 200)
-      <div className="search__result">
+      <div key={result._source.nid} className="search__result">
           <h3>
             <Link to="post" postId={result._source.nid}>
               <span className="search__result__title" dangerouslySetInnerHTML={__html:title} />
@@ -84,6 +108,13 @@ module.exports = React.createClass
           </h3>
         <p dangerouslySetInnerHTML={__html:body} />
       </div>
+
+  handleSortChange: (e) ->
+    @setState sort: e.target.value, ->
+      if data = @loadFromCache(@state.query, @state.sort)
+        @setState data
+      else
+        @search()
 
   handleKeyDown: (e) ->
     if e.key is "Enter"
@@ -97,23 +128,60 @@ module.exports = React.createClass
     @search()
 
   search: ->
-    @setState searching: true
-    Router.transitionTo('search', null, {q: @state.query})
+    @setState
+      searching: true
+      hits: []
+      facets: []
+      total: 0
+      took: undefined
+
+    sortStyle = ""
+    switch @state.sort
+      when "Best match"
+        sortStyle = ''
+      when "Oldest first"
+        sortStyle = "asc"
+      when "Newest first"
+        sortStyle = "desc"
+
+    Router.transitionTo('search', null, {
+      q: @state.query
+      sort: @state.sort
+    })
+
     searchStart = new Date()
     request
       .get('/search')
       .set('Accept', 'application/json')
       .query(q: @state.query)
       .query(size: @state.size)
+      .query(sort: sortStyle)
       .end (err, res) =>
-        console.log res
         @setState {
           hits: res.body.hits.hits
           facets: res.body.facets.month.entries
           total: res.body.hits.total
           took: new Date() - searchStart
           searching: false
-        }
+        }, ->
+          # Cache result.
+          Dispatcher.emit(
+            AppConstants.SEARCH_CACHE,
+            @searchSerializeKey(@state.query, @state.sort),
+            {
+              hits: @state.hits
+              facets: @state.facets
+              total: @state.total
+              took: @state.took
+              sort: @state.sort
+            }
+          )
+
+  loadFromCache: (query, sort) ->
+    AppStore.get(@searchSerializeKey(query, sort))
+
+  searchSerializeKey: (query, sort) ->
+    "search-#{@props.query.q}-#{sort}"
 
   searchMore: ->
     request

@@ -1,5 +1,7 @@
 Joi = require 'joi'
 elasticsearch = require 'elasticsearch'
+_ = require 'underscore'
+
 client = new elasticsearch.Client({
   host: process.env.ELASTICSEARCH_URL
   #log: 'trace'
@@ -15,8 +17,9 @@ exports.register = (plugin, options, next) ->
           q: Joi.string()
           size: Joi.number().min(10).max(100).default(30)
           start: Joi.number().min(0).default(0)
+          sort: Joi.any()
       handler: (request, reply) ->
-        client.search({
+        query = {
           index: 'journal_posts'
           body:
             size: request.query.size
@@ -41,7 +44,12 @@ exports.register = (plugin, options, next) ->
               fields:
                 title: {"fragment_size" : 300}
                 body: {"fragment_size" : 200}
-        }).then (body) ->
+          }
+
+        if request.query.sort isnt ""
+          query.body = _.extend query.body, sort: created: order: request.query.sort
+
+        client.search(query).then (body) ->
           reply body
 
   next()
