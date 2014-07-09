@@ -27,9 +27,6 @@ AppConstants = require './constants/app_constants'
 # Transports
 PostsAjax = require './transports/posts_ajax'
 
-# Transports
-require './transports/posts_ajax'
-
 # Kick off some fetching
 Dispatcher.emit PostConstants.POSTS_FETCH
 

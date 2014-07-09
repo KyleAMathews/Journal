@@ -6,12 +6,20 @@ _ = require 'underscore'
 _str = require 'underscore.string'
 request = require 'superagent'
 
+eventBus = require '../event_bus'
+
 module.exports = React.createClass
+  displayName: "Search"
   getInitialState: ->
     {
       query: @props.query.q || ""
       hits: []
       facets: []
+      total: 0
+      size: 30
+      offset: 0
+      loading: false
+      searching: false
     }
 
   componentDidMount: ->
@@ -19,6 +27,21 @@ module.exports = React.createClass
       @search()
 
     @refs.query.getDOMNode().focus()
+
+    # Listen for when getting close to the bottom
+    # so we can load more.
+    throttled = _.throttle ((distance) =>
+      if distance < 2000 and not
+        @state.loading and not
+        (@state.total is @state.hits.length)
+          @setState loading: true
+          @searchMore()
+    ), 250
+
+    eventBus.on 'scrollBottom', throttled
+
+  componentWillUnmount: ->
+    eventBus.off()
 
   render: ->
     <div className="search">
@@ -81,6 +104,7 @@ module.exports = React.createClass
       .get('/search')
       .set('Accept', 'application/json')
       .query(q: @state.query)
+      .query(size: @state.size)
       .end (err, res) =>
         console.log res
         @setState {
@@ -89,4 +113,17 @@ module.exports = React.createClass
           total: res.body.hits.total
           took: new Date() - searchStart
           searching: false
+        }
+
+  searchMore: ->
+    request
+      .get('/search')
+      .set('Accept', 'application/json')
+      .query(q: @state.query)
+      .query(size: @state.size)
+      .query(start: @state.hits.length)
+      .end (err, res) =>
+        @setState {
+          hits: @state.hits.concat res.body.hits.hits
+          loading: false
         }

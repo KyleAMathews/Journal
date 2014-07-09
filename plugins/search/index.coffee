@@ -13,10 +13,14 @@ exports.register = (plugin, options, next) ->
       validate:
         query:
           q: Joi.string()
+          size: Joi.number().min(10).max(100).default(30)
+          start: Joi.number().min(0).default(0)
       handler: (request, reply) ->
         client.search({
           index: 'journal_posts'
           body:
+            size: request.query.size
+            from: request.query.start
             query:
               query_string:
                 fields: ['title', 'body'] # search the title and body of posts.
