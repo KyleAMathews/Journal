@@ -22,7 +22,6 @@ module.exports = React.createClass
 
   render: ->
     <div className="search">
-      <h1>Search</h1>
       <input
         className="search__input"
         ref="query"
