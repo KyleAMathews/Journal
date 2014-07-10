@@ -30,19 +30,19 @@
   &__histogram {
     @include adjust-font-size-to(10px);
     .bar rect {
-      fill: #FF8902;
+      fill: #FFB055;
       shape-rendering: crispEdges;
     }
     .bar text {
-      fill: gray(99%);
+      fill: gray(100%);
     }
     .axis path, .axis line {
       fill: none;
-      stroke: #0973A7;
+      stroke: gray(15%);
       shape-rendering: crispEdges;
     }
     .axis text {
-      color: #0973A7;
+      color: gray(15%);
     }
   }
   &__result {

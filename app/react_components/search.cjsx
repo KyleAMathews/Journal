@@ -67,7 +67,6 @@ module.exports = React.createClass
 
   render: ->
     <div className="search">
-      <small>Sort: </small>
       <select value={@state.sort} onChange={@handleSortChange}>
         <option>Best match</option>
         <option>Oldest first</option>
