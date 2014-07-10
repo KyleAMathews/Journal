@@ -6,9 +6,12 @@ CHANGE_EVENT = "change"
 
 _appState = {}
 
+set = (key, value) ->
+  _appState[key] = value
+
 # Get latitude and longitude
 success = (position) ->
-  AppStore.set 'coordinates', position.coords
+  set 'coordinates', position.coords
 
 error = (error) ->
   console.log error
@@ -27,9 +30,6 @@ class AppStore extends Emitter
   get: (key) ->
     return _appState[key]
 
-  set: (key, value) ->
-    _appState[key] = value
-
   emitChange: ->
     @emit CHANGE_EVENT
 
@@ -39,7 +39,6 @@ module.exports = window.appstore = AppStore = new AppStore()
 Dispatcher.on '*', (action, args...) ->
   switch action
     when AppConstants.POSTS_INDEX_SCROLL_POSITION_UPDATE
-      AppStore.set 'posts_index_scroll_position', args[0]
+      set 'posts_index_scroll_position', args[0]
     when AppConstants.SEARCH_CACHE
-      AppStore.set args[0], args[1]
-
+      set args[0], args[1]

@@ -19,13 +19,16 @@ Dispatcher = require './dispatcher'
 # Stores
 PostStore = require './stores/post_store'
 AppStore = require './stores/app_store'
+SearchStore = require './stores/search_store'
 
 # Constants
 PostConstants = require './constants/post_constants'
 AppConstants = require './constants/app_constants'
+SearchConstants = require './constants/search_constants'
 
 # Transports
 PostsAjax = require './transports/posts_ajax'
+SearchAjax = require './transports/search_ajax'
 
 # Kick off some fetching
 Dispatcher.emit PostConstants.POSTS_FETCH
@@ -39,12 +42,15 @@ if window
   window.app = app = {}
   app.transports = {}
   app.transports.PostsAjax = PostsAjax
+  app.transports.SearchAjax = SearchAjax
   app.stores = {}
   app.stores.PostStore = PostStore
   app.stores.AppStore = AppStore
+  app.stores.SearchStore = SearchStore
   app.constants = {}
   app.constants.PostConstants = PostConstants
   app.constants.AppConstants = AppConstants
+  app.constants.SearchConstants = SearchConstants
   app.dispatcher = Dispatcher
 
 React.renderComponent((

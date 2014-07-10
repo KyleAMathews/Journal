@@ -8,7 +8,9 @@ request = require 'superagent'
 
 eventBus = require '../event_bus'
 AppStore = require '../stores/app_store'
+SearchStore = require '../stores/search_store'
 AppConstants = require '../constants/app_constants'
+SearchConstants = require '../constants/search_constants'
 Dispatcher = require '../dispatcher'
 DateHistogram = require '../date_histogram'
 
@@ -23,8 +25,7 @@ module.exports = React.createClass
     return _.extend {
       loading: false
       searching: false
-      size: 30
-      activeQuery: ''
+      lastQuery: ''
     }, data
 
   componentDidMount: ->
@@ -32,10 +33,15 @@ module.exports = React.createClass
     if @state.query isnt "" and @state.hits.length is 0
       @search()
 
+    # Get width of main-text area so chart is right width.
     @setState width: Math.floor(@getDOMNode().offsetWidth/25) * 25
     @createCanvas()
 
     @refs.query.getDOMNode().focus()
+
+    # Change in the search store, probably means our delivery has arrived!
+    SearchStore.on 'change', 'search', =>
+      @search()
 
     # Listen for when getting close to the bottom
     # so we can load more.
@@ -52,10 +58,7 @@ module.exports = React.createClass
   # URL changed so we need to update our internal state.
   componentWillReceiveProps: (newProps) ->
     if newProps.query.q isnt @state.query or newProps.query.sort isnt @state.sort
-      # Don't need to search or transition because since we're moving
-      # to a know history item, there will be cached results and we
-      # don't need to transition (again).
-      @setState @loadFromCache(newProps.query.q, newProps.query.sort)
+      @search(newProps.query.q, newProps.query.sort)
 
   # Redraw our chart when facets data change.
   componentDidUpdate: (prevProps, prevState) ->
@@ -64,13 +67,14 @@ module.exports = React.createClass
 
   componentWillUnmount: ->
     eventBus.off()
+    SearchStore.releaseGroup('search')
 
   render: ->
     <div className="search">
       <select value={@state.sort} onChange={@handleSortChange}>
-        <option>Best match</option>
-        <option>Oldest first</option>
-        <option>Newest first</option>
+        <option value="">Best match</option>
+        <option value="asc">Oldest first</option>
+        <option value="desc">Newest first</option>
       </select>
       <br />
       <br />
@@ -88,7 +92,7 @@ module.exports = React.createClass
       {@meta()}
       {if @state.facets.length > 1
         <div
-          key={@searchSerializeKey(@state.activeQuery, @state.sort)}
+          key={"#{@state.lastQuery}-#{@state.sort}"}
           className="search__histogram" />
       }
       {@results()}
@@ -103,6 +107,7 @@ module.exports = React.createClass
       </div>
 
   results: ->
+    unless @state.hits.length > 0 then return
     results = @state.hits.map (result) ->
       # If there's a highlighted version, default to that.
       if result.highlight.title?
@@ -124,11 +129,12 @@ module.exports = React.createClass
       </div>
 
   handleSortChange: (e) ->
-    @resetState(@state.query, e.target.value)
+    @setState sort: e.target.value, ->
+      @search()
 
   handleKeyUp: (e) ->
     if e.key is "Enter"
-      @resetState(@state.query, @state.sort)
+      @search()
 
   # Text in inbox changed.
   handleChange: (e) ->
@@ -137,51 +143,34 @@ module.exports = React.createClass
 
   # User clicked on search button.
   handleClick: (e) ->
-    @resetState(@state.query, e.target.value)
+    @search()
 
-  transitionTo: ->
+  loadFromCache: (query=@state.lastQuery, sort=@state.sort) ->
+    data = SearchStore.get(query, sort)
+    unless data?
+      data = {
+        lastQuery: query
+        searching: true
+        query: query
+        sort: sort
+        hits: []
+        facets: []
+        total: 0
+        took: undefined
+      }
+    else
+      data = _.extend data, lastQuery: query, searching: false
+
+    return data
+
+  search: (query=@state.query, sort=@state.sort) ->
+    # Set to the URL our search query strings.
     Router.transitionTo('search', null, {
-      q: @state.query
-      sort: @state.sort
+      q: query
+      sort: sort
     })
 
-  search: ->
-    @transitionTo()
-
-    @setState
-      searching: true
-      activeQuery: @state.query
-
-    searchStart = new Date()
-    request
-      .get('/search')
-      .set('Accept', 'application/json')
-      .query(q: @state.query)
-      .query(size: @state.size)
-      .query(sort: @sortStyle())
-      .end (err, res) =>
-        @setState {
-          hits: res.body.hits.hits
-          facets: res.body.facets.month.entries
-          total: res.body.hits.total
-          took: new Date() - searchStart
-          searching: false
-        }, ->
-          # Cache result.
-          Dispatcher.emit(
-            AppConstants.SEARCH_CACHE,
-            @searchSerializeKey(@state.query, @state.sort),
-            {
-              activeQuery: @state.query
-              query: @state.query
-              sort: @state.sort
-              hits: @state.hits
-              facets: @state.facets
-              total: @state.total
-              took: @state.took
-              sort: @state.sort
-            }
-          )
+    @setState @loadFromCache(query, sort)
 
   searchMore: ->
     request
@@ -190,51 +179,12 @@ module.exports = React.createClass
       .query(q: @state.query)
       .query(size: @state.size)
       .query(start: @state.hits.length)
-      .query(sort: @sortStyle())
+      .query(sort: @state.sort)
       .end (err, res) =>
         @setState {
           hits: @state.hits.concat res.body.hits.hits
           loading: false
         }
-
-  sortStyle: ->
-    sortStyle = ""
-    switch @state.sort
-      when "Best match"
-        sortStyle = ''
-      when "Oldest first"
-        sortStyle = "asc"
-      when "Newest first"
-        sortStyle = "desc"
-
-    return sortStyle
-
-  resetState: (query, sort) ->
-    @setState @loadFromCache(query, sort), ->
-      # Cache miss
-      if @state.hits.length is 0
-        @search()
-      # Cache hit
-      else
-        @transitionTo()
-
-  loadFromCache: (query, sort) ->
-    data = AppStore.get(@searchSerializeKey(query, sort))
-    unless data?
-      data = {
-        activeQuery: query
-        query: query
-        sort: sort
-        hits: []
-        facets: []
-        total: 0
-        took: undefined
-      }
-
-    return data
-
-  searchSerializeKey: (query, sort) ->
-    "search-#{query}-#{sort}"
 
   createCanvas: ->
     if @state.facets.length > 1
