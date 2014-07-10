@@ -13,7 +13,10 @@ module.exports = (options) ->
     bottom: 19.5
     left: 13
 
-  width = options.containerWidth - 25
+  if options.containerWidth > 400
+    width = options.containerWidth - 40
+  else
+    width = options.containerWidth - 10
   height = 81.5
   ticks = Math.round(options.containerWidth/36)
 
