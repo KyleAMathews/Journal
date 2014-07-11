@@ -1,6 +1,6 @@
 .search {
-  &__meta {
-    color: gray(70%);
+  .errors {
+    margin-bottom: rhythm(1.5);
   }
   &__input {
     width: 40%;
@@ -26,6 +26,9 @@
     margin-left: rhythm(1);
     top: 18px;
     width: rhythm(7/8);
+  }
+  &__meta {
+    color: gray(70%);
   }
   &__histogram {
     @include adjust-font-size-to(10px);

@@ -6,8 +6,8 @@ CHANGE_EVENT = "change"
 
 _searches = {}
 
-searchSerializeKey = (query, sort, start) ->
-  "search-#{query}-#{sort}-#{start}"
+searchSerializeKey = (query, sort) ->
+  "search-#{query}-#{sort}"
 
 set = (key, value) ->
   _searches[key] = value
@@ -16,8 +16,8 @@ class SearchStore extends Emitter
   getAll: ->
     return _searches
 
-  get: (query, sort, start=0) ->
-    key = searchSerializeKey(query, sort, start)
+  get: (query, sort) ->
+    key = searchSerializeKey(query, sort)
     search = _searches[key]
     unless search?
       Dispatcher.emit SearchConstants.SEARCH, query, sort
@@ -43,7 +43,15 @@ Dispatcher.on '*', (action, args...) ->
         sort: data.sort
         start: data.start
 
-      set(searchSerializeKey(result.query, result.sort, result.start), result)
+      set(searchSerializeKey(result.query, result.sort), result)
 
       SearchStore.emitChange()
 
+    when SearchConstants.SEARCH_ERROR
+      data = args[0]
+      set(searchSerializeKey(data.query, data.sort),
+        error: true
+        message: data.error
+      )
+
+      SearchStore.emitChange()

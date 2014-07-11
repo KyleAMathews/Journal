@@ -21,7 +21,7 @@ search = (query, sort) ->
     .query(q: query)
     .query(size: 30)
     .query(sort: sort)
-    .end (err, res) =>
+    .end (err, res) ->
       delete _loading["#{query}#{sort}"]
       if res?.status is 200
         Dispatcher.emit SearchConstants.SEARCH_COMPLETE,
@@ -32,9 +32,17 @@ search = (query, sort) ->
           sort: sort
           start: 0
       else
-        # Detect various errors.
-        if err.message?
-          console.log 'bad something', err.message
+        error = ""
+        if err?.message
+          error = err.message
+        else
+          error = "#{res.body.statusCode} #{res.body.error}: #{res.body.message}"
+
+        Dispatcher.emit SearchConstants.SEARCH_ERROR, {
+          error: error
+          query: query
+          sort: sort
+        }
 
 # Register to dispatcher.
 Dispatcher.on '*', (action, args...) ->

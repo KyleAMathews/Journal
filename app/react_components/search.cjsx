@@ -13,6 +13,7 @@ AppConstants = require '../constants/app_constants'
 SearchConstants = require '../constants/search_constants'
 Dispatcher = require '../dispatcher'
 DateHistogram = require '../date_histogram'
+Messages = require './messages'
 
 module.exports = React.createClass
   displayName: "Search"
@@ -26,6 +27,7 @@ module.exports = React.createClass
       loading: false
       searching: false
       lastQuery: ''
+      errors: []
     }, data
 
   componentDidMount: ->
@@ -71,6 +73,7 @@ module.exports = React.createClass
 
   render: ->
     <div className="search">
+      <Messages type="errors" messages={@state.errors} />
       <select value={@state.sort} onChange={@handleSortChange}>
         <option value="">Best match</option>
         <option value="asc">Oldest first</option>
@@ -146,11 +149,11 @@ module.exports = React.createClass
     @search()
 
   loadFromCache: (query=@state.lastQuery, sort=@state.sort) ->
-    data = SearchStore.get(query, sort)
+    if query isnt "" and sort
+      data = SearchStore.get(query, sort)
     unless data?
       data = {
         lastQuery: query
-        searching: true
         query: query
         sort: sort
         hits: []
@@ -158,8 +161,17 @@ module.exports = React.createClass
         total: 0
         took: undefined
       }
+      if query isnt ""
+        data.searching = true
+    else if data.error
+      @setState
+        errors: [data.message]
+        searching: false
     else
-      data = _.extend data, lastQuery: query, searching: false
+      data = _.extend data, {
+        lastQuery: query
+        searching: false
+      }
 
     return data
 
