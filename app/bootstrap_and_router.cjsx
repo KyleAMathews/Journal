@@ -38,6 +38,7 @@ if window
   window._ = require 'underscore'
   window.moment = require 'moment'
   window.d3 = require 'd3'
+  window.mori = require 'mori'
 
   window.app = app = {}
   app.transports = {}

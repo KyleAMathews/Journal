@@ -16,7 +16,7 @@ fetchPosts = ->
   request
     .get('/posts')
     .set('Accept', 'application/json')
-    .query(limit: 100)
+    .query(limit: 50)
     .query(start: _start)
     .end (err, res) =>
       if res.status is 200

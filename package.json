@@ -44,6 +44,7 @@
     "marked": "^0.3.2",
     "memwatch": "^0.2.2",
     "moment": "2.x.x",
+    "mori": "^0.2.8",
     "node-uuid": "^1.4.1",
     "open": "0.0.5",
     "path-engine": "^1.0.1",

@@ -44,7 +44,7 @@ module.exports = React.createClass
     console.time('sort-index-posts')
     months = {}
     posts = []
-    for post in _.sortBy(_.values(@state.posts), (post) -> post.created_at).reverse()
+    for post in @state.posts
       month = moment(post.created_at).format('MMMM YYYY')
       unless months[month]?
         posts.push <h2 className="posts-index__month" key={month}>{month}</h2>

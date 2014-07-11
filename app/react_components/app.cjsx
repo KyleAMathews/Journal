@@ -1,15 +1,15 @@
 React = require 'react'
 Link = require('react-nested-router').Link
 request = require 'superagent'
-window.jQuery = window.$ = require 'jquery'
-require 'velocity-animate'
+#window.jQuery = window.$ = require 'jquery'
+#require 'velocity-animate'
 
 module.exports = React.createClass
   displayName: 'App'
 
   handleClickHome: ->
-    if document.location.pathname is "/"
-      $('body').velocity("scroll", { duration: 1000, offset: -85 })
+    #if document.location.pathname is "/"
+      #$('body').velocity("scroll", { duration: 1000, offset: -85 })
 
   render: ->
     <div>

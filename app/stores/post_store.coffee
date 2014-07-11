@@ -1,6 +1,7 @@
 Dispatcher = require '../dispatcher'
 PostConstants = require '../constants/post_constants'
 Emitter = require('wildemitter')
+mori = require 'mori'
 
 CHANGE_EVENT = "change"
 ADD_EVENT = "add"
@@ -9,15 +10,22 @@ CHANGE_ERROR_EVENT = "change_error"
 _posts = {}
 _errors = {}
 
+_posts_sorted = mori.sorted_set_by((a, b) ->
+  return a.created_at > b.created_at
+)
+
 # Posts internal API
 create = (post) ->
   _posts[post.id] = post
+  _posts_sorted = mori.conj(_posts_sorted, post)
 
 update = (post) ->
   _posts[post.id] = post
+  _posts_sorted = mori.conj(_posts_sorted, post)
 
 destroy = (post) ->
   delete _posts[post.id]
+  _posts_sorted = mori.disj(_posts_sorted, post)
 
 # Errors internal API
 createError = (postId, errorType, error) ->
@@ -33,7 +41,7 @@ destroyError = (postId, errorType) ->
 
 class PostsStore extends Emitter
   getAll: ->
-    return _posts
+    return mori.clj_to_js(_posts_sorted)
 
   get: (id) ->
     id = parseInt(id, 10)
