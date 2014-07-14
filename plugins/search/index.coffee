@@ -19,6 +19,7 @@ exports.register = (plugin, options, next) ->
           start: Joi.number().min(0).default(0)
           sort: Joi.any()
       handler: (request, reply) ->
+        sljd()
         query = {
           index: 'journal_posts'
           body:
