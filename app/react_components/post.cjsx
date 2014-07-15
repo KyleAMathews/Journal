@@ -6,6 +6,7 @@ Router = require('react-nested-router')
 Spinner = require 'react-spinner'
 Link = require('react-nested-router').Link
 _ = require 'underscore'
+path = require 'path'
 
 Messages = require './messages'
 PostStore = require '../stores/post_store'
@@ -62,12 +63,33 @@ module.exports = React.createClass
     else if @state.errors.length > 0
       <Messages type="errors" messages={@state.errors} />
     else
+      # Upgrade photos for high density screens.
+      body = @state.post.body
+      if window.devicePixelRatio > 1.5
+        re = new RegExp(/(\!\[.*\]\()(.*)(\))/g)
+        amazon = new RegExp(/amazonaws.com\/pictures\//m)
+        match = body.match(re)
+        if match
+          for pic in match
+            # If this is one of our images on Amazon.
+            if amazon.test pic
+              link = pic.replace(re, "$2")
+              split = link.split('/')
+              # Rewrite image w/ @2x
+              image = path.basename(link, path.extname(link))
+              image = image + "@2x" + path.extname(link)
+              split[split.length - 1] = image
+              newLink = split.join('/')
+
+              # Replace with retina image link
+              body = body.replace(link, newLink)
+
       return (
         <div onDoubleClick={@handleDblClick} className="post">
           <Link className="button post__edit-button" to="post-edit" postId={@state.post.id} ><span className="icon-flat-pencil" />Edit post</Link>
           <span className="post__date">{moment(@state.post.created_at).format('dddd, MMMM Do YYYY, h:mma')}</span>
           <h1 className="post__title">{@state.post.title}</h1>
-          <div onClick={@handleClick} dangerouslySetInnerHTML={__html:marked(@state.post.body, smartypants:true)}></div>
+          <div onClick={@handleClick} dangerouslySetInnerHTML={__html:marked(body, smartypants:true)}></div>
         </div>
       )
 
