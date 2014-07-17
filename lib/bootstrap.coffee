@@ -1,5 +1,8 @@
 # Random app bootstrappy stuff.
 
+config = require '../config'
+require './jobs/worker_coordinator'
+
 memwatch = require('memwatch')
 memwatch.on 'lead', (info) -> console.log info
 memwatch.on 'stats', (info) ->

@@ -75,7 +75,6 @@ exports.register = (plugin, options, next) ->
         config.wrappedDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
           if array.length is 0
             reply(plugin.hapi.error.notFound('Post not found'))
-          console.log JSON.stringify array[0], null, 4
           reply array[0]
         )
 
@@ -113,8 +112,10 @@ exports.register = (plugin, options, next) ->
                 err: err
                 message: "Post update didn't save correctly: #{ JSON.stringify(err) }"
               }
-            post = _.extend post
             reply post
+
+            # Enqueue updated post to be pushed to S3
+            config.jobsClient.push jobName: 'push_post_s3', post: post
           )
         )
 
@@ -158,6 +159,11 @@ exports.register = (plugin, options, next) ->
               newPost.temp_id = temp_id
               response = reply(newPost)
               response.created("/posts/#{newPost.id}")
+
+              # Enqueue updated post to be pushed to S3
+              postNoTempId = _.extend({}, newPost)
+              delete postNoTempId.temp_id
+              config.jobsClient.push jobName: 'push_post_s3', post: postNoTempId
             )
           )
 

@@ -83,25 +83,8 @@ saveUpdatesFromS3 = ->
     config.wrappedDb.put(post.created_at, post)
 
 
-# Push local posts that are ahead of or don't exist on S3 yet.
+# Queue to push local posts that are ahead of or don't exist on S3 yet.
 pushLocalUpdates = ->
   console.log "Pushing #{_.keys(localPostsToStream).length} posts to S3"
-  async.eachLimit _.pairs(localPostsToStream), 20, ((post, callback) ->
-    json = JSON.stringify post[1], null, 4
-    req = config.s3client.put("/posts/#{post[0]}.json", {
-      'Content-Length': Buffer.byteLength(json),'Content-Type': 'application/json'
-    })
-
-    req.on 'response', (res) ->
-      # Log errors.
-      if res.statusCode isnt 200
-        console.log res.statusCode
-        console.log res.headers
-        console.log res.req.url
-        res.on 'data', (chunk) ->
-          console.log chunk.toString()
-      callback()
-
-    req.end json
-  ), (err) -> console.log 'done uploading!'
-
+  for id, post of localPostsToStream
+    config.jobsClient.push jobName: 'push_post_s3', post: post
