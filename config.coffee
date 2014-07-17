@@ -1,37 +1,19 @@
-exports.config =
-  # Edit the next line to change default build path.
-  paths:
-    public: 'public'
+knoxCopy = require 'knox-copy'
+levelup = require 'levelup'
+levelQuery = require('level-queryengine')
+pathEngine = require('path-engine')
 
-  files:
-    javascripts:
-      # Defines what file will be generated with `brunch generate`.
-      defaultExtension: 'coffee'
-      # Describes how files will be compiled & joined together.
-      # Available formats:
-      # * 'outputFilePath'
-      # * map of ('outputFilePath': /regExp that matches input path/)
-      # * map of ('outputFilePath': function that takes input path)
-      joinTo:
-        'javascripts/app.js': /^app/
-        'javascripts/vendor.js': /^(bower_components|vendor)/
+config = {}
 
-    templates:
-      defaultExtension: 'eco'
-      joinTo: 'javascripts/app.js'
+config.db = levelup('./postsdb', valueEncoding: 'json')
+config.wrappedDb = levelQuery(config.db)
+config.wrappedDb.query.use(pathEngine())
 
-  # Change this if you're using something other than backbone (e.g. 'ember').
-  # Content of files, generated with `brunch generate` depends on the setting.
-  # framework: 'backbone'
+config.s3client = knoxCopy.createClient({
+    key: process.env.AMAZON_KEY
+    secret: process.env.AMAZON_SECRET
+    bucket: process.env.S3_BUCKET
+    region: process.env.S3_REGION || 'us-standard'
+})
 
-  # Enable or disable minifying of result js / css files.
-  minify: no
-
-  # Settings of web server that will run with `brunch watch [--server]`.
-  # server:
-  #   # Path to your server node.js module.
-  #   # If it's commented-out, brunch will use built-in express.js server.
-  #   path: 'server.coffee'
-  #   port: 3333
-  #   # Run even without `--server` option?
-  #   run: yes
+module.exports = config

@@ -43,12 +43,12 @@ MongoClient.connect("mongodb://#{process.env.REMOTE_ADDRESS}:27017/journal", (er
       post.body = post.body.replace(re, "(/posts/$1)")
 
       # Replace /node/#### links w/ /post/####
-      re = new RegExp(/\(.?node(\/\d+\))/g)
-      post.body = post.body.replace(re, "/posts$3")
+      re = new RegExp(/node(\/\d+\))/g)
+      post.body = post.body.replace(re, "/posts$1")
 
       # Replace standalone /node/####
       re = new RegExp(/\/?node\/(\d+)/g)
-      post.body = post.body.replace(re, "/posts/$3")
+      post.body = post.body.replace(re, "/posts/$1")
 
       re = new RegExp(/\!\[.*\]\((.*)\)/g)
       keyRe = new RegExp(/\(\/attachments\/(.*)\)/i)
@@ -61,4 +61,5 @@ MongoClient.connect("mongodb://#{process.env.REMOTE_ADDRESS}:27017/journal", (er
           post.body = post.body.replace(picRe, newUrl)
 
       postsDb.put post.created_at, post
+      console.log "PUT #{post.id}"
 )

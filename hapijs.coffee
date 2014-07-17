@@ -1,5 +1,7 @@
 Hapi = require 'hapi'
 Joi = require 'joi'
+config = require './config'
+bootstrap = require './lib/bootstrap'
 
 server = new Hapi.Server(8081, '0.0.0.0', {
   cors: true

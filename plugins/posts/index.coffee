@@ -1,24 +1,12 @@
 Joi = require 'joi'
-levelQuery = require('level-queryengine')
-pathEngine = require('path-engine')
-levelup = require 'levelup'
 es = require('event-stream')
 _ = require 'underscore'
 async = require 'async'
-memwatch = require('memwatch')
-memwatch.on 'lead', (info) -> console.log info
-memwatch.on 'stats', (info) ->
-  console.log info
-  console.log info.current_base / 1024 / 1024 + " MB"
 
-db = levelup('./postsdb', valueEncoding: 'json')
-postsDb = levelQuery(db)
-postsDb.query.use(pathEngine())
-postsDb.ensureIndex('id')
-postsDb.ensureIndex('updated_at')
+config = require '../../config'
 
 # If there's no posts (e.g. fresh install of the application) add a sample one.
-db.createKeyStream().pipe(es.writeArray (err, array) ->
+config.db.createKeyStream().pipe(es.writeArray (err, array) ->
   if array.length is 0
     post =
       title: "Welcome to your new Journal!"
@@ -30,7 +18,7 @@ db.createKeyStream().pipe(es.writeArray (err, array) ->
       id: 1
       deleted: false
       starred: false
-    postsDb.put post.created_at, post
+    config.wrappedDb.put post.created_at, post
 )
 
 exports.register = (plugin, options, next) ->
@@ -51,7 +39,7 @@ exports.register = (plugin, options, next) ->
         # User is querying for all posts changed since a certain date.
         if request.query.updated_since?
           ids = []
-          postsDb.indexes['updated_at'].createIndexStream(
+          config.wrappedDb.indexes['updated_at'].createIndexStream(
               start: request.query.updated_since.toJSON()
               end: request.query.until.toJSON()
             )
@@ -59,11 +47,11 @@ exports.register = (plugin, options, next) ->
               unless data.value.deleted
                 ids.push data.value
             .on 'end', ->
-              async.map ids, ((id, cb) -> postsDb.get(id, cb)), (err, results) ->
+              async.map ids, ((id, cb) -> config.wrappedDb.get(id, cb)), (err, results) ->
                 reply results.reverse()
 
         else
-          db.createValueStream(
+          config.db.createValueStream(
             reverse: true
             limit: request.query.limit
             start: request.query.start.toJSON()
@@ -84,9 +72,10 @@ exports.register = (plugin, options, next) ->
         params:
           id: Joi.number().integer().max(999999).min(1).required()
       handler: (request, reply) ->
-        postsDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
+        config.wrappedDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
           if array.length is 0
             reply(plugin.hapi.error.notFound('Post not found'))
+          console.log JSON.stringify array[0], null, 4
           reply array[0]
         )
 
@@ -112,13 +101,13 @@ exports.register = (plugin, options, next) ->
           latitude: Joi.any()
           longitude: Joi.any()
       handler: (request, reply) ->
-        postsDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
+        config.wrappedDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
           if array.length is 0
             reply(plugin.hapi.error.notFound('Post not found'))
           # Change updated_at
           post = _.extend array[0], request.payload, updated_at: new Date().toJSON()
           # Save
-          db.put(post.created_at, post, (err) ->
+          config.db.put(post.created_at, post, (err) ->
             if err
               reply plugin.hapi.error.internal {
                 err: err
@@ -154,7 +143,7 @@ exports.register = (plugin, options, next) ->
         newPost.updated_at = new Date().toJSON()
         temp_id = newPost.id
 
-        db.createValueStream()
+        config.db.createValueStream()
           .pipe(es.writeArray (err, array) ->
             max = _.max(array, (post) -> post.id).id
             if max?
@@ -164,7 +153,7 @@ exports.register = (plugin, options, next) ->
             newPost.id = newId
 
             # Save
-            postsDb.put(newPost.created_at, newPost, (err) ->
+            config.wrappedDb.put(newPost.created_at, newPost, (err) ->
               # Add back temp_id to newPost
               newPost.temp_id = temp_id
               response = reply(newPost)
