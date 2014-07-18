@@ -6,9 +6,9 @@ module.exports = keyMirror({
   POST_UPDATE: null
   POST_UPDATE_COMPLETE: null
   POST_UPDATE_ERROR: null
-  POST_DESTROY: null
-  POST_DESTROY_COMPLETE: null
-  POST_DESTROY_ERROR: null
+  POST_DELETE: null
+  POST_DELETE_COMPLETE: null
+  POST_DELETE_ERROR: null
   POST_FETCH: null
   POST_FETCH_ERROR: null
   POSTS_FETCH: null

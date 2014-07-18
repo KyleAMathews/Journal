@@ -45,7 +45,7 @@ class PostsStore extends Emitter
 
   get: (id) ->
     id = parseInt(id, 10)
-    post = _.find _posts, (post) -> return post.id is id
+    post = _posts[id]
     unless post?
       Dispatcher.emit PostConstants.POST_FETCH, id
 
@@ -79,6 +79,15 @@ Dispatcher.on '*', (action, args...) ->
       for post in args[0]
         create(post)
       PostStore.emitChange()
+
+    when PostConstants.POST_DELETE_COMPLETE
+      destroy(PostStore.get(args[0]))
+      PostStore.emitChange()
+
+    when PostConstants.POST_DELETE_ERROR
+      error = args[0]
+      createError error.postId, PostConstants.POST_DELETE_ERROR, error
+      PostStore.emitErrorChange()
 
     when PostConstants.POST_UPDATE_COMPLETE
       update(args[0])

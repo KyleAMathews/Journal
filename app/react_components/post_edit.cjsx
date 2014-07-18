@@ -100,6 +100,8 @@ module.exports = React.createClass
             rows=4
             onSave={@handleSave}
             saving={@state.saving}
+            deleteButton=true
+            onDelete={@handleDelete}
             initialValue={@state.post.body} />
         </div>
       )
@@ -115,6 +117,10 @@ module.exports = React.createClass
     else
       Dispatcher.emit PostConstants.POST_UPDATE, post
       @setState saving: true
+
+  handleDelete: ->
+    Dispatcher.emit PostConstants.POST_DELETE, @state.post.id
+    Router.transitionTo('posts-index')
 
   handleTitleChange: ->
     post = _.extend @state.post, title: @refs.title.getDOMNode().value

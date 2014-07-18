@@ -45,6 +45,7 @@ module.exports = React.createClass
     months = {}
     posts = []
     for post in @state.posts
+      if post.deleted then continue
       month = moment(post.created_at).format('MMMM YYYY')
       unless months[month]?
         posts.push <h2 className="posts-index__month" key={month}>{month}</h2>

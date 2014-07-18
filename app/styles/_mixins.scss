@@ -1,0 +1,4 @@
+@mixin button ($color) {
+  @include sassy-button-structure(rhythm(0.375), rhythm(0.75), rhythm(0.25) rhythm(.75));
+  @include sassy-button-gradient('flat', $color);
+}

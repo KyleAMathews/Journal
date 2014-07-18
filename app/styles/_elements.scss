@@ -99,7 +99,5 @@ input {
 }
 
 button, input[type="submit"], a.button {
-  @include sassy-button-structure(rhythm(0.375), rhythm(0.75), rhythm(0.25) rhythm(.75));
-  @include sassy-button-gradient('flat', #4ba3cc);
+  @include button(#4ba3cc);
 }
-

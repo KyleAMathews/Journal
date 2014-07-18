@@ -167,6 +167,36 @@ exports.register = (plugin, options, next) ->
             )
           )
 
+  #########################################################
+  ### DELETE /posts/{id}
+  #########################################################
+
+  plugin.route
+    path: "/posts/{id}"
+    method: "DELETE"
+    config:
+      validate:
+        params:
+          id: Joi.number().integer().max(999999).min(1).required()
+      handler: (request, reply) ->
+        config.wrappedDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
+          if array.length is 0
+            reply(plugin.hapi.error.notFound('Post not found'))
+          # Change updated_at
+          post = _.extend array[0], deleted: true, updated_at: new Date().toJSON()
+          # Save
+          config.db.put(post.created_at, post, (err) ->
+            if err
+              reply plugin.hapi.error.internal {
+                err: err
+                message: "Post update wasn't deleted correctly: #{ JSON.stringify(err) }"
+              }
+            reply post
+
+            # Enqueue updated post to be pushed to S3
+            config.jobsClient.push jobName: 'push_post_s3', post: post
+          )
+        )
   next()
 
 exports.register.attributes =

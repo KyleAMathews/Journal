@@ -97,6 +97,24 @@ updatePost = (post) ->
           status: res?.status
           error: error
 
+deletePost = (postId) ->
+  log "DELETE /posts/id", postId
+  request
+    .del("/posts/#{postId}")
+    .set('Accept', 'application/json')
+    .end (err, res) =>
+      if res?.status is 200
+        Dispatcher.emit PostConstants.POST_DELETE_COMPLETE, postId
+      else
+        if err?.message
+          error = err.message
+        else
+          error = createErrorMessage(res.body)
+        Dispatcher.emit PostConstants.POST_DELETE_ERROR,
+          postId: postId
+          status: res?.status
+          error: error
+
 # Register to dispatcher.
 Dispatcher.on '*', (action, args...) ->
   switch action
@@ -108,6 +126,8 @@ Dispatcher.on '*', (action, args...) ->
       createPost(args[0])
     when PostConstants.POST_UPDATE
       updatePost(args[0])
+    when PostConstants.POST_DELETE
+      deletePost(args[0])
 
 createErrorMessage = (body) ->
   return "#{body.statusCode} #{body.error}: #{body.message}"

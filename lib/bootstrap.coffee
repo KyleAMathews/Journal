@@ -14,4 +14,4 @@ require('https').globalAgent.maxSockets = 1000
 require('http').globalAgent.maxSockets = 1000
 
 # Sync posts with the app's Amazon S3 bucket
-require './sync_posts'
+#require './sync_posts'

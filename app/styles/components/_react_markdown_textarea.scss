@@ -23,6 +23,13 @@
     float: left;
     margin-top: rhythm(1);
   }
+  &__delete-button {
+    @include button(#FF7955);
+
+    float: right;
+    margin-left: rhythm(0.25);
+    margin-top: rhythm(1);
+  }
   &__spinner {
     float: left;
     height: rhythm(1);
