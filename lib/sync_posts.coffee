@@ -22,7 +22,7 @@ config.s3client.streamKeys(prefix: '/posts/').on('data', (key) ->
 ).on 'end', ->
   # Once key streaming is finished, start fetching all the files.
   async.mapLimit S3PostsKeys, 25, getPostS3, (err, results) ->
-    if err then console.log err
+    if err then config.server.log ['error', 'sync_posts'], err
     obj = {}
     for result in results
       obj[result.id] = result
@@ -40,8 +40,8 @@ getPostS3 = (key, callback) ->
         try
           post = JSON.parse Buffer.concat(chunks).toString()
         catch e
-          console.log "BAD JSON FOR #{key}"
-          callback(null)
+          config.server.log ['error', 'sync_posts'], e
+          callback(e)
         callback(err, post)
 
 # Compare each fetched posts to what exists locally and see what posts
@@ -78,13 +78,13 @@ compareToLocal = (s3Posts) ->
 
 # Save any updates from S3 locally.
 saveUpdatesFromS3 = ->
-  console.log "Saving #{_.keys(s3PostsToSave).length} posts from S3"
+  config.server.log ['info', 'sync_posts'], "Saving #{_.keys(s3PostsToSave).length} posts from S3"
   for id, post of s3PostsToSave
     config.wrappedDb.put(post.created_at, post)
 
 
 # Queue to push local posts that are ahead of or don't exist on S3 yet.
 pushLocalUpdates = ->
-  console.log "Pushing #{_.keys(localPostsToStream).length} posts to S3"
+  config.server.log ['info', 'sync_posts'], "Pushing #{_.keys(localPostsToStream).length} posts to S3"
   for id, post of localPostsToStream
     config.jobsClient.push jobName: 'push_post_s3', post: post

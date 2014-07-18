@@ -1,9 +1,16 @@
 Hapi = require 'hapi'
+bunyan = require('bunyan')
 Joi = require 'joi'
 config = require './config'
 bootstrap = require './lib/bootstrap'
 
-server = new Hapi.Server(8081, '0.0.0.0', {
+logger = bunyan.createLogger({
+  name: 'journal'
+  stream: process.stdout
+  level: 'debug'
+})
+
+config.server = server = new Hapi.Server(8081, '0.0.0.0', {
   cors: true
   json:
     space: 4
@@ -22,6 +29,12 @@ server.pack.register [
   },
   {
     plugin: require './plugins/search'
+  },
+  {
+    plugin: require 'hapi-bunyan-lite'
+    options:
+      logger: logger
+      defaultLogLevel: 'info'
   },
   {
     plugin: require 'hapi-single-page-app-plugin'

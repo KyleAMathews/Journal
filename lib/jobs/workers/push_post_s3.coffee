@@ -10,14 +10,17 @@ module.exports = (payload, cb) ->
   req.on 'response', (res) ->
     # Log errors.
     if res.statusCode isnt 200
-      console.log res.statusCode
-      console.log res.headers
-      console.log res.req.url
       res.on 'data', (chunk) ->
-        console.log chunk.toString()
+        config.server.log ['error', 'jobQueue', 'push_post_s3'], {
+          successful: false
+          url: res.req.url
+          statusCode: res.statusCode
+          headers: res.heades
+          body: chunk.toString()
+        }
         cb(res.statusCode)
     else
-      console.log 'pushed post to s3: ' + res.req.url
+      config.server.log ['info', 'jobQueue', 'push_post_s3'], successful: true, url: res.req.url
       cb()
 
   req.end json
