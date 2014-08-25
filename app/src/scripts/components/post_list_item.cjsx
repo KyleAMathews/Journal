@@ -1,6 +1,6 @@
 React = require 'react/addons'
 TransitionGroup = React.addons.TransitionGroup
-Link = require('react-nested-router').Link
+Link = require('react-router').Link
 moment = require 'moment'
 _ = require 'underscore'
 

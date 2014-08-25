@@ -14,7 +14,7 @@ fetchPosts = ->
   if _fetchedAll then return
   log 'GET /posts'
   request
-    .get('/posts')
+    .get('http://localhost:8081/posts')
     .set('Accept', 'application/json')
     .query(limit: 50)
     .query(start: _start)
@@ -44,7 +44,7 @@ fetchPost = (id) ->
 
   # Make request.
   request
-    .get("/posts/#{id}")
+    .get("http://localhost:8081/posts/#{id}")
     .set('Accept', 'application/json')
     .end (err, res) =>
       delete _postsLoading[id]

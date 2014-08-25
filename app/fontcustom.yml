@@ -19,8 +19,8 @@ quiet: false
 # --------------------------------------------------------------------------- #
 
 input:
-  vectors: app/styles/icons/         # required
-  templates: app/styles/icons/fontcustom/templates
+  vectors: src/styles/icons/         # required
+  templates: src/styles/icons/fontcustom/templates
 
 
 # --------------------------------------------------------------------------- #
@@ -29,7 +29,7 @@ input:
 
 output:
   fonts: assets/fonts                             # required
-  css: app/styles/
+  css: src/styles/
 
 
 # --------------------------------------------------------------------------- #
@@ -42,4 +42,3 @@ output:
 templates:
  - scss
  - preview
- #- my-custom-template.yml

@@ -1,8 +1,7 @@
 uuid = require('node-uuid')
 MarkdownTextarea = require 'react-markdown-textarea'
-Router = require('react-nested-router')
+Router = require('react-router')
 ReactTextarea = require 'react-textarea-autosize'
-Spinner = require 'react-spinner'
 
 Messages = require './messages'
 Dispatcher = require '../dispatcher'

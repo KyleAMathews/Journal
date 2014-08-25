@@ -44,7 +44,7 @@ server.pack.register [
   {
     plugin: require 'good'
     options:
-      subcribers:
+      subscribers:
         console: ['ops', 'request', 'log', 'error']
   }
 ], ->

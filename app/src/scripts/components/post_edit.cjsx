@@ -3,10 +3,10 @@ request = require 'superagent'
 marked = require('marked')
 moment = require 'moment'
 _ = require 'underscore'
-Router = require('react-nested-router')
+Router = require('react-router')
 MarkdownTextarea = require 'react-markdown-textarea'
 ReactTextarea = require 'react-textarea-autosize'
-Spinner = require 'react-spinner'
+Spinner = require 'react-spinkit'
 
 Messages = require './messages'
 PostStore = require '../stores/post_store'
@@ -79,7 +79,7 @@ module.exports = React.createClass
   render: ->
     if @state.loading
       return (
-        <Spinner />
+        <Spinner spinnerName="wave" cssRequire />
       )
     else
       return (

@@ -1,5 +1,5 @@
 React = require 'react'
-Link = require('react-nested-router').Link
+Link = require('react-router').Link
 request = require 'superagent'
 #window.jQuery = window.$ = require 'jquery'
 #require 'velocity-animate'
@@ -24,6 +24,6 @@ module.exports = React.createClass
         </div>
       </div>
       <div className="main-section">
-        {@props.activeRoute}
+        {@props.activeRouteHandler()}
       </div>
     </div>

@@ -1,6 +1,6 @@
-Spinner = require 'react-spinner'
-Link = require('react-nested-router').Link
-Router = require('react-nested-router')
+Spinner = require 'react-spinkit'
+Link = require('react-router').Link
+Router = require('react-router')
 moment = require 'moment'
 _ = require 'underscore'
 _str = require 'underscore.string'
@@ -91,7 +91,7 @@ module.exports = React.createClass
         <span className="icon-search" />
         Search
       </button>
-      {if @state.searching then <Spinner className="search__spinner" />}
+      {if @state.searching then <Spinner spinnerName="wave" cssRequire />}
       {@meta()}
       {if @state.facets.length > 1
         <div

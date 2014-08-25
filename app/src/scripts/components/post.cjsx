@@ -2,9 +2,9 @@ React = require 'react'
 request = require 'superagent'
 marked = require('marked')
 moment = require 'moment'
-Router = require('react-nested-router')
-Spinner = require 'react-spinner'
-Link = require('react-nested-router').Link
+Router = require('react-router')
+Spinner = require 'react-spinkit'
+Link = require('react-router').Link
 _ = require 'underscore'
 path = require 'path'
 
@@ -58,7 +58,7 @@ module.exports = React.createClass
   render: ->
     if @state.loading
       return (
-        <Spinner />
+        <Spinner spinnerName="wave" cssRequire />
       )
     else if @state.errors.length > 0
       <Messages type="errors" messages={@state.errors} />

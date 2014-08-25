@@ -16,7 +16,7 @@ search = (query, sort) ->
   log "Searching for query: '#{query}' by sort: '#{sort}'"
   searchStart = new Date()
   request
-    .get('/search')
+    .get('http://localhost:8081/search')
     .set('Accept', 'application/json')
     .query(q: query)
     .query(size: 30)

@@ -20,7 +20,7 @@ module.exports = (options) ->
   height = 81.5
   ticks = Math.round(options.containerWidth/36)
 
-  x = x = d3.time.scale.utc()
+  x = d3.time.scale.utc()
     #.domain([0, 120])
     .domain(d3.extent(options.values))
     .range([0, width])

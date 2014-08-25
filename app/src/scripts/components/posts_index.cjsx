@@ -2,8 +2,8 @@ React = require 'react/addons'
 request = require 'superagent'
 moment = require 'moment'
 _ = require 'underscore'
-Link = require('react-nested-router').Link
-Spinner = require 'react-spinner'
+Link = require('react-router').Link
+Spinner = require 'react-spinkit'
 
 SetInterval = require '../mixins/set_interval'
 PostListItem = require './post_list_item'
@@ -55,7 +55,7 @@ module.exports = React.createClass
 
     if _.isEmpty(PostStore.getAll())
       return (
-        <Spinner />
+        <Spinner spinnerName="wave" cssRequire />
       )
     else
       return (
