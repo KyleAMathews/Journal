@@ -1,6 +1,7 @@
 Dispatcher = require '../dispatcher'
 PostConstants = require '../constants/post_constants'
 request = require 'superagent'
+require 'superagent-bluebird-promise'
 _ = require 'underscore'
 log = require('bows')("PostTransport")
 moment = require 'moment'

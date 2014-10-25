@@ -18,46 +18,19 @@ NewPost = require './components/new_post'
 Attribution = require './components/attribution'
 Search = require './components/search'
 
-# Dispatcher
-Dispatcher = require './dispatcher'
+# Setup stores
+require './stores/post_store'
 
-# Stores
-PostStore = require './stores/post_store'
-AppStore = require './stores/app_store'
-SearchStore = require './stores/search_store'
-
-# Constants
-PostConstants = require './constants/post_constants'
-AppConstants = require './constants/app_constants'
-SearchConstants = require './constants/search_constants'
-
-# Transports
-PostsAjax = require './transports/posts_ajax'
-SearchAjax = require './transports/search_ajax'
-
-# Kick off some fetching
-Dispatcher.emit PostConstants.POSTS_FETCH
+# Kick off initial load of posts.
+require('./actions/PostActions').load()
 
 # Create a handy entrypoint into the various tools and datastores.
 if window
   window._ = require 'underscore'
   window.moment = require 'moment'
   window.d3 = require 'd3'
-  window.mori = require 'mori'
 
   window.app = app = {}
-  app.transports = {}
-  app.transports.PostsAjax = PostsAjax
-  app.transports.SearchAjax = SearchAjax
-  app.stores = {}
-  app.stores.PostStore = PostStore
-  app.stores.AppStore = AppStore
-  app.stores.SearchStore = SearchStore
-  app.constants = {}
-  app.constants.PostConstants = PostConstants
-  app.constants.AppConstants = AppConstants
-  app.constants.SearchConstants = SearchConstants
-  app.dispatcher = Dispatcher
 
 React.renderComponent((
   <Routes>
