@@ -2,6 +2,11 @@ config = require '../../../config'
 
 module.exports = (payload, cb) ->
   json = JSON.stringify payload.post, null, 4
+
+  # If there's no post, just report it was finished successfully.
+  unless json?
+    cb()
+
   req = config.s3client.put("/posts/#{payload.post.id}.json", {
     'Content-Length': Buffer.byteLength(json)
     'Content-Type': 'application/json'
