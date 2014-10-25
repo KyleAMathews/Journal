@@ -9,8 +9,8 @@ fs = require 'fs'
 
 config = require '../config'
 
-S3PostsKeys = []
-S3Posts = []
+s3PostsKeys = []
+s3Posts = []
 localPostsToStream = {}
 s3PostsToSave = {}
 
@@ -18,10 +18,10 @@ s3PostsToSave = {}
 # use the knox_copy module to stream all the keys and then fetch each file in turn.
 config.s3client.streamKeys(prefix: '/posts/').on('data', (key) ->
   if key isnt "posts/" # Ignore the directory
-    S3PostsKeys.push key
+    s3PostsKeys.push key
 ).on 'end', ->
   # Once key streaming is finished, start fetching all the files.
-  async.mapLimit S3PostsKeys, 25, getPostS3, (err, results) ->
+  async.mapLimit s3PostsKeys, 25, getPostS3, (err, results) ->
     if err then config.server.log ['error', 'sync_posts'], err
     obj = {}
     for result in results
@@ -68,10 +68,10 @@ compareToLocal = (s3Posts) ->
     # Diff localposts array with s3Posts so we can save new posts from S3 locally.
     for key in _.difference _.keys(s3Posts), _.keys(localPosts)
       s3PostsToSave[key] = s3Posts[key]
-    #
+
     # Diff localposts array with s3Posts so we can save new posts to S3.
     for key in _.difference _.keys(localPosts), _.keys(s3Posts)
-      s3PostsToSave[key] = s3Posts[key]
+      localPostsToStream[key] = localPosts[key]
 
     saveUpdatesFromS3()
     pushLocalUpdates()
@@ -81,7 +81,6 @@ saveUpdatesFromS3 = ->
   config.server.log ['info', 'sync_posts'], "Saving #{_.keys(s3PostsToSave).length} posts from S3"
   for id, post of s3PostsToSave
     config.wrappedDb.put(post.created_at, post)
-
 
 # Queue to push local posts that are ahead of or don't exist on S3 yet.
 pushLocalUpdates = ->
