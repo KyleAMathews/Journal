@@ -34,8 +34,15 @@ server.pack.register [
   {
     plugin: require 'good'
     options:
-      subscribers:
-        console: ['ops', 'request', 'log', 'error']
+      reporters: [{
+        reporter: require('good-console'),
+        args:[{
+          log: '*'
+          request: '*'
+          ops: '*'
+          error: '*'
+        }]
+      }]
   }
 ], ->
   server.start ->

@@ -32,7 +32,7 @@ if window
 
   window.app = app = {}
 
-React.renderComponent((
+React.render((
   <Routes>
     <Route handler={App}>
       <Route name="new-post" path="/posts/new" handler={NewPost} />
