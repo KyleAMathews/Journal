@@ -25,7 +25,8 @@ config.s3client.streamKeys(prefix: '/posts/').on('data', (key) ->
     if err then config.server.log ['error', 'sync_posts'], err
     obj = {}
     for result in results
-      obj[result.id] = result
+      if result?
+        obj[result.id] = result
     compareToLocal(obj)
 
 # Function to fetch files.
