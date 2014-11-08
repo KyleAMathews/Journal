@@ -13,6 +13,8 @@ _ = require 'underscore'
 module.exports = React.createClass
   displayName: 'NewPost'
 
+  mixins: [Router.Navigation]
+
   getInitialState: ->
     return {
       saving: false
@@ -34,7 +36,7 @@ module.exports = React.createClass
       if newPost.temp_id is @state.post.id
         # Post saved successfully. Destroy any errors and move to post view.
         Dispatcher.emit PostConstants.POST_ERROR_DESTROY, @state.post.id
-        Router.transitionTo('post', postId: newPost.id)
+        @transitionTo('post', postId: newPost.id)
     )
     PostStore.on('change_error', 'new-post', =>
       errors = PostStore.getErrorById(@state.post.id)

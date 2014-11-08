@@ -18,6 +18,8 @@ Messages = require './messages'
 module.exports = React.createClass
   displayName: "Search"
 
+  mixins: [Router.Navigation]
+
   getInitialState: ->
     query = @props.query.q || ""
     sort = @props.query.sort || 'Best match'
@@ -177,7 +179,7 @@ module.exports = React.createClass
 
   search: (query=@state.query, sort=@state.sort) ->
     # Set to the URL our search query strings.
-    Router.transitionTo('search', null, {
+    @transitionTo('search', null, {
       q: query
       sort: sort
     })

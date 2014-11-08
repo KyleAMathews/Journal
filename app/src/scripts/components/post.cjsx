@@ -16,7 +16,7 @@ postStore = require '../stores/post_store'
 module.exports = React.createClass
   displayName: 'Post'
 
-  mixins: [Reflux.ListenerMixin]
+  mixins: [Reflux.ListenerMixin, Router.Navigation]
 
   getInitialState: ->
     errors: []
@@ -71,12 +71,12 @@ module.exports = React.createClass
     if e.target.nodeName is "A"
       path = e.target.pathname?.split('/')
       if path[1] is "posts" and path[2]?
-        Router.transitionTo('post', postId: path[2])
+        @transitionTo('post', postId: path[2])
       else
         window.open e.target.href, '_blank'
 
   handleDblClick: ->
-    Router.transitionTo('post-edit', postId: @state.post.id)
+    @transitionTo('post-edit', postId: @state.post.id)
 
   getPost: ->
     @setState post: postStore.get(@props.params.postId)

@@ -14,6 +14,8 @@ PostConstants = require '../constants/post_constants'
 Dispatcher = require '../dispatcher'
 
 module.exports = React.createClass
+  mixins: [Router.Navigation]
+
   getInitialState: ->
     state = {
       post: post = PostStore.get(@props.params.postId)
@@ -49,7 +51,7 @@ module.exports = React.createClass
         if post.updated_at > @state.post.updated_at
           # Post was saved successfully
           Dispatcher.emit PostConstants.POST_ERROR_DESTROY, @state.post.id
-          Router.transitionTo('post', postId: @state.post.id)
+          @transitionTo('post', postId: @state.post.id)
     )
 
     PostStore.on('change_error', 'post-edit', =>
@@ -60,7 +62,7 @@ module.exports = React.createClass
         for errorType, errorTypeErrors of errors
           # If we can't load the post to edit, just go back to posts-index.
           if errorType is "POST_FETCH_ERROR"
-            Router.transitionTo('posts-index')
+            @transitionTo('posts-index')
           # Loop through errors and add them to the errors message array.
           for data in errorTypeErrors
             message = "Saving failed. Message: \"#{data.error}\""
@@ -120,7 +122,7 @@ module.exports = React.createClass
 
   handleDelete: ->
     Dispatcher.emit PostConstants.POST_DELETE, @state.post.id
-    Router.transitionTo('posts-index')
+    @transitionTo('posts-index')
 
   handleTitleChange: ->
     post = _.extend @state.post, title: @refs.title.getDOMNode().value
