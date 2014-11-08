@@ -23,8 +23,8 @@ module.exports = React.createClass
     months = {}
     posts = []
     if @state.posts?
-      for post in @state.posts
-        if post.deleted then continue
+      @state.posts.forEach (post) ->
+        if post.deleted then return
         month = moment(post.created_at).format('MMMM YYYY')
         unless months[month]?
           posts.push <h2 className="posts-index__month" key={month}>{month}</h2>
@@ -33,7 +33,11 @@ module.exports = React.createClass
 
       return (
         <div className="posts-index">
-          <Link className="button posts-index__new-post" to="new-post"><span className="icon-flat-pencil" />New post</Link>
+          <Link
+           className="button posts-index__new-post"
+           to="new-post">
+             <span className="icon-flat-pencil" />New post
+          </Link>
           <ul className="posts-index__list">
             {posts}
           </ul>
