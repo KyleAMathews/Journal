@@ -1,6 +1,8 @@
 Reflux = require 'reflux'
 PostActions = require '../actions/PostActions'
 Immutable = require 'immutable'
+request = require 'superagent'
+Promise = require 'bluebird'
 
 module.exports = PostStore = Reflux.createStore
   init: ->
@@ -14,7 +16,17 @@ module.exports = PostStore = Reflux.createStore
 
   get: (id) ->
     id = parseInt(id, 10)
-    @_mappedPosts.get(id)
+    post = @_mappedPosts.get(id)
+    if post?
+      return new Promise (resolve, reject) ->
+        resolve post
+    else
+      request
+        .get("http://localhost:8081/posts/#{id}")
+        .set('Accept', 'application/json')
+        .promise()
+        .then (res) ->
+          res.body
 
   onLoad: (posts) ->
     @_posts = Immutable.List(posts.body)

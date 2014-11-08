@@ -79,4 +79,5 @@ module.exports = React.createClass
     @transitionTo('post-edit', postId: @state.post.id)
 
   getPost: ->
-    @setState post: postStore.get(@props.params.postId)
+    postStore.get(@props.params.postId).then (post) =>
+      @setState post: post
