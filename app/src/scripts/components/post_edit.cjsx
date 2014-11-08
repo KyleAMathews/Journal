@@ -73,11 +73,6 @@ module.exports = React.createClass
   componentWillUnmount: ->
     PostStore.releaseGroup('post-edit')
 
-  componentWillUpdate: ->
-    setTimeout((->
-      jQuery('textarea').trigger('autosize.resize')
-    ), 0)
-
   render: ->
     if @state.loading
       return (
