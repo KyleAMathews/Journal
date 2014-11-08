@@ -7,22 +7,25 @@ Reflux = require 'reflux'
 
 PostListItem = require './post_list_item'
 postStore = require '../stores/post_store'
+loadingStore = require '../stores/loading'
+PostActions = require '../actions/PostActions'
 
 module.exports = React.createClass
   displayName: 'PostsIndex'
 
-  mixins: [Reflux.connect(postStore, "posts")]
+  mixins: [Reflux.connect(postStore, "posts"), Reflux.connect(loadingStore, "loading")]
 
-  getInitialState: ->
-    return {
-      start: new Date().toJSON()
-      loading: false
-    }
+  componentDidMount: ->
+    window.addEventListener('scroll', @distanceToBottom)
+    @listenTo PostActions.loadMoreComplete, -> @setState loading: false
+
+  componentWillUnmount: ->
+    window.removeEventListener('scroll', @distanceToBottom)
 
   render: ->
     months = {}
     posts = []
-    if @state.posts?
+    if @state?.posts?
       @state.posts.forEach (post) ->
         if post.deleted then return
         month = moment(post.created_at).format('MMMM YYYY')
@@ -48,3 +51,16 @@ module.exports = React.createClass
       return (
         <Spinner spinnerName="wave" fadeIn cssRequire />
       )
+
+  distanceToBottom: ->
+    w = window
+    d = document
+    e = d.documentElement
+    g = d.getElementsByTagName('body')[0]
+    x = w.innerWidth || e.clientWidth || g.clientWidth
+    y = w.innerHeight|| e.clientHeight|| g.clientHeight
+
+    distanceToBottom = document.body.clientHeight - window.scrollY - y
+
+    if distanceToBottom < 300 and @state.posts? and not @state.loading
+      PostActions.loadMore(@state.posts.last())
