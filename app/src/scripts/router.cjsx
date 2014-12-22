@@ -3,8 +3,8 @@
 require '../../public/main.css'
 
 React = require 'react'
+Router = require('react-router')
 Route = require('react-router').Route
-Routes = require('react-router').Routes
 
 if window
   window.React = React
@@ -32,15 +32,17 @@ if window
 
   window.app = app = {}
 
-React.render((
-  <Routes>
-    <Route handler={App}>
-      <Route name="new-post" path="/posts/new" handler={NewPost} />
-      <Route name="posts-index" path="/" handler={PostsIndex} />
-      <Route name="post" path="/posts/:postId" handler={Post} />
-      <Route name="post-edit" path="/posts/:postId/edit" handler={PostEdit} />
-      <Route name="attributions" path="/attribution" handler={Attribution} />
-      <Route name="search" path="/search" handler={Search} />
-    </Route>
-  </Routes>
-), document.body)
+routes = (
+  <Route handler={App}>
+    <Route name="posts-index" path="/" handler={PostsIndex} />
+    <Route name="post" path="/posts/:postId" handler={Post} />
+    <Route name="post-edit" path="/posts/:postId/edit" handler={PostEdit} />
+    <Route name="new-post" path="/posts/new" handler={NewPost} />
+    <Route name="attributions" path="/attribution" handler={Attribution} />
+    <Route name="search" path="/search" handler={Search} />
+  </Route>
+)
+
+Router.run(routes, (Handler) ->
+  React.render(<Handler/>, document.body)
+)

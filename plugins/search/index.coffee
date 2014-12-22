@@ -1,14 +1,15 @@
 Joi = require 'joi'
 elasticsearch = require 'elasticsearch'
 _ = require 'underscore'
+Boom = require 'boom'
 
 client = new elasticsearch.Client({
   host: process.env.ELASTICSEARCH_URL
   #log: 'trace'
 })
 
-exports.register = (plugin, options, next) ->
-  plugin.route
+exports.register = (server, options, next) ->
+  server.route
     path: "/search"
     method: "GET"
     config:

@@ -2,6 +2,7 @@ Joi = require 'joi'
 es = require('event-stream')
 _ = require 'underscore'
 async = require 'async'
+Boom = require 'boom'
 
 config = require '../../config'
 
@@ -21,11 +22,11 @@ config.db.createKeyStream().pipe(es.writeArray (err, array) ->
     config.wrappedDb.put post.created_at, post
 )
 
-exports.register = (plugin, options, next) ->
+exports.register = (server, options, next) ->
   #########################################################
   ### GET /posts
   #########################################################
-  plugin.route
+  server.route
     path: "/posts"
     method: "GET"
     config:
@@ -36,6 +37,7 @@ exports.register = (plugin, options, next) ->
           start: Joi.date().default(new Date().toJSON())
           until: Joi.date()
       handler: (request, reply) ->
+        console.log "requesting"
         # User is querying for all posts changed since a certain date.
         if request.query.updated_since?
           ids = []
@@ -64,7 +66,7 @@ exports.register = (plugin, options, next) ->
   #########################################################
 
   postOptions =
-  plugin.route
+  server.route
     path: "/posts/{id}"
     method: "GET"
     config:
@@ -74,7 +76,7 @@ exports.register = (plugin, options, next) ->
       handler: (request, reply) ->
         config.wrappedDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
           if array.length is 0
-            reply(plugin.hapi.error.notFound('Post not found'))
+            reply(Boom.notFound('Post not found'))
           reply array[0]
         )
 
@@ -82,7 +84,7 @@ exports.register = (plugin, options, next) ->
   ### PATCH /posts/{id}
   #########################################################
 
-  plugin.route
+  server.route
     path: "/posts/{id}"
     method: "PATCH"
     config:
@@ -102,17 +104,18 @@ exports.register = (plugin, options, next) ->
       handler: (request, reply) ->
         config.wrappedDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
           if array.length is 0
-            reply(plugin.hapi.error.notFound('Post not found'))
+            reply(Boom.notFound('Post not found'))
           # Change updated_at
           post = _.extend array[0], request.payload, updated_at: new Date().toJSON()
           # Save
           config.db.put(post.created_at, post, (err) ->
             if err
-              reply plugin.hapi.error.internal {
+              reply Boom.badImplementation("Post update didn't save correctly",
+              {
                 err: err
-                message: "Post update didn't save correctly: #{ JSON.stringify(err) }"
-              }
-            reply post
+              })
+            else
+              reply post
 
             # Enqueue updated post to be pushed to S3
             config.jobsClient.push jobName: 'push_post_s3', post: post
@@ -123,7 +126,7 @@ exports.register = (plugin, options, next) ->
   ### POST /posts/
   #########################################################
 
-  plugin.route
+  server.route
     path: "/posts"
     method: "POST"
     config:
@@ -171,7 +174,7 @@ exports.register = (plugin, options, next) ->
   ### DELETE /posts/{id}
   #########################################################
 
-  plugin.route
+  server.route
     path: "/posts/{id}"
     method: "DELETE"
     config:
@@ -181,22 +184,23 @@ exports.register = (plugin, options, next) ->
       handler: (request, reply) ->
         config.wrappedDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
           if array.length is 0
-            reply(plugin.hapi.error.notFound('Post not found'))
+            reply(Boom.notFound('Post not found'))
           # Change updated_at
           post = _.extend array[0], deleted: true, updated_at: new Date().toJSON()
           # Save
           config.db.put(post.created_at, post, (err) ->
             if err
-              reply plugin.hapi.error.internal {
+              reply Boom.badImplementation("Post update wasn't deleted correctly: #{ JSON.stringify(err) }", {
                 err: err
-                message: "Post update wasn't deleted correctly: #{ JSON.stringify(err) }"
-              }
-            reply post
+              })
+            else
+              reply post
 
             # Enqueue updated post to be pushed to S3
             config.jobsClient.push jobName: 'push_post_s3', post: post
           )
         )
+
   next()
 
 exports.register.attributes =

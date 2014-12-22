@@ -10,29 +10,31 @@ logger = bunyan.createLogger({
   level: 'debug'
 })
 
-config.server = server = new Hapi.Server(8081, '0.0.0.0', {
-  cors: true
-  json:
-    space: 4
-})
+config.server = server = new Hapi.Server()
+server.connection(
+  {
+    port: 8081
+    routes:
+      cors: true
+      json:
+        space: 4
+  }
+)
 
-server.pack.register [
+server.register([
   {
-    plugin: require 'lout'
+    register: require './plugins/posts'
   },
   {
-    plugin: require './plugins/posts'
+    register: require './plugins/search'
   },
   {
-    plugin: require './plugins/search'
-  },
-  {
-    plugin: require 'hapi-single-page-app-plugin'
+    register: require 'hapi-single-page-app-plugin'
     options:
       exclude: ['docs.*']
   },
   {
-    plugin: require 'good'
+    register: require 'good'
     options:
       reporters: [{
         reporter: require('good-console'),
@@ -44,6 +46,9 @@ server.pack.register [
         }]
       }]
   }
-], ->
-  server.start ->
+], (err) ->
+  if err then console.log err
+  server.start (err) ->
+    if err then console.log err
     console.log "Hapi server started @ #{server.info.uri}"
+)

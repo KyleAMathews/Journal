@@ -1,5 +1,6 @@
 React = require 'react'
 Link = require('react-router').Link
+RouteHandler = require('react-router').RouteHandler
 request = require 'superagent'
 #window.jQuery = window.$ = require 'jquery'
 #require 'velocity-animate'
@@ -24,6 +25,6 @@ module.exports = React.createClass
         </div>
       </div>
       <div className="main-section">
-        {@props.activeRouteHandler()}
+        <RouteHandler/>
       </div>
     </div>
