@@ -15,11 +15,12 @@ config.wrappedDb.query.use(pathEngine())
 config.jobsDb = levelup('./jobs_db')
 config.jobsClient = QueueClient(config.jobsDb)
 
-config.s3client = knoxCopy.createClient({
-    key: process.env.AMAZON_KEY
-    secret: process.env.AMAZON_SECRET
-    bucket: process.env.S3_BUCKET
-    region: process.env.S3_REGION || 'us-standard'
-})
+if process.env.AMAZON_KEY
+  config.s3client = knoxCopy.createClient({
+      key: process.env.AMAZON_KEY
+      secret: process.env.AMAZON_SECRET
+      bucket: process.env.S3_BUCKET
+      region: process.env.S3_REGION
+  })
 
 module.exports = config
