@@ -11,7 +11,7 @@ module.exports = PostStore = Reflux.createStore
     @listenTo PostActions.loadComplete, @onLoad
     @listenTo PostActions.loadMoreComplete, @onLoadMore
 
-  getDefaultData: ->
+  getInitialState: ->
     @_posts
 
   get: (id) ->

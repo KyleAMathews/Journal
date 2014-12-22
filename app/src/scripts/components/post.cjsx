@@ -11,20 +11,26 @@ Reflux = require 'reflux'
 
 Messages = require './messages'
 
-postStore = require '../stores/post_store'
+PostStore = require '../stores/post_store'
+LoadingStore = require '../stores/loading'
 
 module.exports = React.createClass
   displayName: 'Post'
 
-  mixins: [Reflux.ListenerMixin, Router.Navigation]
+  mixins: [
+    Reflux.connect(LoadingStore, "loading"),
+    Reflux.listenTo(PostStore, "getPost"),
+    Router.Navigation
+    Router.State
+  ]
 
   getInitialState: ->
-    errors: []
-    loading: false
+    {
+      errors: []
+    }
 
   componentDidMount: ->
     @getPost()
-    @listenTo postStore, @getPost
 
   render: ->
     if @state.errors.length > 0
@@ -79,5 +85,5 @@ module.exports = React.createClass
     @transitionTo('post-edit', postId: @state.post.id)
 
   getPost: ->
-    postStore.get(@props.params.postId).then (post) =>
+    PostStore.get(@getParams().postId).then (post) =>
       @setState post: post

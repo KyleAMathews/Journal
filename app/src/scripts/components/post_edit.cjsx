@@ -1,4 +1,5 @@
 React = require 'react'
+Reflux = require 'reflux'
 request = require 'superagent'
 marked = require('marked')
 moment = require 'moment'
@@ -7,76 +8,40 @@ Router = require('react-router')
 MarkdownTextarea = require 'react-markdown-textarea'
 ReactTextarea = require 'react-textarea-autosize'
 Spinner = require 'react-spinkit'
-
 Messages = require './messages'
-PostStore = require '../stores/post_store'
-PostConstants = require '../constants/post_constants'
-Dispatcher = require '../dispatcher'
 
+PostStore = require '../stores/post_store'
+LoadingStore = require '../stores/loading'
+PostActions = require '../actions/PostActions'
+
+# TODO
+# validation
+# saving/loading indicators
+# error handling
+# global error store
 module.exports = React.createClass
-  mixins: [Router.Navigation]
+  displayName: "PostEdit"
+
+  mixins: [
+    Reflux.connect(LoadingStore, "loading"),
+    Reflux.listenTo(PostActions.updateComplete, "onUpdateComplete"),
+    Reflux.listenTo(PostActions.deleteComplete, "onDeleteComplete"),
+    Router.Navigation
+    Router.State
+  ]
 
   getInitialState: ->
-    state = {
-      post: post = PostStore.get(@props.params.postId)
+    return {
       errors: []
-      loading: false
-      saving: false
     }
 
-    if post
-      return state
-    else
-      state.post = {}
-      state.loading = true
-      return state
-
-
   componentDidMount: ->
-    # Ensure we're at the top of the page.
-    scroll(0,0)
-
-    PostStore.on('change', 'post-edit', =>
-      # We're waiting for our post to be loaded.
-      # Let's check if it's here.
-      if @state.loading and PostStore.get(@props.params.postId)
-        @setState {
-          post: PostStore.get(@props.params.postId)
-          loading: false
-        }
-      # We're waiting for our post to be saved,
-      # let's see if that's happened.
-      if @state.saving
-        post = PostStore.get(@props.params.postId)
-        if post.updated_at > @state.post.updated_at
-          # Post was saved successfully
-          Dispatcher.emit PostConstants.POST_ERROR_DESTROY, @state.post.id
-          @transitionTo('post', postId: @state.post.id)
-    )
-
-    PostStore.on('change_error', 'post-edit', =>
-      errors = PostStore.getErrorById(@props.params.postId)
-      unless _.isEmpty(errors)
-        @setState saving: false
-        # Look at each class of errors in turn.
-        for errorType, errorTypeErrors of errors
-          # If we can't load the post to edit, just go back to posts-index.
-          if errorType is "POST_FETCH_ERROR"
-            @transitionTo('posts-index')
-          # Loop through errors and add them to the errors message array.
-          for data in errorTypeErrors
-            message = "Saving failed. Message: \"#{data.error}\""
-            unless (@state.errors.some (val) -> val is message)
-              @setState errors: @state.errors.concat [message]
-    )
-
-  componentWillUnmount: ->
-    PostStore.releaseGroup('post-edit')
+    @getPost()
 
   render: ->
-    if @state.loading
+    unless @state.post?
       return (
-        <Spinner spinnerName="wave" cssRequire />
+        <Spinner spinnerName="wave" fadeIn cssRequire />
       )
     else
       return (
@@ -85,10 +50,9 @@ module.exports = React.createClass
           <h1>
             <ReactTextarea
               placeholder="New title for post"
-              rows=1
               className="post-edit__title"
+              rows=1
               ref="title"
-              autosize
               value={@state.post.title}
               onChange={@handleTitleChange} />
           </h1>
@@ -99,6 +63,12 @@ module.exports = React.createClass
             saving={@state.saving}
             deleteButton=true
             onDelete={@handleDelete}
+            spinner={Spinner}
+            spinnerOptions={
+              fadeIn: true,
+              spinnerName: "wave"
+              className: "react-markdown-textarea__spinner"
+            }
             initialValue={@state.post.body} />
         </div>
       )
@@ -106,18 +76,20 @@ module.exports = React.createClass
   handleSave: (value) ->
     post = @state.post
     post.body = value
-    delete post.temp_id
 
     # Validate
     if post.title is "" or post.body is ""
       @setState errors: @state.errors.concat ["Missing title or body"]
     else
-      Dispatcher.emit PostConstants.POST_UPDATE, post
-      @setState saving: true
+      @setState {
+        saving: true
+        errors: []
+      }
+
+      PostActions.update post
 
   handleDelete: ->
-    Dispatcher.emit PostConstants.POST_DELETE, @state.post.id
-    @transitionTo('posts-index')
+    PostActions.delete(@state.post)
 
   handleTitleChange: ->
     post = _.extend @state.post, title: @refs.title.getDOMNode().value
@@ -128,3 +100,13 @@ module.exports = React.createClass
     # Ignore unless the click was on an A element.
     if e.target.nodeName is "A"
       window.open(e.target.href, '_blank')
+
+  getPost: ->
+    PostStore.get(@getParams().postId).then (post) =>
+      @setState post: post
+
+  onUpdateComplete: ->
+    @transitionTo('post', postId: @getParams().postId)
+
+  onDeleteComplete: ->
+    @transitionTo('posts-index')

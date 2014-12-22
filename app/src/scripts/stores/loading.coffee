@@ -4,7 +4,7 @@ PostActions = require '../actions/PostActions'
 module.exports = PostStore = Reflux.createStore
   listenables: PostActions
 
-  getDefaultData: ->
+  getInitialState: ->
     false
 
   onLoad: ->

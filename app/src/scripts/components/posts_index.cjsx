@@ -13,7 +13,10 @@ PostActions = require '../actions/PostActions'
 module.exports = React.createClass
   displayName: 'PostsIndex'
 
-  mixins: [Reflux.connect(postStore, "posts"), Reflux.connect(loadingStore, "loading")]
+  mixins: [
+    Reflux.connect(postStore, "posts"),
+    Reflux.connect(loadingStore, "loading")
+  ]
 
   componentDidMount: ->
     window.addEventListener('scroll', @distanceToBottom)

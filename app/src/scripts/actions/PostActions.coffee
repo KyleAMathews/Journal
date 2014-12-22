@@ -8,6 +8,12 @@ PostActions = module.exports = Reflux.createActions([
   'loadMore'
   'loadMoreComplete'
   'loadMoreError'
+  'update'
+  'updateComplete'
+  'updateError'
+  'delete'
+  'deleteComplete'
+  'deleteError'
 ])
 
 PostActions.load.preEmit = ->
@@ -19,3 +25,13 @@ PostActions.loadMore.preEmit = (lastPost) ->
   API.postsLoadMore(lastPost.created_at)
     .then(PostActions.loadMoreComplete)
     .catch(PostActions.loadMoreError)
+
+PostActions.update.preEmit = (post) ->
+  API.postsUpdate(post)
+    .then(PostActions.updateComplete)
+    .catch(PostActions.updateError)
+
+PostActions.delete.preEmit = (post) ->
+  API.postsDelete(post)
+    .then(PostActions.deleteComplete)
+    .catch(PostActions.deleteError)

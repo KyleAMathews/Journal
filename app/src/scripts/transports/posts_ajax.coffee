@@ -19,8 +19,9 @@ fetchPosts = ->
     .set('Accept', 'application/json')
     .query(limit: 50)
     .query(start: _start)
-    .end (err, res) =>
-      if res.status is 200
+    .end (err, res) ->
+      log res
+      if res?.status is 200
         if res.body.length is 0
           _fetchedAll = true
         else
@@ -32,7 +33,7 @@ fetchPosts = ->
         else
           error = createErrorMessage(res.body)
         Dispatcher.emit PostConstants.POSTS_FETCH_ERROR, {
-          status: res.status
+          status: res?.status
           error: error
         }
 
@@ -50,7 +51,7 @@ fetchPost = (id) ->
     .end (err, res) =>
       delete _postsLoading[id]
 
-      if res.status is 200
+      if res?.status is 200
         Dispatcher.emit PostConstants.POSTS_ADD, [res.body]
       else
         if err?.message
@@ -58,7 +59,7 @@ fetchPost = (id) ->
         else
           error = createErrorMessage(res.body)
         Dispatcher.emit PostConstants.POST_FETCH_ERROR,
-          {id: id, status: res.status, error: error}
+          {id: id, status: res?.status, error: error}
 
 createPost = (post) ->
   log "POST /posts", post

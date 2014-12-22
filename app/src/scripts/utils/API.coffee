@@ -20,3 +20,18 @@ module.exports =
       .query(limit: 50)
       .query(start: startDate)
       .promise()
+
+  postsUpdate: (post) ->
+    log "PATCH /posts/#{post.id}"
+    request
+      .patch("http://localhost:8081/posts/#{post.id}")
+      .set('Accept', 'application/json')
+      .send(post)
+      .promise()
+
+  postsDelete: (post) ->
+    log "DELETE /posts/#{post.id}"
+    request
+      .del("/posts/#{post.id}")
+      .set('Accept', 'application/json')
+      .promise()
