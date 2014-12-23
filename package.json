@@ -40,7 +40,7 @@
     "gulp-uglify": "^1.0.2",
     "gulp-util": "^3.0.1",
     "hapi": "^8.0.0",
-    "hapi-single-page-app-plugin": "0.0.6",
+    "hapi-single-page-app-plugin": "^1.0.1",
     "immutable": "^3.4.1",
     "joi": "^5.0.2",
     "jquery": "^2.1.3",
