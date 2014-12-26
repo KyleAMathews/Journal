@@ -1,4 +1,6 @@
-config = require '../../../config'
+config = require 'config'
+s3client = config.get('s3client')
+server = require '../../../hapijs'
 
 module.exports = (payload, cb) ->
   json = JSON.stringify payload.post, null, 4
@@ -7,7 +9,7 @@ module.exports = (payload, cb) ->
   unless json?
     cb()
 
-  req = config.s3client.put("/posts/#{payload.post.id}.json", {
+  req = s3client.put("/posts/#{payload.post.id}.json", {
     'Content-Length': Buffer.byteLength(json)
     'Content-Type': 'application/json'
   })
@@ -16,7 +18,7 @@ module.exports = (payload, cb) ->
     # Log errors.
     if res.statusCode isnt 200
       res.on 'data', (chunk) ->
-        config.server.log ['error', 'jobQueue', 'push_post_s3'], {
+        server.log ['error', 'jobQueue', 'push_post_s3'], {
           successful: false
           url: res.req.url
           statusCode: res.statusCode
@@ -25,7 +27,9 @@ module.exports = (payload, cb) ->
         }
         cb(res.statusCode)
     else
-      config.server.log ['info', 'jobQueue', 'push_post_s3'], successful: true, url: res.req.url
+      server.log ['info', 'jobQueue', 'push_post_s3'],
+        successful: true,
+        url: res.req.url
       cb()
 
   req.end json

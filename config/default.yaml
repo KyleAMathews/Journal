@@ -1,0 +1,4 @@
+db:
+  posts: './postsdb'
+  jobs: './jobs_db'
+port: 8081

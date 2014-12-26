@@ -4,25 +4,28 @@ _ = require 'underscore'
 async = require 'async'
 Boom = require 'boom'
 
-config = require '../../config'
-
-# If there's no posts (e.g. fresh install of the application) add a sample one.
-config.db.createKeyStream().pipe(es.writeArray (err, array) ->
-  if array.length is 0
-    post =
-      title: "Welcome to your new Journal!"
-      body: "This is a sample post. Try editing this post to see how things work.
-        You can use **Markdown** to format your posts.\n\nIf you find bugs
-        or otherwise need help, [post at an issue on Github](https://github.com/KyleAMathews/Journal/issues?state=open)."
-      created_at: new Date().toJSON()
-      updated_at: new Date().toJSON()
-      id: 1
-      deleted: false
-      starred: false
-    config.wrappedDb.put post.created_at, post
-)
+config = require 'config'
 
 exports.register = (server, options, next) ->
+  db = server.plugins.dbs.postsDb
+  wrappedDb = server.plugins.dbs.wrappedDb
+  jobsClient = server.plugins.dbs.jobsClient
+
+  ## If there's no posts (e.g. fresh install of the application) add a sample one.
+  db.createKeyStream().pipe(es.writeArray (err, array) ->
+    if array.length is 0
+      post =
+        title: "Welcome to your new Journal!"
+        body: "This is a sample post. Try editing this post to see how things work.
+          You can use **Markdown** to format your posts.\n\nIf you find bugs
+          or otherwise need help, [post at an issue on Github](https://github.com/KyleAMathews/Journal/issues?state=open)."
+        created_at: new Date().toJSON()
+        updated_at: new Date().toJSON()
+        id: 1
+        deleted: false
+        starred: false
+      wrappedDb.put post.created_at, post
+  )
   #########################################################
   ### GET /posts
   #########################################################
@@ -37,23 +40,24 @@ exports.register = (server, options, next) ->
           start: Joi.date().default(new Date().toJSON())
           until: Joi.date()
       handler: (request, reply) ->
-        console.log "requesting"
         # User is querying for all posts changed since a certain date.
         if request.query.updated_since?
           ids = []
-          config.wrappedDb.indexes['updated_at'].createIndexStream(
-              start: request.query.updated_since.toJSON()
-              end: request.query.until.toJSON()
-            )
-            .on 'data', (data) ->
-              unless data.value.deleted
-                ids.push data.value
-            .on 'end', ->
-              async.map ids, ((id, cb) -> config.wrappedDb.get(id, cb)), (err, results) ->
+          wrappedDb.indexes['updated_at'].createIndexStream(
+            start: request.query.updated_since.toJSON()
+            end: request.query.until.toJSON()
+          )
+          .on 'data', (data) ->
+            unless data.value.deleted
+              ids.push data.value
+          .on 'end', ->
+            async.map ids, ((id, cb) ->
+              wrappedDb.get(id, cb)),
+              (err, results) ->
                 reply results.reverse()
 
         else
-          config.db.createValueStream(
+          db.createValueStream(
             reverse: true
             limit: request.query.limit
             start: request.query.start.toJSON()
@@ -74,10 +78,12 @@ exports.register = (server, options, next) ->
         params:
           id: Joi.number().integer().max(999999).min(1).required()
       handler: (request, reply) ->
-        config.wrappedDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
-          if array.length is 0
-            reply(Boom.notFound('Post not found'))
-          reply array[0]
+        wrappedDb.query(['id', request.params.id])
+          .pipe(es.writeArray (err, array) ->
+            if array.length is 0
+              reply(Boom.notFound('Post not found'))
+            else
+              reply array[0]
         )
 
   #########################################################
@@ -102,25 +108,32 @@ exports.register = (server, options, next) ->
           latitude: Joi.any()
           longitude: Joi.any()
       handler: (request, reply) ->
-        config.wrappedDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
-          if array.length is 0
-            reply(Boom.notFound('Post not found'))
-          # Change updated_at
-          post = _.extend array[0], request.payload, updated_at: new Date().toJSON()
-          # Save
-          config.db.put(post.created_at, post, (err) ->
-            if err
-              reply Boom.badImplementation("Post update didn't save correctly",
-              {
-                err: err
-              })
+        wrappedDb.query(['id', request.params.id])
+          .pipe(es.writeArray (err, array) ->
+            if array.length is 0
+              reply(Boom.notFound('Post not found'))
             else
-              reply post
+              # Change updated_at
+              post = _.extend(
+                array[0],
+                request.payload,
+                updated_at: new Date().toJSON()
+              )
 
-            # Enqueue updated post to be pushed to S3
-            config.jobsClient.push jobName: 'push_post_s3', post: post
+              # Save
+              db.put(post.created_at, post, (err) ->
+                if err
+                  reply Boom.badImplementation(
+                    "Post update didn't save correctly",
+                    {err: err}
+                  )
+                else
+                  reply post
+
+                # Enqueue updated post to be pushed to S3
+                jobsClient.push jobName: 'push_post_s3', post: post
+              )
           )
-        )
 
   #########################################################
   ### POST /posts/
@@ -147,7 +160,7 @@ exports.register = (server, options, next) ->
         newPost.updated_at = new Date().toJSON()
         temp_id = newPost.id
 
-        config.db.createValueStream()
+        db.createValueStream()
           .pipe(es.writeArray (err, array) ->
             max = _.max(array, (post) -> post.id).id
             if max?
@@ -157,7 +170,7 @@ exports.register = (server, options, next) ->
             newPost.id = newId
 
             # Save
-            config.wrappedDb.put(newPost.created_at, newPost, (err) ->
+            wrappedDb.put(newPost.created_at, newPost, (err) ->
               # Add back temp_id to newPost
               newPost.temp_id = temp_id
               response = reply(newPost)
@@ -166,7 +179,7 @@ exports.register = (server, options, next) ->
               # Enqueue updated post to be pushed to S3
               postNoTempId = _.extend({}, newPost)
               delete postNoTempId.temp_id
-              config.jobsClient.push jobName: 'push_post_s3', post: postNoTempId
+              jobsClient.push jobName: 'push_post_s3', post: postNoTempId
             )
           )
 
@@ -182,28 +195,35 @@ exports.register = (server, options, next) ->
         params:
           id: Joi.number().integer().max(999999).min(1).required()
       handler: (request, reply) ->
-        config.wrappedDb.query(['id', request.params.id]).pipe(es.writeArray (err, array) ->
-          if array.length is 0
-            reply(Boom.notFound('Post not found'))
-          # Change updated_at
-          post = _.extend array[0], deleted: true, updated_at: new Date().toJSON()
-          # Save
-          config.db.put(post.created_at, post, (err) ->
-            if err
-              reply Boom.badImplementation("Post update wasn't deleted correctly: #{ JSON.stringify(err) }", {
-                err: err
-              })
+        wrappedDb.query(['id', request.params.id])
+          .pipe(es.writeArray (err, array) ->
+            if array.length is 0
+              reply(Boom.notFound('Post not found'))
             else
-              reply post
+              # Change updated_at
+              post = _.extend(
+                array[0],
+                deleted: true,
+                updated_at: new Date().toJSON()
+              )
 
-            # Enqueue updated post to be pushed to S3
-            config.jobsClient.push jobName: 'push_post_s3', post: post
+              # Save
+              db.put(post.created_at, post, (err) ->
+                if err
+                  reply Boom.badImplementation(
+                    "Post wasn't deleted correctly",
+                    {err: err}
+                  )
+                else
+                  reply post
+
+                  # Enqueue updated post to be pushed to S3
+                  jobsClient.push jobName: 'push_post_s3', post: post
+              )
           )
-        )
 
   next()
 
 exports.register.attributes =
   name: 'postsAPI'
   version: '1.0.0'
-
