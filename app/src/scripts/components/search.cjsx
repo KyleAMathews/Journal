@@ -125,7 +125,7 @@ module.exports = React.createClass
         body = _str.prune(result._source.body, 200)
       <div key={result._source.nid} className="search__result">
           <h3>
-            <Link to="post" postId={result._source.nid}>
+            <Link to="post" params={{postId: result._source.nid}}>
               <span className="search__result__title" dangerouslySetInnerHTML={__html:title} />
             </Link>
             <span className="search__result__date"> — {moment(result._source.created).format("D MMMM YYYY")}</span>

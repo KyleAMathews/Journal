@@ -1,0 +1,6 @@
+amazon:
+  key: "AMAZON_KEY"
+  secret: "AMAZON_SECRET"
+  bucket: "S3_BUCKET"
+  region: "S3_REGION"
+port: "PORT"

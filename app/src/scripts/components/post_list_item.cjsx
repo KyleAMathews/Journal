@@ -8,4 +8,8 @@ module.exports = React.createClass
   displayName: 'PostListItem'
 
   render: ->
-    <li className="posts-index__list__item"><Link to="post" params={{postId: @props.post.id}}>{@props.post.title}</Link></li>
+    <li className="posts-index__list__item">
+      <Link to="post" params={{postId: @props.post.id}}>
+       {@props.post.title}
+      </Link>
+    </li>

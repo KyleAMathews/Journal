@@ -1,8 +1,7 @@
 Hapi = require 'hapi'
 bunyan = require('bunyan')
 Joi = require 'joi'
-config = require './config'
-bootstrap = require './lib/bootstrap'
+config = require 'config'
 
 logger = bunyan.createLogger({
   name: 'journal'
@@ -10,10 +9,11 @@ logger = bunyan.createLogger({
   level: 'debug'
 })
 
-config.server = server = new Hapi.Server()
+server = new Hapi.Server()
+
 server.connection(
   {
-    port: 8081
+    port: config.get('port')
     routes:
       cors: true
       json:
@@ -23,15 +23,22 @@ server.connection(
 
 server.register([
   {
+    register: require './plugins/dbs'
+  },
+  {
     register: require './plugins/posts'
   },
   {
     register: require './plugins/search'
   },
   {
+    register: require './plugins/sync_amazon'
+  },
+  {
     register: require 'hapi-single-page-app-plugin'
     options:
       exclude: ['docs.*']
+      staticPath: './app/public'
   },
   {
     register: require 'good'
@@ -51,4 +58,9 @@ server.register([
   server.start (err) ->
     if err then console.log err
     console.log "Hapi server started @ #{server.info.uri}"
+
+    # Start other app bootstrapy things.
+    require './lib/bootstrap'
 )
+
+module.exports = server
