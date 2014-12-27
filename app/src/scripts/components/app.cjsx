@@ -22,6 +22,9 @@ module.exports = React.createClass
           <Link className="headroom__link" to="search">
             <span className="icon-search headroom__icon" />Search
           </Link>
+          <Link className="headroom__link" to="drafts-index">
+            Drafts
+          </Link>
         </div>
       </div>
       <div className="main-section">

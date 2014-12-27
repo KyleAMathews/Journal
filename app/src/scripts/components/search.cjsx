@@ -13,7 +13,7 @@ AppConstants = require '../constants/app_constants'
 SearchConstants = require '../constants/search_constants'
 Dispatcher = require '../dispatcher'
 DateHistogram = require '../date_histogram'
-Messages = require './messages'
+Messages = require 'react-message'
 
 module.exports = React.createClass
   displayName: "Search"
