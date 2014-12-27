@@ -21,6 +21,14 @@ module.exports =
       .query(start: startDate)
       .promise()
 
+  postsCreate: (post) ->
+    log "POST /posts"
+    request
+      .post("http://localhost:8081/posts")
+      .set('Accept', 'application/json')
+      .send(post)
+      .promise()
+
   postsUpdate: (post) ->
     log "PATCH /posts/#{post.id}"
     request
@@ -32,6 +40,6 @@ module.exports =
   postsDelete: (post) ->
     log "DELETE /posts/#{post.id}"
     request
-      .del("/posts/#{post.id}")
+      .del("http://localhost:8081/posts/#{post.id}")
       .set('Accept', 'application/json')
       .promise()

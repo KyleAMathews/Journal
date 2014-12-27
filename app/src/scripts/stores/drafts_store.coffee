@@ -4,7 +4,7 @@ Immutable = require 'immutable'
 request = require 'superagent'
 Promise = require 'bluebird'
 
-module.exports = PostStore = Reflux.createStore
+module.exports = DraftStore = Reflux.createStore
   init: ->
     @_posts = null
     @_mappedPosts = Immutable.Map({})
@@ -29,14 +29,14 @@ module.exports = PostStore = Reflux.createStore
           res.body
 
   onLoad: (res) ->
-    posts = _.filter res.body, (post) -> post.draft isnt true
+    posts = _.filter res.body, (post) -> post.draft is true
     @_posts = Immutable.List(posts)
     @_posts = @sort(@_posts)
     @addToMap(@_posts)
     @trigger(@_posts)
 
   onLoadMore: (res) ->
-    posts = _.filter res.body, (post) -> post.draft isnt true
+    posts = _.filter res.body, (post) -> post.draft is true
     @addToMap(posts)
     @_posts = @_posts.concat posts
     @_posts = @sort(@_posts)
@@ -51,3 +51,4 @@ module.exports = PostStore = Reflux.createStore
   addToMap: (posts) ->
     posts.forEach (post) =>
       @_mappedPosts = @_mappedPosts.set(post.id, post)
+

@@ -9,7 +9,7 @@ _ = require 'underscore'
 path = require 'path'
 Reflux = require 'reflux'
 
-Messages = require './messages'
+Messages = require 'react-message'
 
 PostStore = require '../stores/post_store'
 LoadingStore = require '../stores/loading'

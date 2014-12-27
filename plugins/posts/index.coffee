@@ -105,6 +105,7 @@ exports.register = (server, options, next) ->
           updated_at: Joi.any()
           deleted: Joi.boolean()
           starred: Joi.boolean()
+          draft: Joi.boolean()
           latitude: Joi.any()
           longitude: Joi.any()
       handler: (request, reply) ->
@@ -145,7 +146,6 @@ exports.register = (server, options, next) ->
     config:
       validate:
         payload:
-          id: Joi.string().required()
           title: Joi.string().min(1)
           body: Joi.string().min(1)
           created_at: Joi.any().required()
@@ -158,7 +158,7 @@ exports.register = (server, options, next) ->
         # Create new post and return
         newPost = request.payload
         newPost.updated_at = new Date().toJSON()
-        temp_id = newPost.id
+        newPost.draft = true
 
         db.createValueStream()
           .pipe(es.writeArray (err, array) ->
@@ -171,15 +171,11 @@ exports.register = (server, options, next) ->
 
             # Save
             wrappedDb.put(newPost.created_at, newPost, (err) ->
-              # Add back temp_id to newPost
-              newPost.temp_id = temp_id
               response = reply(newPost)
               response.created("/posts/#{newPost.id}")
 
               # Enqueue updated post to be pushed to S3
-              postNoTempId = _.extend({}, newPost)
-              delete postNoTempId.temp_id
-              jobsClient.push jobName: 'push_post_s3', post: postNoTempId
+              jobsClient.push jobName: 'push_post_s3', post: newPost
             )
           )
 
