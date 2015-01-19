@@ -1,5 +1,5 @@
 knoxCopy = require 'knox-copy'
-levelup = require 'levelup'
+levelup = require 'level'
 levelQuery = require('level-queryengine')
 pathEngine = require('path-engine')
 QueueClient = require('level-jobs/client')
