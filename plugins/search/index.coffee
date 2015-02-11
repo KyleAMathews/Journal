@@ -1,57 +1,57 @@
 Joi = require 'joi'
 elasticsearch = require 'elasticsearch'
 _ = require 'underscore'
+es = require('event-stream')
 Boom = require 'boom'
-
-client = new elasticsearch.Client({
-  host: process.env.ELASTICSEARCH_URL
-  #log: 'trace'
-})
+async = require 'async'
 
 exports.register = (server, options, next) ->
+  # Index posts.
+  db = server.plugins.dbs.postsDb
+  posts = server.plugins.dbs.posts
+  index = server.plugins.dbs.index
+
   server.route
     path: "/search"
     method: "GET"
     config:
       validate:
         query:
-          q: Joi.string()
-          size: Joi.number().min(10).max(100).default(30)
+          q: Joi.string().required()
+          size: Joi.number().min(1).max(100).default(30)
           start: Joi.number().min(0).default(0)
-          sort: Joi.any()
+          sort: Joi.valid(["", "asc", "desc"])
       handler: (request, reply) ->
-        query = {
-          index: 'journal_posts'
-          body:
-            size: request.query.size
-            from: request.query.start
-            query:
-              query_string:
-                fields: ['title', 'body'] # search the title and body of posts.
-                default_operator: 'AND'   # require all query terms to match
-                query: request.query.q    # The query from the REST call.
-                use_dis_max: true
-                fuzzy_prefix_length : 3
-            filter:
-              term:
-                deleted: false
-                draft: false
-            facets:
-              month:
-                date_histogram:
-                  field: 'created'
-                  interval: 'hour'
-            highlight:
-              fields:
-                title: {"fragment_size" : 300}
-                body: {"fragment_size" : 200}
-          }
+        start = process.hrtime()
 
-        if request.query.sort isnt ""
-          query.body = _.extend query.body, sort: created: order: request.query.sort
+        # Perform search.
+        hits = index.search request.query.q
 
-        client.search(query).then (body) ->
-          reply body
+        total = hits.length
+
+        # Hydrate
+        hits = hits.map (result) -> posts[result.ref]
+
+        # Sort
+
+        # Oldest first
+        if request.query.sort is "asc"
+          hits = _.sortBy hits, (hit) -> hit.created_at
+
+        # Newest first
+        else if request.query.sort is "desc"
+          hits = _.sortBy hits, (hit) -> hit.created_at
+          hits.reverse()
+
+        # Slice.
+        hits = hits.slice(request.query.start, request.query.size)
+
+        reply {
+          total: total
+          hits: hits
+          offset: request.query.start
+          took: process.hrtime(start)[1] / 1000000
+        }
 
   next()
 

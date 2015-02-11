@@ -8,11 +8,14 @@ config = require 'config'
 
 exports.register = (server, options, next) ->
   db = server.plugins.dbs.postsDb
-  wrappedDb = server.plugins.dbs.wrappedDb
+  posts = server.plugins.dbs.posts
+  sortedPosts = server.plugins.dbs.sortedPosts
+  index = server.plugins.dbs.index
+  syncPosts = server.plugins.dbs.syncPosts
   jobsClient = server.plugins.dbs.jobsClient
 
   ## If there's no posts (e.g. fresh install of the application) add a sample one.
-  db.createKeyStream().pipe(es.writeArray (err, array) ->
+  db.createKeyStream(limit: 1).pipe(es.writeArray (err, array) ->
     if array.length is 0
       post =
         title: "Welcome to your new Journal!"
@@ -24,7 +27,7 @@ exports.register = (server, options, next) ->
         id: 1
         deleted: false
         starred: false
-      wrappedDb.put post.created_at, post
+      db.put post.id, post
   )
   #########################################################
   ### GET /posts
@@ -41,29 +44,21 @@ exports.register = (server, options, next) ->
           until: Joi.date()
       handler: (request, reply) ->
         # User is querying for all posts changed since a certain date.
+        # TODO — support this?
         if request.query.updated_since?
-          ids = []
-          wrappedDb.indexes['updated_at'].createIndexStream(
-            start: request.query.updated_since.toJSON()
-            end: request.query.until.toJSON()
-          )
-          .on 'data', (data) ->
-            unless data.value.deleted
-              ids.push data.value
-          .on 'end', ->
-            async.map ids, ((id, cb) ->
-              wrappedDb.get(id, cb)),
-              (err, results) ->
-                reply results.reverse()
+          reply 'NOT OK'
 
         else
-          db.createValueStream(
-            reverse: true
-            limit: request.query.limit
-            start: request.query.start.toJSON()
-          ).pipe(es.writeArray (err, array) ->
-            reply array.filter (post) -> not post.deleted
-          )
+          filteredPosts = []
+          for post in server.plugins.dbs.sortedPosts
+            # Filter out deleted posts and posts newer than the start date.
+            if not post.deleted and
+                post.created_at < request.query.start.toJSON()
+              filteredPosts.push post
+              if filteredPosts.length >= request.query.limit
+                break
+
+          reply filteredPosts
 
   #########################################################
   ### GET /posts/{id}
@@ -78,13 +73,10 @@ exports.register = (server, options, next) ->
         params:
           id: Joi.number().integer().max(999999).min(1).required()
       handler: (request, reply) ->
-        wrappedDb.query(['id', request.params.id])
-          .pipe(es.writeArray (err, array) ->
-            if array.length is 0
-              reply(Boom.notFound('Post not found'))
-            else
-              reply array[0]
-        )
+        if posts[request.params.id]?
+          reply posts[request.params.id]
+        else
+          reply Boom.notFound()
 
   #########################################################
   ### PATCH /posts/{id}
@@ -98,43 +90,43 @@ exports.register = (server, options, next) ->
         params:
           id: Joi.number().integer().max(999999).min(1).required()
         payload:
-          id: Joi.number().required().min(1).max(999999)
           title: Joi.string().min(1)
           body: Joi.string().min(1)
-          created_at: Joi.any()
-          updated_at: Joi.any()
-          deleted: Joi.boolean()
           starred: Joi.boolean()
-          draft: Joi.boolean()
-          latitude: Joi.any()
-          longitude: Joi.any()
       handler: (request, reply) ->
-        wrappedDb.query(['id', request.params.id])
-          .pipe(es.writeArray (err, array) ->
-            if array.length is 0
-              reply(Boom.notFound('Post not found'))
-            else
-              # Change updated_at
-              post = _.extend(
-                array[0],
-                request.payload,
-                updated_at: new Date().toJSON()
-              )
+        db.get request.params.id, (err, post) ->
+          if err
+            reply(Boom.badImplementation("Error when getting post
+              #{request.params.id}", {err: err}))
+          else if not post?
+            reply(Boom.notFound('Post not found'))
+          else
+            # Change updated_at
+            patchedPost = _.extend(
+              post,
+              request.payload,
+              updated_at: new Date().toJSON()
+            )
 
-              # Save
-              db.put(post.created_at, post, (err) ->
-                if err
-                  reply Boom.badImplementation(
-                    "Post update didn't save correctly",
-                    {err: err}
-                  )
-                else
-                  reply post
+            # Save
+            db.put(patchedPost.id, patchedPost, (err) ->
+              if err
+                reply Boom.badImplementation(
+                  "Post patch didn't save correctly",
+                  {err: err}
+                )
+              else
+                reply patchedPost
+
+                # Update in-memory version of posts.
+                posts[patchedPost.id] = patchedPost
+
+                # Resync in-memory version of db to ensure correctness.
+                syncPosts()
 
                 # Enqueue updated post to be pushed to S3
                 jobsClient.push jobName: 'push_post_s3', post: post
-              )
-          )
+            )
 
   #########################################################
   ### POST /posts/
@@ -170,9 +162,15 @@ exports.register = (server, options, next) ->
             newPost.id = newId
 
             # Save
-            wrappedDb.put(newPost.created_at, newPost, (err) ->
+            db.put(newPost.id, newPost, (err) ->
               response = reply(newPost)
               response.created("/posts/#{newPost.id}")
+
+              # Update in-memory version of posts.
+              posts[patchedPost.id] = patchedPost
+
+              # Resync in-memory version of db
+              syncPosts()
 
               # Enqueue updated post to be pushed to S3
               jobsClient.push jobName: 'push_post_s3', post: newPost
@@ -191,32 +189,39 @@ exports.register = (server, options, next) ->
         params:
           id: Joi.number().integer().max(999999).min(1).required()
       handler: (request, reply) ->
-        wrappedDb.query(['id', request.params.id])
-          .pipe(es.writeArray (err, array) ->
-            if array.length is 0
-              reply(Boom.notFound('Post not found'))
-            else
-              # Change updated_at
-              post = _.extend(
-                array[0],
-                deleted: true,
-                updated_at: new Date().toJSON()
-              )
+        db.get request.params.id, (err, post) ->
+          if err
+            reply(Boom.badImplementation("Error when getting post
+              #{request.params.id}", {err: err}))
+          else if not post?
+            reply(Boom.notFound('Post not found'))
+          else
+            # Change updated_at
+            deletedPost = _.extend(
+              post,
+              updated_at: new Date().toJSON()
+              deleted: true
+            )
 
-              # Save
-              db.put(post.created_at, post, (err) ->
-                if err
-                  reply Boom.badImplementation(
-                    "Post wasn't deleted correctly",
-                    {err: err}
-                  )
-                else
-                  reply post
+            # Save
+            db.put(deletedPost.id, deletedPost, (err) ->
+              if err
+                reply Boom.badImplementation(
+                  "Post patch wasn't deleted correctly",
+                  {err: err}
+                )
+              else
+                reply deletedPost
 
-                  # Enqueue updated post to be pushed to S3
-                  jobsClient.push jobName: 'push_post_s3', post: post
-              )
-          )
+                # Update in-memory version of posts.
+                posts[deletedPost.id] = deletedPost
+
+                # Resync in-memory version of db to ensure correctness.
+                syncPosts()
+
+                # Enqueue updated post to be pushed to S3
+                jobsClient.push jobName: 'push_post_s3', post: post
+            )
 
   next()
 

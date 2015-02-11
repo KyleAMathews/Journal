@@ -1,5 +1,5 @@
 MongoClient = require('mongodb').MongoClient
-levelup = require 'levelup'
+levelup = require 'level'
 postsDb = levelup './postsdb', valueEncoding: 'json'
 moment = require 'moment'
 _ = require 'underscore'

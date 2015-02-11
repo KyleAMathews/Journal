@@ -18,7 +18,7 @@ Post = require './components/post'
 PostEdit = require './components/post_edit'
 NewPost = require './components/new_post'
 Attribution = require './components/attribution'
-Search = require './components/search'
+Search = require './components/SearchController'
 
 # Setup stores
 require './stores/post_store'
