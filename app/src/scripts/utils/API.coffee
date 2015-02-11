@@ -1,6 +1,7 @@
 request = require 'superagent'
 require 'superagent-bluebird-promise'
 log = require('bows')("PostTransport")
+_ = require 'underscore'
 
 module.exports =
   postsLoad: ->
@@ -31,8 +32,11 @@ module.exports =
 
   postsUpdate: (post) ->
     log "PATCH /posts/#{post.id}"
+    # Pick only needed payload items.
+    id = post.id
+    post = _.pick(post, 'title', 'body', 'starred')
     request
-      .patch("http://localhost:8081/posts/#{post.id}")
+      .patch("http://localhost:8081/posts/#{id}")
       .set('Accept', 'application/json')
       .send(post)
       .promise()

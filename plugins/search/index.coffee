@@ -4,22 +4,12 @@ _ = require 'underscore'
 es = require('event-stream')
 Boom = require 'boom'
 async = require 'async'
-lunr = require 'lunr'
-posts = {}
-index = lunr ->
-  @field('title', boost: 10)
-  @field('body')
 
 exports.register = (server, options, next) ->
   # Index posts.
   db = server.plugins.dbs.postsDb
-  wrappedDb = server.plugins.dbs.wrappedDb
-  db.createReadStream()
-    .on 'data', (data) ->
-      posts[data.value.id] = data.value
-      index.add(data.value)
-    .on 'end', ->
-      console.log "Indexing done"
+  posts = server.plugins.dbs.posts
+  index = server.plugins.dbs.index
 
   server.route
     path: "/search"
@@ -32,8 +22,6 @@ exports.register = (server, options, next) ->
           start: Joi.number().min(0).default(0)
           sort: Joi.valid(["", "asc", "desc"])
       handler: (request, reply) ->
-        # TODO create posts store with add/destroy/update + search
-        # that the search can use.
         start = process.hrtime()
 
         # Perform search.
