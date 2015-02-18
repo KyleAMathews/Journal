@@ -7,7 +7,6 @@ class Geolocation
     else
       console.log('Geolocation is not supported for this Browser/OS version yet.')
 
-
   success: (position) =>
     @position = position
 

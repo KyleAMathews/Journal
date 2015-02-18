@@ -167,7 +167,7 @@ exports.register = (server, options, next) ->
               response.created("/posts/#{newPost.id}")
 
               # Update in-memory version of posts.
-              posts[patchedPost.id] = patchedPost
+              posts[newPost.id] = newPost
 
               # Resync in-memory version of db
               syncPosts()

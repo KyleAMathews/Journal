@@ -7,13 +7,23 @@ MarkdownTextarea = require 'react-markdown-textarea'
 moment = require 'moment'
 Spinner = require 'react-spinkit'
 
+LocationStore = require '../stores/location'
+
 module.exports =
+  mixins: [
+    Reflux.connect(LocationStore, 'location')
+  ]
+
   getInitialState: ->
     return {
       saving: false
       actionListeners: []
       errors: []
     }
+
+  componentWillUpdate: (nextProps, nextState) ->
+    if nextState.location?.latitude? and not nextState.post.latitude
+      nextState.post = _.extend nextState.post, nextState.location
 
   componentDidMount: ->
     @debouncedSaveDraft = _.debounce @saveDraft, 1500
@@ -115,7 +125,14 @@ module.exports =
       }
 
   handleSave: (value) ->
-    post = _.extend @state.post, body: value
+    post = _.extend(
+        @state.post,
+        {
+          body: value
+          latitude: @state.location.latitude
+          longitude: @state.location.longitude
+        }
+    )
 
     if post.title is "" or post.body is ""
       @setState errors: @state.errors.concat ["Missing title or body"]
@@ -131,7 +148,6 @@ module.exports =
     PostActions.delete(@state.post)
 
   handleHTTPError: (res) ->
-    console.log res
     @setState {
       savingDraft: false
       saving: false

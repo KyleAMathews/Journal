@@ -23,6 +23,7 @@ Search = require './components/SearchController'
 # Setup stores
 require './stores/post_store'
 require './stores/drafts_store'
+require './stores/location'
 
 # Kick off initial load of posts.
 require('./actions/PostActions').load()

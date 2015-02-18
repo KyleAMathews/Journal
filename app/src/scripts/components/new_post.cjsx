@@ -1,9 +1,8 @@
 uuid = require('node-uuid')
 Router = require('react-router')
 _ = require 'underscore'
+Reflux = require 'reflux'
 
-AppStore = require '../stores/app_store'
-PostActions = require '../actions/PostActions'
 SaveMixin = require '../mixins/save'
 
 module.exports = React.createClass
@@ -21,8 +20,6 @@ module.exports = React.createClass
         title: ''
         body: ''
         created_at: new Date().toJSON()
-        latitude: AppStore.get('coordinates')?.latitude
-        longitude: AppStore.get('coordinates')?.longitude
         deleted: false
         starred: false
     }

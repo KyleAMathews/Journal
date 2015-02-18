@@ -8,8 +8,6 @@ request = require 'superagent'
 prettyMs = require 'pretty-ms'
 Messages = require 'react-message'
 
-eventBus = require '../event_bus'
-AppStore = require '../stores/app_store'
 SearchStore = require '../stores/search_store'
 AppConstants = require '../constants/app_constants'
 SearchConstants = require '../constants/search_constants'
