@@ -1,4 +1,7 @@
 db:
-  posts: './postsdb'
+  posts:
+    by_id: './posts_by_id'
+    by_last_updated: "./posts_last_updated"
   jobs: './jobs_db'
+  events: './events_db'
 port: 8081

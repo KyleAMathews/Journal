@@ -6,7 +6,6 @@ lunr = require 'lunr'
 _ = require 'underscore'
 
 posts = {}
-sortedPosts = []
 index = lunr ->
   @field('title', boost: 10)
   @field('body')
@@ -14,20 +13,19 @@ index = lunr ->
 exports.register = (server, options, next) ->
 
   jobsDb = levelup(config.get('db.jobs'))
-  postsDb = levelup(config.get('db.posts'), valueEncoding: 'json')
+  postsByIdDb = levelup(config.get('db.posts.by_id'), valueEncoding: 'json')
+  postsByLastUpdatedDb = levelup(config.get('db.posts.by_last_updated'), valueEncoding: 'json')
+  eventsDb = levelup(config.get('db.events'), valueEncoding: 'json')
 
   syncPosts = ->
     console.log "Syncing posts"
-    postsDb.createReadStream()
+    postsByIdDb.createReadStream()
       .on 'data', (data) ->
         posts[data.value.id] = data.value
         index.add(data.value)
       .on 'end', ->
         server.expose('posts', posts)
         console.log "posts loading done"
-        sortedPosts = _.values(_.extend({}, posts))
-        sortedPosts = _.sortBy(sortedPosts, (post) -> post.created_at).reverse()
-        server.expose('sortedPosts', sortedPosts)
 
   syncPosts()
   server.expose('syncPosts', syncPosts)
@@ -46,9 +44,9 @@ exports.register = (server, options, next) ->
 
   server.expose('jobsDb', jobsDb)
   server.expose('jobsClient', jobsClient)
-  server.expose('postsDb', postsDb)
-  server.expose('posts', posts)
-  server.expose('sortedPosts', sortedPosts)
+  server.expose('postsByIdDb', postsByIdDb)
+  server.expose('postsByLastUpdatedDb', postsByLastUpdatedDb)
+  server.expose('eventsDb', eventsDb)
   server.expose('index', index)
 
   next()

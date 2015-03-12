@@ -5,3 +5,10 @@ build
 bower_components/
 postsdb/
 jobs_db/
+test_events_db
+test_jobs_db
+test_posts_by_id
+test_posts_last_updated
+events_db/
+posts_by_id/
+posts_last_updated/

@@ -26,14 +26,20 @@ server.register([
     register: require './plugins/dbs'
   },
   {
+    register: require './import_pepys'
+  },
+  {
+    register: require './plugins/create_snapshots'
+  }
+  {
     register: require './plugins/posts'
   },
   {
     register: require './plugins/search'
   },
-  {
-    register: require './plugins/sync_amazon'
-  },
+  #{
+    #register: require './plugins/sync_amazon'
+  #},
   {
     register: require 'hapi-single-page-app-plugin'
     options:

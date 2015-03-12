@@ -21,15 +21,10 @@ module.exports = React.createClass
   mixins: [Router.Navigation]
 
   # TODO
-  # Add facets in the route handler
-  # add componentWidthMixin for the graphs
-  # Move search into stores
-  # SearchStore — keeps track of current search e.g. hits, total, took etc.
   # Perform actual searches with actions
   # restore searchMore (as action)
   # Set query etc. when changing the search
   # restore getInitialState's ability to do search automatically
-  # load last search when returning to search page
 
   getInitialState: ->
     {

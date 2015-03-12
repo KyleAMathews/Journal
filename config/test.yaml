@@ -1,0 +1,7 @@
+db:
+  posts:
+    by_id: './test_posts_by_id'
+    by_last_updated: "./test_posts_last_updated"
+  jobs: './test_jobs_db'
+  events: './test_events_db'
+port: 8981
