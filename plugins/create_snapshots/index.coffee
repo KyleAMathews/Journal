@@ -17,7 +17,7 @@ exports.register = (server, options, next) ->
       if event is "postCreated"
         a.posts[key] = data.value
       else if event is "postUpdated"
-        console.log "updated", data
+        #console.log "updated", data
         a.posts[key] = _.extend a.posts[key], data.value
       else if event is "postDeleted"
         delete a.posts[key]
@@ -25,8 +25,6 @@ exports.register = (server, options, next) ->
     .on('end', ->
       # Update id + updated_at indexes.
       for k,v of a.posts
-        if k is "13688"
-          console.log v
         postsByIdDb.put k, v
         postsByLastUpdatedDb.put "#{v.updated_at}-#{k}", v
 

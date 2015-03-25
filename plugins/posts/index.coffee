@@ -56,9 +56,9 @@ exports.register = (server, options, next) ->
             new Date().toJSON()
           postsByLastUpdatedDb
             .createReadStream({
-              lt: start
+              lt: start.toJSON()
               reverse: true
-              limit: request.query.limit + 10
+              limit: request.query.limit
             })
             .on('data', (data) ->
               if filteredPosts.length >= request.query.limit
