@@ -1,6 +1,6 @@
 # Random app bootstrappy stuff.
 config = require 'config'
-require './jobs/worker_coordinator'
+#require './jobs/worker_coordinator'
 
 # Track memory and watch for memory leaks.
 #memwatch = require('memwatch')

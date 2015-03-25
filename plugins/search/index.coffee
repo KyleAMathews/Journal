@@ -7,8 +7,7 @@ async = require 'async'
 
 exports.register = (server, options, next) ->
   # Index posts.
-  db = server.plugins.dbs.postsDb
-  posts = server.plugins.dbs.posts
+  postsByIdDb = server.plugins.dbs.postsByIdDb
   index = server.plugins.dbs.index
 
   server.route
@@ -30,28 +29,33 @@ exports.register = (server, options, next) ->
         total = hits.length
 
         # Hydrate
-        hits = hits.map (result) -> posts[result.ref]
+        hits = async.map hits, ((hit, cb) ->
+          postsByIdDb.get(hit.ref, (err, value) ->
+            if err
+              return cb(err)
+            else
+              cb(null, value)
+          )
+        ), (err, hits) ->
 
-        # Sort
+          # Sort by oldest first
+          if request.query.sort is "asc"
+            hits = _.sortBy hits, (hit) -> hit.created_at
 
-        # Oldest first
-        if request.query.sort is "asc"
-          hits = _.sortBy hits, (hit) -> hit.created_at
+          # Sort by newest first
+          else if request.query.sort is "desc"
+            hits = _.sortBy hits, (hit) -> hit.created_at
+            hits.reverse()
 
-        # Newest first
-        else if request.query.sort is "desc"
-          hits = _.sortBy hits, (hit) -> hit.created_at
-          hits.reverse()
+          # Slice.
+          hits = hits.slice(request.query.start, request.query.size)
 
-        # Slice.
-        hits = hits.slice(request.query.start, request.query.size)
-
-        reply {
-          total: total
-          hits: hits
-          offset: request.query.start
-          took: process.hrtime(start)[1] / 1000000
-        }
+          reply {
+            total: total
+            hits: hits
+            offset: request.query.start
+            took: process.hrtime(start)[1] / 1000000
+          }
 
   next()
 

@@ -39,7 +39,12 @@ lab.experiment("posts plugin", ->
               .on 'data', (key) ->
                 postsByLastUpdatedDb.del(key)
               .on 'end', ->
-                done()
+                eventsDb.close()
+                postsByIdDb.close()
+                postsByLastUpdatedDb.close()
+                server.stop({timeout: 0}, ->
+                  done()
+                )
 
   it('successfully loads', (done) ->
     server.register([
@@ -191,7 +196,7 @@ lab.experiment("posts plugin", ->
         done()
   )
 
-  it("delets posts", (done) ->
+  it("deletes posts", (done) ->
     options =
       method: "DELETE"
       url: "/posts/#{newPost}"

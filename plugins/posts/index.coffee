@@ -40,9 +40,9 @@ exports.register = (server, options, next) ->
       validate:
         query:
           limit: Joi.number().integer().max(5000).default(10)
-          updated_since: Joi.date()
-          start: Joi.date()
-          until: Joi.date()
+          updated_since: Joi.date().raw().iso()
+          start: Joi.date().raw().iso()
+          until: Joi.date().raw().iso()
       handler: (request, reply) ->
         # User is querying for all posts changed since a certain date.
         # TODO — support this?
@@ -50,13 +50,15 @@ exports.register = (server, options, next) ->
           reply 'NOT OK'
         else
           filteredPosts = []
+          # Setting default date with Joi doesn't work
+          # as it gets set to when the server starts.
           start = if request.query.start?
             request.query.start
           else
             new Date().toJSON()
           postsByLastUpdatedDb
             .createReadStream({
-              lt: start.toJSON()
+              lt: start
               reverse: true
               limit: request.query.limit
             })
@@ -115,8 +117,6 @@ exports.register = (server, options, next) ->
             # Save event.
             updated_at = new Date().toJSON()
             old_updated_at = post.updated_at
-            console.log "saving post update event", post.id,
-              request.payload
             eventsDb.put "#{post.id}__#{updated_at}__postUpdated", {
               title: request.payload.title
               body: request.payload.body
@@ -153,6 +153,9 @@ exports.register = (server, options, next) ->
                   "#{updatedPost.updated_at}-#{updatedPost.id}",
                   updatedPost
                 )
+
+                # Update search index.
+                index.update updatedPost
 
                 reply updatedPost
 
@@ -208,6 +211,9 @@ exports.register = (server, options, next) ->
                   "#{newPost.updated_at}-#{newPost.id}",
                   newPost
                 )
+
+                # Add to search index.
+                index.add newPost
             )
 
   #########################################################
@@ -237,6 +243,9 @@ exports.register = (server, options, next) ->
 
                 # Remove from post indexes
                 postsByIdDb.del post.id
+
+                # Remove from search index
+                index.remove(post)
 
                 postsByLastUpdatedDb.del("#{post.updated_at}-#{post.id}")
 

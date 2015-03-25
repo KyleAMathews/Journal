@@ -1,6 +1,6 @@
 knoxCopy = require 'knox-copy'
 levelup = require 'level'
-QueueClient = require('level-jobs/client')
+#QueueClient = require('level-jobs/client')
 config = require 'config'
 lunr = require 'lunr'
 _ = require 'underscore'
@@ -12,7 +12,7 @@ index = lunr ->
 
 exports.register = (server, options, next) ->
 
-  jobsDb = levelup(config.get('db.jobs'))
+  #jobsDb = levelup(config.get('db.jobs'))
   postsByIdDb = levelup(config.get('db.posts.by_id'), valueEncoding: 'json')
   postsByLastUpdatedDb = levelup(config.get('db.posts.by_last_updated'), valueEncoding: 'json')
   eventsDb = levelup(config.get('db.events'), valueEncoding: 'json')
@@ -30,7 +30,7 @@ exports.register = (server, options, next) ->
   syncPosts()
   server.expose('syncPosts', syncPosts)
 
-  jobsClient = QueueClient(jobsDb)
+  #jobsClient = QueueClient(jobsDb)
 
   if config.has('amazon.key')
     s3client = knoxCopy.createClient({
@@ -42,8 +42,8 @@ exports.register = (server, options, next) ->
 
     server.expose('s3client', s3client)
 
-  server.expose('jobsDb', jobsDb)
-  server.expose('jobsClient', jobsClient)
+  #server.expose('jobsDb', jobsDb)
+  #server.expose('jobsClient', jobsClient)
   server.expose('postsByIdDb', postsByIdDb)
   server.expose('postsByLastUpdatedDb', postsByLastUpdatedDb)
   server.expose('eventsDb', eventsDb)
