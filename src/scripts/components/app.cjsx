@@ -1,33 +1,60 @@
 React = require 'react'
 Link = require('react-router').Link
 RouteHandler = require('react-router').RouteHandler
-request = require 'superagent'
-#window.jQuery = window.$ = require 'jquery'
-#require 'velocity-animate'
+Headroom = require 'react-headroom'
+gray = require 'gray-percentage'
+{Container} = require 'react-responsive-grid'
 
 module.exports = React.createClass
   displayName: 'App'
 
-  handleClickHome: ->
-    #if document.location.pathname is "/"
-      #$('body').velocity("scroll", { duration: 1000, offset: -85 })
-
   render: ->
+    headerLinkStyles =
+      color: gray(90)
+      marginRight: @props.rhythm(1)
+      textDecoration: 'none'
+
     <div>
-      <div className="headroom">
-        <div onClick={@handleClickHome} className="headroom__links">
-          <Link className="headroom__link" to="posts-index">
-            <span className="icon-home headroom__icon" />Home
+      <Headroom
+        style={{
+          background: gray(20, 'warm')
+          fontFamily: @props.typography.options.headerFontFamily
+        }}
+      >
+        <Container
+          style={{
+            maxWidth: 600
+            padding: @props.rhythm(1/2)
+            paddingLeft: @props.rhythm(3/4)
+          }}
+        >
+          <Link
+            style={headerLinkStyles}
+            to="posts-index"
+          >
+            Home
           </Link>
-          <Link className="headroom__link" to="search">
-            <span className="icon-search headroom__icon" />Search
+          <Link
+            style={headerLinkStyles}
+            to="search"
+          >
+            Search
           </Link>
-          <Link className="headroom__link" to="drafts-index">
+          <Link
+            style={headerLinkStyles}
+            to="drafts-index"
+          >
             Drafts
           </Link>
-        </div>
-      </div>
-      <div className="main-section">
-        <RouteHandler/>
-      </div>
+        </Container>
+      </Headroom>
+      <Container
+        style={{
+          maxWidth: 600
+          padding: @props.rhythm(1)
+          paddingTop: @props.rhythm(1.75)
+        }}
+      >
+        <RouteHandler {...@props}/>
+      </Container>
     </div>

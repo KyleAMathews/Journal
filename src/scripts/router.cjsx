@@ -1,7 +1,3 @@
-# Load css first thing. It gets injected in the <head> in a <style> element by
-# the Webpack style-loader.
-require '../../public/main.css'
-
 React = require 'react'
 Router = require('react-router')
 Route = require('react-router').Route
@@ -19,6 +15,21 @@ PostEdit = require './components/post_edit'
 NewPost = require './components/new_post'
 Attribution = require './components/attribution'
 Search = require './components/SearchController'
+
+Typography = require 'typography'
+typography = new Typography({
+  headerFontFamily: '"Clear Sans", "Helvetica Neue", Helvetica, Arial, sans-serif'
+  headerGray: 15
+  bodyGray: 30
+  bodyFontFamily: '"Linux Libertine", Georgia, sans-serif'
+  baseFontSize: "20px"
+  baseLineHeight: "26px"
+  modularScales: [
+    'major third'
+    ['768px', 'minor third']
+  ]
+})
+typography.injectStyles()
 
 # Setup stores
 require './stores/post_store'
@@ -50,5 +61,5 @@ routes = (
 )
 
 Router.run(routes, (Handler) ->
-  React.render(<Handler/>, document.body)
+  React.render(<Handler typography={typography} rhythm={typography.rhythm} />, document.getElementById('mount-point'))
 )

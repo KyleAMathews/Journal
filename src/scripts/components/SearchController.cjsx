@@ -9,5 +9,5 @@ module.exports = React.createClass
   mixins: [Reflux.connect(SearchStore, 'search')]
 
   render: ->
-    <Search search={@state.search} />
+    <Search search={@state.search} {...@props} />
 

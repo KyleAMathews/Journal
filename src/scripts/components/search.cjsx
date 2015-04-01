@@ -7,11 +7,8 @@ _str = require 'underscore.string'
 request = require 'superagent'
 prettyMs = require 'pretty-ms'
 Messages = require 'react-message'
+gray = require 'gray-percentage'
 
-SearchStore = require '../stores/search_store'
-AppConstants = require '../constants/app_constants'
-SearchConstants = require '../constants/search_constants'
-Dispatcher = require '../dispatcher'
 DateHistogram = require '../date_histogram'
 SearchActions = require '../actions/SearchActions'
 
@@ -85,6 +82,8 @@ module.exports = React.createClass
     #SearchStore.releaseGroup('search')
 
   render: ->
+    {input, button} = require('react-simple-form-inline-styles')(@props.rhythm)
+
     <div className="search">
       <Messages type="error" messages={@state.errors} />
       <select value={@props.search.sort} onChange={@handleSortChange}>
@@ -95,13 +94,15 @@ module.exports = React.createClass
       <br />
       <br />
       <input
-        className="search__input"
+        style={input}
         ref="query"
         value={@props.search.query}
         onChange={@handleChange}
         onKeyUp={@handleKeyUp} />
-      <button className="search__button" onClick={@handleClick}>
-        <span className="icon-search" />
+      <button
+        style={button}
+        onClick={@handleClick}
+      >
         Search
       </button>
       {if @state.searching then <Spinner spinnerName="wave" cssRequire />}
@@ -116,24 +117,47 @@ module.exports = React.createClass
 
   meta: ->
     if @props.search.took
-      <div>
-        <small className="search__meta">
+      <div
+        style={{
+          marginBottom: @props.rhythm(1)
+        }}
+      >
+        <small
+          style={{
+            color: gray(60, 'warm')
+          }}
+        >
           {@props.search.total} results in {prettyMs(@props.search.took)}
         </small>
       </div>
 
   results: ->
     unless @props.search.hits.length > 0 then return
-    results = @props.search.hits.map (result) ->
+    results = @props.search.hits.map (result) =>
       title = result.title
       body = _str.prune(result.body, 200)
       <div key={result.id} className="search__result">
-          <h3>
-            <Link to="post" params={{postId: result.id}}>
+          <h5
+            style={{
+              marginBottom: 0
+            }}
+          >
+            <Link
+              to="post"
+              params={{postId: result.id}}
+              style={{
+                textDecoration: 'none'
+              }}
+            >
               <span className="search__result__title" dangerouslySetInnerHTML={__html:title} />
             </Link>
-            <span className="search__result__date"> — {moment(result.created_at).format("D MMMM YYYY")}</span>
-          </h3>
+            <span
+              style={{
+                color: gray(50, 'warm')
+              }}
+            >
+              {' '}— {moment(result.created_at).format("D MMMM YYYY")}</span>
+          </h5>
         <p dangerouslySetInnerHTML={__html:body} />
       </div>
 

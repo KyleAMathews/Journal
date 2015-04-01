@@ -26,25 +26,35 @@ module.exports = React.createClass
     window.removeEventListener('scroll', @distanceToBottom)
 
   render: ->
+    console.log @props
     months = {}
     posts = []
     if @state?.posts?
-      @state.posts.forEach (post) ->
+      @state.posts.forEach (post) =>
         if post.deleted then return
         month = moment(post.created_at).format('MMMM YYYY')
         unless months[month]?
-          posts.push <h2 className="posts-index__month" key={month}>{month}</h2>
+          posts.push (
+            <h2
+              style={{
+                marginTop: @props.rhythm(1)
+              }}
+              key={month}
+            >
+              {month}
+            </h2>
+          )
           months[month] = true
         posts.push <PostListItem key={post.id} post={post}></PostListItem>
 
       return (
-        <div className="posts-index">
+        <div>
           <Link
-           className="button posts-index__new-post"
-           to="new-post">
-             <span className="icon-flat-pencil" />New post
+           to="new-post"
+           >
+             New post
           </Link>
-          <ul className="posts-index__list">
+          <ul>
             {posts}
           </ul>
         </div>
