@@ -1,2 +1,0 @@
-<h3><span class="js-link link"><%- @title %></span> <span class="created">– <%- @created %></span></h3>
-<p><%- @body %></p>

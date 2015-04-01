@@ -23,22 +23,22 @@ server.connection(
 
 server.register([
   {
-    register: require './plugins/dbs'
+    register: require '../plugins/dbs'
   },
   {
-    register: require './import_pepys'
+    register: require '../import_pepys'
   },
   {
-    register: require './plugins/create_snapshots'
+    register: require '../plugins/create_snapshots'
   }
   {
-    register: require './plugins/posts'
+    register: require '../plugins/posts'
   },
   {
-    register: require './plugins/search'
+    register: require '../plugins/search'
   },
   #{
-    #register: require './plugins/sync_amazon'
+    #register: require '../plugins/sync_amazon'
   #},
   {
     register: require 'hapi-single-page-app-plugin'
@@ -66,7 +66,7 @@ server.register([
     console.log "Hapi server started @ #{server.info.uri}"
 
     # Start other app bootstrapy things.
-    require './lib/bootstrap'
+    require './bootstrap'
 )
 
 module.exports = server

@@ -1,6 +1,5 @@
 node_modules/
 public
-.sass-cache/
 build
 bower_components/
 postsdb/
@@ -12,3 +11,4 @@ test_posts_last_updated
 events_db/
 posts_by_id/
 posts_last_updated/
+dbs/
