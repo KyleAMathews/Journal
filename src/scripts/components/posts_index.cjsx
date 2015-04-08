@@ -26,7 +26,8 @@ module.exports = React.createClass
     window.removeEventListener('scroll', @distanceToBottom)
 
   render: ->
-    console.log @props
+    {button} = require('react-simple-form-inline-styles')(@props.rhythm)
+
     months = {}
     posts = []
     if @state?.posts?
@@ -52,7 +53,15 @@ module.exports = React.createClass
           <Link
            to="new-post"
            >
-             New post
+             <button
+               style={
+                 _.extend(button, {
+                   padding: "#{@props.rhythm(1/3)} #{@props.rhythm(2/3)}"
+                 })
+               }
+             >
+               New post
+             </button>
           </Link>
           <ul>
             {posts}

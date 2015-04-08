@@ -6,6 +6,7 @@ Textarea = require 'react-textarea-autosize'
 MarkdownTextarea = require 'react-markdown-textarea'
 moment = require 'moment'
 Spinner = require 'react-spinkit'
+gray = require 'gray-percentage'
 
 LocationStore = require '../stores/location'
 
@@ -41,6 +42,7 @@ module.exports =
       unsubscribeFunc()
 
   render: ->
+    {input, button} = require('react-simple-form-inline-styles')(@props.rhythm)
     unless @state.post?
       return (
         <Spinner spinnerName="wave" fadeIn cssRequire />
@@ -56,7 +58,9 @@ module.exports =
             ref="title"
             autosize
             value={@state.post.title}
-            onChange={@handleTitleChange} />
+            onChange={@handleTitleChange}
+            style={input}
+          />
         </h1>
         <MarkdownTextarea
           placeholder="The body of your post"
@@ -68,11 +72,42 @@ module.exports =
           onSave={@handleSave}
           initialValue={@state.post.body}
           spinner={Spinner}
+          textareaStyle={_.extend(input, marginBottom: 0)}
+          buttonStyle={_.extend({}, button, {
+            float: 'left', marginTop: @props.rhythm(1)
+          })}
+          deleteButtonStyle={_.extend({}, button, {
+            float: 'right'
+            marginTop: @props.rhythm(1)
+          })}
+          navTabStyle={{
+            fontSize: '15px'
+            marginBottom: @props.rhythm(1/4)
+          }}
+          tabStyle={{
+            borderRadius: 3
+            cursor: 'pointer'
+            display: 'inline-block'
+            listStyle: 'none'
+            marginRight: @props.rhythm(1/2)
+            padding: "#{@props.rhythm(1/4)} #{@props.rhythm(1/2)}"
+          }}
+          tabActiveStyle={{
+            background: gray(95, 'warm')
+            border: "1px solid #{gray(75, 'warm')}"
+            color: gray(35, 'warm')
+            cursor: 'default'
+            padding: "calc(#{@props.rhythm(1/4)} - 1px) #{@props.rhythm(1/2)}"
+          }}
+          previewStyle={{
+            padding: @props.rhythm(3/4)
+          }}
           spinnerOptions={
             fadeIn: true,
             spinnerName: "wave"
             className: "react-markdown-textarea__spinner"
-          } />
+          }
+        />
         <div
           style={{
             bottom: '10px'

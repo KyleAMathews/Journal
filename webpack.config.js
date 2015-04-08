@@ -7,6 +7,9 @@ module.exports = {
     'webpack/hot/only-dev-server',
     './src/scripts/router'
   ],
+  devServer: {
+    hot: true
+  },
   devtool: "eval",
   debug: true,
   output: {

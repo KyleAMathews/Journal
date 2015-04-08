@@ -34,6 +34,8 @@ module.exports = React.createClass
     @getPost()
 
   render: ->
+    {button} = require('react-simple-form-inline-styles')(@props.rhythm)
+
     if @state.errors.length > 0
       <Messages type="errors" messages={@state.errors} />
     else if not @state.post?.id
@@ -53,7 +55,7 @@ module.exports = React.createClass
               to="post-edit"
               params={{postId:@state.post.id}}
             >
-              <button>
+              <button style={button}>
                 Edit post
               </button>
             </Link>
