@@ -12,10 +12,11 @@ index = lunr ->
 
 exports.register = (server, options, next) ->
 
+  DBS_DIRECTORY = config.get('db.directory')
   #jobsDb = levelup(config.get('db.jobs'))
-  postsByIdDb = levelup(config.get('db.posts.by_id'), valueEncoding: 'json')
-  postsByLastUpdatedDb = levelup(config.get('db.posts.by_last_updated'), valueEncoding: 'json')
-  eventsDb = levelup(config.get('db.events'), valueEncoding: 'json')
+  postsByIdDb = levelup(DBS_DIRECTORY + '/posts_by_id', valueEncoding: 'json')
+  postsByLastUpdatedDb = levelup(DBS_DIRECTORY + '/posts_last_updated', valueEncoding: 'json')
+  eventsDb = levelup(DBS_DIRECTORY + '/events_db', valueEncoding: 'json')
 
   syncPosts = ->
     console.log "Syncing posts"

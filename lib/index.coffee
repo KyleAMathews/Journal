@@ -25,9 +25,9 @@ server.register([
   {
     register: require '../plugins/dbs'
   },
-  {
-    register: require '../import_pepys'
-  },
+  #{
+    #register: require '../import_pepys'
+  #},
   {
     register: require '../plugins/create_snapshots'
   }

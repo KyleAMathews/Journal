@@ -4,3 +4,5 @@ amazon:
   bucket: "S3_BUCKET"
   region: "S3_REGION"
 port: "PORT"
+db:
+  directory: "DBS_DIRECTORY"
