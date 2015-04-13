@@ -34,7 +34,7 @@ module.exports =
     log "PATCH /posts/#{post.id}"
     # Pick only needed payload items.
     id = post.id
-    post = _.pick(post, 'title', 'body', 'starred')
+    post = _.pick(post, 'title', 'body', 'starred', 'draft')
     request
       .patch("http://localhost:8081/posts/#{id}")
       .set('Accept', 'application/json')

@@ -109,6 +109,7 @@ exports.register = (server, options, next) ->
           title: Joi.string().min(1)
           body: Joi.string().min(1)
           starred: Joi.boolean()
+          draft: Joi.boolean()
       handler: (request, reply) ->
         postsByIdDb.get request.params.id, (err, post) ->
           if err
@@ -117,33 +118,20 @@ exports.register = (server, options, next) ->
             # Save event.
             updated_at = new Date().toJSON()
             old_updated_at = post.updated_at
-            eventsDb.put "#{post.id}__#{updated_at}__postUpdated", {
-              title: request.payload.title
-              body: request.payload.body
+            eventsDb.put "#{post.id}__#{updated_at}__postUpdated", _.extend(
+              request.payload,
               updated_at: updated_at
-              starred: (
-                if request.payload.starred
-                  request.payload.starred
-                else
-                  post.starred
-              )
-            }, (err) ->
+            ), (err) ->
               if err
                 return reply(
                   Boom.badImplementation("error saving update event", err)
                 )
               else
-                updatedPost = _.extend post, {
-                  title: request.payload.title
-                  body: request.payload.body
+                updatedPost = _.extend(
+                  post,
+                  request.payload,
                   updated_at: updated_at
-                  starred: (
-                    if request.payload.starred
-                      request.payload.starred
-                    else
-                      post.starred
-                  )
-                }
+                )
 
                 # Update post indexes
                 postsByIdDb.put updatedPost.id, updatedPost
@@ -177,6 +165,7 @@ exports.register = (server, options, next) ->
           created_at: Joi.date().iso().required()
           deleted: Joi.boolean().default(false)
           starred: Joi.boolean().default(false)
+          draft: Joi.boolean()
           latitude: Joi.number().min(0).max(90)
           longitude: Joi.number().min(-180).max(180)
 

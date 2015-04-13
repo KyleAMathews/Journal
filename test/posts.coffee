@@ -77,12 +77,16 @@ lab.experiment("posts plugin", ->
         created_at: new Date().toJSON()
         title: "A test post"
         body: "A test body"
+        latitude: 12
+        draft: true
 
     server.inject options, (res) ->
       result = res.result
       expect(res.statusCode).to.equal(201)
       expect(result.id).to.exist()
       expect(result.created_at).to.exist()
+      expect(result.draft).to.equal(true)
+      expect(result.latitude).to.equal(12)
       newPost = result.id
       done()
   )
@@ -126,6 +130,7 @@ lab.experiment("posts plugin", ->
       expect(res.statusCode).to.equal(200)
       expect(result.id).to.exist()
       expect(result.created_at).to.exist()
+      expect(result.draft).to.equal(true)
       done()
   )
 
@@ -151,6 +156,7 @@ lab.experiment("posts plugin", ->
       payload:
         title: "A test post 2"
         body: "A test body 2"
+        draft: false
 
 
     server.inject options, (res) ->
@@ -160,6 +166,7 @@ lab.experiment("posts plugin", ->
       expect(result.id).to.exist()
       expect(result.id).to.equal(newPost)
       expect(result.updated_at).to.exist()
+      expect(result.draft).to.equal(false)
       done()
   )
 

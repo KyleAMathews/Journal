@@ -150,8 +150,17 @@ module.exports =
         not @state.savingDraft and
         @state.post.draft isnt false
 
-      unless @state.post.id
-        PostActions.create @state.post
+      unless post.id?
+        post = _.extend(
+            {},
+            @state.post,
+            {
+              latitude: @state.location.latitude
+              longitude: @state.location.longitude
+              draft: true
+            }
+        )
+        PostActions.create post
       else
         PostActions.update @state.post
 
@@ -161,11 +170,11 @@ module.exports =
 
   handleSave: (value) ->
     post = _.extend(
-        @state.post,
+        {},
+        _.omit(@state.post, 'latitude', 'longitude'),
         {
           body: value
-          latitude: @state.location.latitude
-          longitude: @state.location.longitude
+          draft: false
         }
     )
 
