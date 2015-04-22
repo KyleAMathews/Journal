@@ -74,11 +74,14 @@ module.exports =
           spinner={Spinner}
           textareaStyle={_.extend(input, marginBottom: 0)}
           buttonStyle={_.extend({}, button, {
-            float: 'left', marginTop: @props.rhythm(1)
+            float: 'left'
+            marginTop: @props.rhythm(1)
+            padding: "#{@props.rhythm(1/3)} #{@props.rhythm(2/3)}"
           })}
           deleteButtonStyle={_.extend({}, button, {
             float: 'right'
             marginTop: @props.rhythm(1)
+            padding: "#{@props.rhythm(1/3)} #{@props.rhythm(2/3)}"
           })}
           navTabStyle={{
             fontSize: '15px'

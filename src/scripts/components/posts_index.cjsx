@@ -10,6 +10,8 @@ postStore = require '../stores/post_store'
 loadingStore = require '../stores/loading'
 PostActions = require '../actions/PostActions'
 
+Button = require './Button'
+
 module.exports = React.createClass
   displayName: 'PostsIndex'
 
@@ -26,8 +28,6 @@ module.exports = React.createClass
     window.removeEventListener('scroll', @distanceToBottom)
 
   render: ->
-    {button} = require('react-simple-form-inline-styles')(@props.rhythm)
-
     months = {}
     posts = []
     if @state?.posts?
@@ -53,15 +53,9 @@ module.exports = React.createClass
           <Link
            to="new-post"
            >
-             <button
-               style={
-                 _.extend(button, {
-                   padding: "#{@props.rhythm(1/3)} #{@props.rhythm(2/3)}"
-                 })
-               }
-             >
+             <Button {...@props}>
                New post
-             </button>
+             </Button>
           </Link>
           <ul>
             {posts}

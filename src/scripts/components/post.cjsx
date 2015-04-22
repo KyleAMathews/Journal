@@ -15,6 +15,8 @@ Messages = require 'react-message'
 PostStore = require '../stores/post_store'
 LoadingStore = require '../stores/loading'
 
+Button = require './Button'
+
 module.exports = React.createClass
   displayName: 'Post'
 
@@ -34,8 +36,6 @@ module.exports = React.createClass
     @getPost()
 
   render: ->
-    {button} = require('react-simple-form-inline-styles')(@props.rhythm)
-
     if @state.errors.length > 0
       <Messages type="errors" messages={@state.errors} />
     else if not @state.post?.id
@@ -55,9 +55,9 @@ module.exports = React.createClass
               to="post-edit"
               params={{postId:@state.post.id}}
             >
-              <button style={button}>
+              <Button {...@props}>
                 Edit post
-              </button>
+              </Button>
             </Link>
           </div>
           <div
