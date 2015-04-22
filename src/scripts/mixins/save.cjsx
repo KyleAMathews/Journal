@@ -124,8 +124,8 @@ module.exports =
         </div>
       </div>
 
-  handleTitleChange: ->
-    post = _.extend @state.post, title: @refs.title.getDOMNode().value
+  handleTitleChange: (e) ->
+    post = _.extend @state.post, title: e.target.value
     @setState {
       post: post
       unsavedChanges: true

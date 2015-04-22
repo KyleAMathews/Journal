@@ -10,6 +10,8 @@ module.exports = PostStore = Reflux.createStore
     @_mappedPosts = Immutable.Map({})
     @listenTo PostActions.loadComplete, @onLoad
     @listenTo PostActions.loadMoreComplete, @onLoadMore
+    @listenTo PostActions.createComplete, @onUpdate
+    @listenTo PostActions.updateComplete, @onUpdate
 
   getInitialState: ->
     @_posts
@@ -42,10 +44,17 @@ module.exports = PostStore = Reflux.createStore
     @_posts = @sort(@_posts)
     @trigger(@_posts)
 
+  onUpdate: (res) ->
+    if res.body.draft isnt true
+      @_posts = @_posts.concat res.body
+      @_posts = @sort(@_posts)
+      @addToMap(@_posts)
+      @trigger(@_posts)
+
   sort: (posts) ->
     posts.sortBy(
       ((post) -> post.created_at),
-      ((a, b) -> a - b)
+      ((a, b) -> a < b)
     )
 
   addToMap: (posts) ->

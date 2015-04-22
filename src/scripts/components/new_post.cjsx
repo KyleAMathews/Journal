@@ -25,4 +25,4 @@ module.exports = React.createClass
     }
 
   componentDidMount: ->
-    @refs.title.getDOMNode().focus()
+    React.findDOMNode(@refs.title).focus()
