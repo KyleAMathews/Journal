@@ -59,7 +59,7 @@ module.exports =
             autosize
             value={@state.post.title}
             onChange={@handleTitleChange}
-            style={input}
+            style={_.extend({}, input, {borderColor: 'transparent'})}
           />
         </h1>
         <MarkdownTextarea
@@ -150,7 +150,7 @@ module.exports =
         not @state.savingDraft and
         @state.post.draft isnt false
 
-      unless post.id?
+      unless @state.post.id?
         post = _.extend(
             {},
             @state.post,
