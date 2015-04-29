@@ -64,16 +64,11 @@ module.exports = React.createClass
             style={{
               color: gray(75)
               fontSize: '80%'
-              marginBottom: @props.rhythm(-1/4)
             }}
           >
             {moment(@state.post.created_at).format('dddd, MMMM Do YYYY, h:mma')}
           </div>
-          <h1
-            style={{
-              marginBottom: @props.rhythm(1/2)
-            }}
-          >
+          <h1>
             {@state.post.title}
           </h1>
           <div onClick={@handleClick} dangerouslySetInnerHTML={__html:marked(@state.post.body, smartypants:true)}></div>
