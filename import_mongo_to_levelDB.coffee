@@ -1,6 +1,6 @@
 MongoClient = require('mongodb').MongoClient
 levelup = require 'level'
-postsDb = levelup './postsdb_real', valueEncoding: 'json'
+eventsDb = levelup './journal/events_db', valueEncoding: 'json'
 moment = require 'moment'
 _ = require 'underscore'
 path = require 'path'
@@ -60,6 +60,6 @@ MongoClient.connect("mongodb://#{process.env.REMOTE_ADDRESS}:27017/journal", (er
           picRe = new RegExp("/attachments/#{attachmentKey}", 'img')
           post.body = post.body.replace(picRe, newUrl)
 
-      postsDb.put post.created_at, post
+      eventsDb.put "#{post.id}__#{post.created_at}__postCreated", post
       console.log "PUT #{post.id}"
 )
