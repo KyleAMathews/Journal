@@ -7,6 +7,7 @@ MarkdownTextarea = require 'react-markdown-textarea'
 moment = require 'moment'
 Spinner = require 'react-spinkit'
 gray = require 'gray-percentage'
+raf = require 'raf'
 
 LocationStore = require '../stores/location'
 
@@ -23,7 +24,7 @@ module.exports =
     }
 
   componentWillUpdate: (nextProps, nextState) ->
-    if nextState.location?.latitude? and not nextState.post.latitude
+    if nextState?.location?.latitude? and not nextState?.post?.latitude
       nextState.post = _.extend nextState.post, nextState.location
 
   componentDidMount: ->
@@ -65,6 +66,7 @@ module.exports =
         <MarkdownTextarea
           placeholder="The body of your post"
           rows=4
+          ref="markdown"
           deleteButton=true
           onDelete={@handleDelete}
           saving={@state.saving}
@@ -137,6 +139,8 @@ module.exports =
     @debouncedSaveDraft()
 
   handleBodyChange: (value) ->
+    raf(=> @scrollWindow())
+
     post = _.extend @state.post, body: value
     @setState {
       post: post
@@ -144,6 +148,14 @@ module.exports =
     }
 
     @debouncedSaveDraft()
+
+  scrollWindow: ->
+    textarea = React.findDOMNode(@refs.markdown).querySelector('textarea')
+    toBottomWindow = -> window.scrollY + window.innerHeight
+    toBottomElement = -> textarea.offsetHeight + textarea.offsetTop
+    distanceToBottom = toBottomWindow() - toBottomElement()
+    if -100 < distanceToBottom < 100
+      window.scrollTo(0, window.scrollY + 200)
 
   saveDraft: ->
     # Only save drafts if it is a draft
