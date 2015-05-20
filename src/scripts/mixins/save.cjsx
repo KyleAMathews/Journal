@@ -151,11 +151,13 @@ module.exports =
 
   scrollWindow: ->
     textarea = React.findDOMNode(@refs.markdown).querySelector('textarea')
-    toBottomWindow = -> window.scrollY + window.innerHeight
-    toBottomElement = -> textarea.offsetHeight + textarea.offsetTop
-    distanceToBottom = toBottomWindow() - toBottomElement()
-    if -100 < distanceToBottom < 100
-      window.scrollTo(0, window.scrollY + 200)
+
+    if (textarea.value.length - textarea.selectionStart) < 200
+      toBottomWindow = -> window.scrollY + window.innerHeight
+      toBottomElement = -> textarea.offsetHeight + textarea.offsetTop
+      distanceToBottom = toBottomWindow() - toBottomElement()
+      if -100 < distanceToBottom < 100
+        window.scrollTo(0, window.scrollY + 200)
 
   saveDraft: ->
     # Only save drafts if it is a draft
