@@ -5,6 +5,7 @@ exports.register = (server, options, next) ->
   eventsDb = server.plugins.dbs.eventsDb
   postsByIdDb = server.plugins.dbs.postsByIdDb
   postsByLastUpdatedDb = server.plugins.dbs.postsByLastUpdatedDb
+  postsByCreatedDB = server.plugins.dbs.postsByCreatedDB
 
   a =
     posts: {}
@@ -27,6 +28,7 @@ exports.register = (server, options, next) ->
       for k,v of a.posts
         postsByIdDb.put k, v
         postsByLastUpdatedDb.put "#{v.updated_at}-#{k}", v
+        postsByCreatedDB.put "#{v.created_at}-#{k}", v
 
       delete a.posts
     )

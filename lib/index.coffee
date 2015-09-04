@@ -29,6 +29,9 @@ server.register([
     #register: require '../import_pepys'
   #},
   {
+    register: require('./graphql')
+  }
+  {
     register: require '../plugins/create_snapshots'
   }
   {
@@ -63,9 +66,9 @@ server.register([
   server.start (err) ->
     if err then console.log err
     console.log "Hapi server started @ #{server.info.uri}"
-
-    # Start other app bootstrapy things.
-    require './bootstrap'
+    table = server.table()[0].table
+    table.forEach (route) ->
+      console.log route.path, "\t", route.method.toUpperCase()
 )
 
 module.exports = server
