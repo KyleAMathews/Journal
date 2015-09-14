@@ -3,15 +3,10 @@ var webpack = require('webpack');
 
 module.exports = {
   entry: [
-    "webpack-dev-server/client?http://0.0.0.0:8080",
-    'webpack/hot/only-dev-server',
+    'webpack-hot-middleware/client',
     './src/scripts/router'
   ],
-  devServer: {
-    hot: true
-  },
   devtool: "eval",
-  debug: true,
   output: {
     path: path.join(__dirname, "public"),
     filename: 'bundle.js'
@@ -21,8 +16,7 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
-    new webpack.IgnorePlugin(/vertx/) // https://github.com/webpack/webpack/issues/353
+    new webpack.NoErrorsPlugin()
   ],
   resolve: {
     extensions: ['', '.js', '.cjsx', '.coffee']
@@ -30,8 +24,13 @@ module.exports = {
   module: {
     loaders: [
       { test: /\.css$/, loaders: ['style', 'css']},
-      { test: /\.cjsx$/, loaders: ['react-hot', 'coffee', 'cjsx']},
-      { test: /\.coffee$/, loader: 'coffee' }
+      { test: /\.cjsx$/, loaders: ['babel?stage=0', 'coffee', 'cjsx']},
+      { test: /\.coffee$/, loader: 'coffee' },
+      {
+        test: /\.js/,
+        loaders: ['babel?stage=0'],
+        exclude: /node_modules/,
+      }
     ]
   }
 };

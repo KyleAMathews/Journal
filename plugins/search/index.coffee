@@ -1,5 +1,4 @@
 Joi = require 'joi'
-elasticsearch = require 'elasticsearch'
 _ = require 'underscore'
 es = require('event-stream')
 Boom = require 'boom'

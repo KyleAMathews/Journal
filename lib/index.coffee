@@ -1,15 +1,19 @@
 Hapi = require 'hapi'
-bunyan = require('bunyan')
+#bunyan = require('bunyan')
 Joi = require 'joi'
 config = require 'config'
 
-logger = bunyan.createLogger({
-  name: 'journal'
-  stream: process.stdout
-  level: 'debug'
-})
+#logger = bunyan.createLogger({
+  #name: 'journal'
+  #stream: process.stdout
+  #level: 'debug'
+#})
 
 server = new Hapi.Server()
+
+server.on('response', (request) ->
+  console.log(request.info.remoteAddress + ': ' + request.method.toUpperCase() + ' ' + request.url.path + ' --> ' + request.response.statusCode);
+)
 
 server.connection(
   {
@@ -46,7 +50,7 @@ server.register([
   {
     register: require 'hapi-single-page-app-plugin'
     options:
-      exclude: ['docs.*']
+      exclude: ['docs.*', 'graphql']
       staticPath: './app/public'
   },
   {

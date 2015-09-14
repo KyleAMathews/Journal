@@ -22,7 +22,8 @@ exports.register = (server, options, next) ->
     console.log "Adding posts to search index."
     postsByIdDb.createReadStream()
       .on 'data', (data) ->
-        index.add(data.value)
+        unless data.value.draft or data.value.deleted
+          index.add(data.value)
       .on 'end', ->
         console.log "Done adding posts to search index."
 

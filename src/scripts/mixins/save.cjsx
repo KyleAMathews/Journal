@@ -1,5 +1,5 @@
-PostActions = require '../actions/PostActions'
-Reflux = require 'reflux'
+#PostActions = require '../actions/PostActions'
+React = require 'react'
 _ = require 'underscore'
 Messages = require 'react-message'
 Textarea = require 'react-textarea-autosize'
@@ -8,14 +8,15 @@ moment = require 'moment'
 Spinner = require 'react-spinkit'
 gray = require 'gray-percentage'
 raf = require 'raf'
+{typography} = require '../typography'
+rhythm = typography.rhythm
 
-LocationStore = require '../stores/location'
+#LocationStore = require '../stores/location'
+#
+# TODO consolidate changes into @onChange() and @onDelete calls
+# post_edit/post_new would use PostCreate/PostUpsert/PostDelete mutations.
 
 module.exports =
-  mixins: [
-    Reflux.connect(LocationStore, 'location')
-  ]
-
   getInitialState: ->
     return {
       saving: false
@@ -30,20 +31,13 @@ module.exports =
   componentDidMount: ->
     @debouncedSaveDraft = _.debounce @saveDraft, 1500
 
-    # Subscribe to action updates.
-    @state.actionListeners.push PostActions.createComplete.listen(@onCreateComplete)
-    @state.actionListeners.push PostActions.updateComplete.listen(@onUpdateComplete)
-    @state.actionListeners.push PostActions.deleteComplete.listen(@onDeleteComplete)
-    @state.actionListeners.push PostActions.createError.listen(@handleHTTPError)
-    @state.actionListeners.push PostActions.updateError.listen(@handleHTTPError)
-    @state.actionListeners.push PostActions.deleteError.listen(@handleHTTPError)
-
   componentWillUnmount: ->
     for unsubscribeFunc in @state.actionListeners
       unsubscribeFunc()
 
   render: ->
-    {input, button} = require('react-simple-form-inline-styles')(@props.rhythm)
+    console.log @state
+    {input, button} = require('react-simple-form-inline-styles')(rhythm)
     unless @state.post?
       return (
         <Spinner spinnerName="wave" fadeIn cssRequire />
@@ -77,35 +71,35 @@ module.exports =
           textareaStyle={_.extend(input, marginBottom: 0)}
           buttonStyle={_.extend({}, button, {
             float: 'left'
-            marginTop: @props.rhythm(1)
-            padding: "#{@props.rhythm(1/3)} #{@props.rhythm(2/3)}"
+            marginTop: rhythm(1)
+            padding: "#{rhythm(1/3)} #{rhythm(2/3)}"
           })}
           deleteButtonStyle={_.extend({}, button, {
             float: 'right'
-            marginTop: @props.rhythm(1)
-            padding: "#{@props.rhythm(1/3)} #{@props.rhythm(2/3)}"
+            marginTop: rhythm(1)
+            padding: "#{rhythm(1/3)} #{rhythm(2/3)}"
           })}
           navTabStyle={{
             fontSize: '15px'
-            marginBottom: @props.rhythm(1/4)
+            marginBottom: rhythm(1/4)
           }}
           tabStyle={{
             borderRadius: 3
             cursor: 'pointer'
             display: 'inline-block'
             listStyle: 'none'
-            marginRight: @props.rhythm(1/2)
-            padding: "#{@props.rhythm(1/4)} #{@props.rhythm(1/2)}"
+            marginRight: rhythm(1/2)
+            padding: "#{rhythm(1/4)} #{rhythm(1/2)}"
           }}
           tabActiveStyle={{
             background: gray(95, 'warm')
             border: "1px solid #{gray(75, 'warm')}"
             color: gray(35, 'warm')
             cursor: 'default'
-            padding: "calc(#{@props.rhythm(1/4)} - 1px) #{@props.rhythm(1/2)}"
+            padding: "calc(#{rhythm(1/4)} - 1px) #{rhythm(1/2)}"
           }}
           previewStyle={{
-            padding: @props.rhythm(3/4)
+            padding: rhythm(3/4)
           }}
           spinnerOptions={
             fadeIn: true,
@@ -130,7 +124,7 @@ module.exports =
       </div>
 
   handleTitleChange: (e) ->
-    post = _.extend @state.post, title: e.target.value
+    post = _.extend {}, @state.post, title: e.target.value
     @setState {
       post: post
       unsavedChanges: true
@@ -141,7 +135,7 @@ module.exports =
   handleBodyChange: (value) ->
     raf(=> @scrollWindow())
 
-    post = _.extend @state.post, body: value
+    post = _.extend {}, @state.post, body: value
     @setState {
       post: post
       unsavedChanges: true
@@ -160,84 +154,82 @@ module.exports =
         window.scrollTo(0, window.scrollY + 200)
 
   saveDraft: ->
-    # Only save drafts if it is a draft
-    # and there's a title/body
+    console.log @state
+    # Only save and there's a title/body
     if @state.post.title isnt '' and
-        @state.post.body isnt '' and
-        not @state.savingDraft and
-        @state.post.draft isnt false
+        @state.post.body isnt ''
 
-      unless @state.post.id?
-        post = _.extend(
-            {},
-            @state.post,
-            {
-              latitude: @state.location.latitude
-              longitude: @state.location.longitude
-              draft: true
-            }
-        )
-        PostActions.create post
-      else
-        PostActions.update @state.post
-
-      @setState {
-        savingDraft: true
-      }
+      @onChange()
 
   handleSave: (value) ->
-    post = _.extend(
-        {},
-        _.omit(@state.post, 'latitude', 'longitude'),
-        {
-          body: value
-          draft: false
-        }
+    console.log "SAVE ME!!"
+    # If the post is a draft and we're saving, this means it's published now
+    # or not a draft any longer.
+    #
+    # If it's not a draft i.e. published already, just do normal save.
+    if @state.post.draft
+      saveFromDraft = true
+    else
+      saveFromDraft = false
+
+    @setState({
+      saveFromDraft: saveFromDraft
+    }, =>
+      @onChange =>
+        console.log "SAVED :)"
+        console.log @
+        @history.pushState(null, "/posts/#{@props.node.post_id}")
     )
 
-    if post.title is "" or post.body is ""
-      @setState errors: @state.errors.concat ["Missing title or body"]
-    else
-      @setState {
-        saving: true
-        errors: []
-      }
+    #post = _.extend(
+        #{},
+        #_.omit(@state.post, 'latitude', 'longitude'),
+        #{
+          #body: value
+          #draft: false
+        #}
+    #)
 
-      PostActions.update post
+    #if post.title is "" or post.body is ""
+      #@setState errors: @state.errors.concat ["Missing title or body"]
+    #else
+      #@setState {
+        #saving: true
+        #errors: []
+      #}
+
+      #PostActions.update post
 
   handleDelete: ->
-    PostActions.delete(@state.post)
+    #PostActions.delete(@state.post)
 
   handleHTTPError: (res) ->
     @setState {
-      savingDraft: false
       saving: false
       errors: [res.error.message]
     }
 
   onUpdateComplete: (res) ->
     @setState {
-      savingDraft: false
       unsavedChanges: false
     }
 
     # Since the save button was clicked, transition to the post view.
     if @state.saving
-      @transitionTo('post', postId: @state.post.id)
+      @history.pushState(null, 'post', postId: @state.post.id)
 
   onDeleteComplete: ->
-    @transitionTo('posts-index')
+    @history.pushState(null, 'posts-index')
 
   onCreateComplete: (res) ->
     id = res.body.id
     post = _.extend @state.post, res.body
 
     @setState {
-      savingDraft: false
       unsavedChanges: false
       post: post
     }
 
     # Since the save button was clicked, transition to the post view.
     if @state.saving
-      @transitionTo('post', postId: post.id)
+      @history.pushState(null, 'post', postId: post.id)
