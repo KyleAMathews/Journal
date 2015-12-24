@@ -107,7 +107,6 @@ exports.register = (server, options, next) ->
 
   {nodeInterface, nodeField} = nodeDefinitions(idFetcher, typeResolver)
 
-
   userType = new GraphQLObjectType({
     name: "User"
     description: "The logged-in user"
