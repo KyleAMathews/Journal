@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Router, Route } from 'react-router';
-import ReactRouterRelay from 'react-router-relay'
+import { browserHistory, Route, IndexRoute } from 'react-router';
+import {RelayRouter} from 'react-router-relay'
 import Relay from 'react-relay'
 
 Relay.injectNetworkLayer(
@@ -11,10 +11,11 @@ Relay.injectNetworkLayer(
 // Route components
 import App from './components/app'
 import PostsIndex from './components/posts_index'
-const Post = require('./components/Post')
-const PostEdit = require('./components/post_edit')
-const NewPost = require('./components/new_post')
-const Search = require('./components/Search')
+import Post from './components/Post'
+import PostEdit from './components/post_edit'
+import NewPost from './components/new_post'
+import Drafts from './components/DraftsIndex'
+import Search from './components/Search'
 
 const ViewerQueries = {
   viewer: () => Relay.QL`query { viewer }`
@@ -34,15 +35,18 @@ const postOnEnter = (nextState, transition) =>
     id: btoa('Post:' + nextState.params.post_id)
   };
 
-ReactDOM.render((
-  <Router createElement={ReactRouterRelay.createElement}>
-    <Route queries={ViewerQueries} component={App}>
-      <Route path='/' queries={ViewerQueries} component={PostsIndex} />
-      <Route path="/posts/new" queries={ViewerQueries} component={NewPost} />
-      <Route path='/posts/:post_id' queryParams={['id']} queries={NodeQuery} onEnter={postOnEnter} component={Post} />
-      <Route path='/posts/:post_id/edit' queryParams={['id']} queries={ViewerNodeQuery} onEnter={postOnEnter} component={PostEdit} />
-      <Route path="/drafts" queries={ViewerQueries} component={require('./components/DraftsIndex')} />
-      <Route path="/search" queries={ViewerQueries} component={Search} />
-    </Route>
-  </Router>
-), document.getElementById('mount-point'))
+const routes = (
+  <Route path="/" queries={ViewerQueries} component={App}>
+    <IndexRoute queries={ViewerQueries} component={PostsIndex} />
+    <Route path="/posts/new" queries={ViewerQueries} component={NewPost} />
+    <Route path='/posts/:post_id' queryParams={['id']} queries={NodeQuery} onEnter={postOnEnter} component={Post} />
+    <Route path='/posts/:post_id/edit' queryParams={['id']} queries={ViewerNodeQuery} onEnter={postOnEnter} component={PostEdit} />
+    <Route path="/drafts" queries={ViewerQueries} component={Drafts} />
+    <Route path="/search" queries={ViewerQueries} component={Search} />
+  </Route>
+)
+
+ReactDOM.render(
+  <RelayRouter history={browserHistory} routes={routes}/>,
+  document.getElementById('mount-point')
+)

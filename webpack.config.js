@@ -24,11 +24,11 @@ module.exports = {
   module: {
     loaders: [
       { test: /\.css$/, loaders: ['style', 'css']},
-      { test: /\.cjsx$/, loaders: ['babel?stage=0', 'coffee', 'cjsx']},
+      { test: /\.cjsx$/, loaders: ['babel', 'coffee', 'cjsx']},
       { test: /\.coffee$/, loader: 'coffee' },
       {
         test: /\.js/,
-        loaders: ['babel?stage=0'],
+        loaders: ['babel'],
         exclude: /node_modules/,
       }
     ]
