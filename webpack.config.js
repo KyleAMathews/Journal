@@ -4,7 +4,7 @@ var webpack = require('webpack');
 module.exports = {
   entry: [
     'webpack-hot-middleware/client',
-    './src/scripts/router'
+    './src/router'
   ],
   devtool: "eval",
   output: {

@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router'
+import { typography } from '../typography'
+const rhythm = typography.rhythm
 
 export default React.createClass({
   displayName: 'PostListItem',
@@ -8,7 +10,8 @@ export default React.createClass({
     return (
       <li
         style={{
-          listStyle: 'none'
+          listStyle: 'none',
+          marginBottom: rhythm(1/4)
         }}
       >
         <Link

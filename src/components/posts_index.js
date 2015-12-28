@@ -60,7 +60,7 @@ const PostsIndex = React.createClass({
              New post
            </Button>
          </Link>
-        <ul>
+        <ul style={{margin: 0}}>
           {posts}
         </ul>
       </div>

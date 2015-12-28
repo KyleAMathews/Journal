@@ -203,6 +203,8 @@ const Search = React.createClass({
 });
 
 export default Relay.createContainer(Search, {
+  // TODO Use directives + set variables to false to not do search when
+  // first loading page.
   initialVariables: {
     first: 20,
     query: null,

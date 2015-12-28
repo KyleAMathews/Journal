@@ -6,6 +6,9 @@ import {History} from 'react-router'
 import SaveMixin from '../mixins/save'
 import CreatePostMutation from '../mutations/CreatePost'
 
+// TODO, create new post as soon as tab out of the title
+// area.
+
 const PostCreate = React.createClass({
   displayName: 'NewPost',
 

@@ -8,8 +8,13 @@ export const typography = new Typography({
   baseFontSize: '20px',
   baseLineHeight: '26px',
   modularScales: [
-    'major third',
-    ['768px', 'minor third']
+    {
+      scale: 'major third'
+    },
+    {
+      maxWidth: '768px',
+      scale:  'minor third'
+    }
   ]
 })
 
