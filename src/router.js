@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { browserHistory, Route, IndexRoute } from 'react-router';
+import createBrowserHistory from 'history/lib/createBrowserHistory'
+import { Route, IndexRoute } from 'react-router';
 import {RelayRouter} from 'react-router-relay'
 import Relay from 'react-relay'
 
@@ -35,6 +36,7 @@ const postOnEnter = (nextState, transition) =>
     id: btoa('Post:' + nextState.params.post_id)
   };
 
+const history = createBrowserHistory()
 const routes = (
   <Route path="/" queries={ViewerQueries} component={App}>
     <IndexRoute queries={ViewerQueries} component={PostsIndex} />
@@ -47,6 +49,6 @@ const routes = (
 )
 
 ReactDOM.render(
-  <RelayRouter history={browserHistory} routes={routes}/>,
+  <RelayRouter history={history} routes={routes}/>,
   document.getElementById('mount-point')
 )
