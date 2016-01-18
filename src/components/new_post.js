@@ -39,7 +39,7 @@ const PostCreate = React.createClass({
     }
 
     console.log(this.state.post, this.props)
-    Relay.Store.update(new CreatePostMutation({
+    Relay.Store.commitUpdate(new CreatePostMutation({
       viewer: this.props.viewer,
       title: this.state.post.title,
       body: this.state.post.body,

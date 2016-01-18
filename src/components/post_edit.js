@@ -65,7 +65,7 @@ const PostEdit = React.createClass({
 
     if (this.state.saveFromDraft === true) {
       console.log("saving post from draft to published");
-      Relay.Store.update(new SavePostMutation({
+      Relay.Store.commitUpdate(new SavePostMutation({
         post: this.props.node,
         viewer: this.props.viewer,
         id: this.props.node.id,
@@ -75,7 +75,7 @@ const PostEdit = React.createClass({
     }
     else {
       console.log("editing saving");
-      Relay.Store.update(new EditPostMutation({
+      Relay.Store.commitUpdate(new EditPostMutation({
         viewer: this.props.viewer,
         post: this.props.node,
         id: this.props.node.id,
