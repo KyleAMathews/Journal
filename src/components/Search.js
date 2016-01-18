@@ -8,6 +8,7 @@ import Messages from 'react-message'
 import marked from 'marked'
 import prettyMs from 'pretty-ms'
 import gray from 'gray-percentage'
+import access from 'safe-access'
 
 import { typography } from '../typography'
 const rhythm = typography.rhythm
@@ -30,9 +31,18 @@ const Search = React.createClass({
 
   render() {
     const {input, button} = require('react-simple-form-inline-styles')(rhythm);
-    //if (this.props.viewer.search && this.props.viewer.search.pageInfo.hasNextPage) {
-      //const loadMore = <button>Load more</button;
-    //}
+
+    console.log(this.props)
+    let loadMore
+    if (access(this, 'props.viewer.search.pageInfo.hasNextPage')) {
+      loadMore = (
+        <button
+          onClick={this.searchMore}
+        >
+          Load more
+        </button>
+      )
+    }
 
     return (
       <div className="search">
@@ -58,11 +68,7 @@ const Search = React.createClass({
         </button>
         {this.meta()}
         <div>{this.results()}</div>
-        <button
-          onClick={this.searchMore}
-        >
-          Load more
-        </button>
+        {loadMore}
       </div>
     )
   },
@@ -194,6 +200,9 @@ export default Relay.createContainer(Search, {
           search(first: $first, query: $query) {
             took
             total
+            pageInfo {
+              hasNextPage
+            }
             edges {
               node {
                 id

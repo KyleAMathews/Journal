@@ -56,6 +56,7 @@
     "react-spinkit": "^1.0.2",
     "react-textarea-autosize": "^3.3.0",
     "react-transform-catch-errors": "^1.0.1",
+    "safe-access": "^0.1.0",
     "style-loader": "^0.13.0",
     "typography": "^0.6.2",
     "underscore": "^1.8.2",

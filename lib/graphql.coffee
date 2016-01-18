@@ -144,6 +144,7 @@ exports.register = (server, options, next) ->
                 reject err
               else
                 resolve assign(
+                  {},
                   connectionFromArray(hits, args),
                   {
                     total: hits.length
