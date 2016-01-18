@@ -20,6 +20,10 @@ const Post = React.createClass({
     History,
   ],
 
+  componentDidMount() {
+    window.scroll(0,0)
+  },
+
   render() {
     console.log(this.props)
     //if @state.errors.length > 0
