@@ -8,7 +8,7 @@ const rhythm = typography.rhythm
 import Relay from 'react-relay'
 
 class App extends Component {
-  static displayName = 'App'
+  static displayName = 'App';
 
   render() {
     const headerLinkStyles = {
@@ -65,7 +65,7 @@ class App extends Component {
       </div>
     )
   }
-}
+};
 
 export default Relay.createContainer(App, {
   fragments: {
