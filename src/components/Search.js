@@ -24,34 +24,9 @@ const Search = React.createClass({
     }
   },
 
-  //componentDidMount() {
-    //## Query set and no results loaded from cache.
-    //#if @state.query isnt "" and @state.hits.length is 0
-      //#@search()
-
-    //## Get width of main-text area so chart is right width.
-    //#@setState width: Math.floor(@getDOMNode().offsetWidth/25) * 25
-    //#@createCanvas()
-
-    //@refs.query.getDOMNode().focus()
-
-    //## Change in the search store, probably means our delivery has arrived!
-    //#SearchStore.on 'change', 'search', =>
-      //#@search()
-
-  //# URL changed so we need to update our internal state.
-  //#componentWillReceiveProps: (newProps) ->
-    //#if newProps.query.q isnt @state.query or newProps.query.sort isnt @state.sort
-      //#@search(newProps.query.q, newProps.query.sort)
-
-  //## Redraw our chart when facets data change.
-  //#componentDidUpdate: (prevProps, prevState) ->
-    //#if prevState.facets isnt @state.facets
-      //#@createCanvas()
-
-  //#componentWillUnmount: ->
-    //#eventBus.off()
-    //#SearchStore.releaseGroup('search')
+  componentDidMount() {
+    this.refs.query.focus()
+  },
 
   render() {
     const {input, button} = require('react-simple-form-inline-styles')(rhythm);
