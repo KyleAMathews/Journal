@@ -37,24 +37,6 @@ export default class SavePostMutation extends Relay.Mutation {
       fieldIDs: {
         viewer: this.props.viewer.id,
       }
-    },
-    {
-      type: 'RANGE_DELETE',
-      parentName: 'viewer',
-      parentId: this.props.viewer.id,
-      connectionname: 'allDrafts',
-      deletedIDFieldName: 'postId',
-      pathToConnection: ['viewer', 'allDrafts']
-    },
-    {
-      type: 'RANGE_ADD',
-      parentName: 'viewer',
-      parentid: this.props.viewer.id,
-      connectionName: 'allPosts',
-      edgename: 'postEdge',
-      rangeBehaviors: {
-        '': 'prepend',
-      },
     }];
   }
   getVariables() {

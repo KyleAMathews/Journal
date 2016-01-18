@@ -8,13 +8,11 @@ import SaveMixin from '../mixins/save'
 import EditPostMutation from '../mutations/EditPost'
 import SavePostMutation from '../mutations/SavePost'
 
-// TODO simplify things.
-// Have a SavePostMutation that just updates title/body/updated_at
-// as well as a PublishPostMutation which changes draft from true
-// to false.
+// TODO simplify things.  Have a SavePostMutation that just updates
+// title/body/updated_at as well as a PublishPostMutation which changes draft
+// from true to false.
 //
-// Also need a DeletePostMutation and UndeletePostMutation at some
-// point.
+// Also need a DeletePostMutation and UndeletePostMutation at some point.
 
 const PostEdit = React.createClass({
   displayName: 'PostEdit',
