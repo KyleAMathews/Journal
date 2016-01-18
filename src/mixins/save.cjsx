@@ -1,5 +1,6 @@
 #PostActions = require '../actions/PostActions'
 React = require 'react'
+ReactDOM = require 'react-dom'
 _ = require 'underscore'
 Messages = require 'react-message'
 Textarea = require 'react-textarea-autosize'
@@ -144,7 +145,7 @@ module.exports =
     @debouncedSaveDraft()
 
   scrollWindow: ->
-    textarea = React.findDOMNode(@refs.markdown).querySelector('textarea')
+    textarea = ReactDOM.findDOMNode(@refs.markdown).querySelector('textarea')
 
     if (textarea.value.length - textarea.selectionStart) < 200
       toBottomWindow = -> window.scrollY + window.innerHeight
