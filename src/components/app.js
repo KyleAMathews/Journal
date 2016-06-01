@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router'
 import Headroom from 'react-headroom'
 import gray from 'gray-percentage'
-import {Container} from 'react-responsive-grid'
+import { Container } from 'react-responsive-grid'
 import { typography } from '../typography'
 const rhythm = typography.rhythm
 import Relay from 'react-relay'
@@ -10,11 +10,11 @@ import Relay from 'react-relay'
 class App extends Component {
   static displayName = 'App';
 
-  render() {
+  render () {
     const headerLinkStyles = {
       color: gray(90),
       marginRight: rhythm(1),
-      textDecoration: 'none'
+      textDecoration: 'none',
     }
 
     return (
@@ -23,14 +23,14 @@ class App extends Component {
           style={{
             background: gray(20, 'warm'),
             color: gray(90),
-            fontFamily: typography.options.headerFontFamily
+            fontFamily: typography.options.headerFontFamily,
           }}
         >
           <Container
             style={{
-              maxWidth: 600,
+              maxWidth: 700,
               padding: rhythm(1/2),
-              paddingLeft: rhythm(3/4)
+              paddingLeft: rhythm(3/4),
             }}
           >
             <Link
@@ -55,9 +55,9 @@ class App extends Component {
         </Headroom>
         <Container
           style={{
-            maxWidth: 600,
+            maxWidth: 700,
             padding: rhythm(1),
-            paddingTop: rhythm(1.75)
+            paddingTop: rhythm(1.75),
           }}
         >
           {this.props.children}
@@ -65,7 +65,7 @@ class App extends Component {
       </div>
     )
   }
-};
+}
 
 export default Relay.createContainer(App, {
   fragments: {
@@ -73,6 +73,6 @@ export default Relay.createContainer(App, {
       fragment on User {
         name
       }
-    `
-  }
-});
+    `,
+  },
+})

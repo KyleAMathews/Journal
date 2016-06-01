@@ -1,7 +1,7 @@
 import React from 'react'
 import Relay from 'react-relay'
 import _ from 'underscore'
-import {History} from 'react-router'
+import { History } from 'react-router'
 
 import SaveMixin from '../mixins/save'
 import CreatePostMutation from '../mutations/CreatePost'
@@ -14,28 +14,28 @@ const PostCreate = React.createClass({
 
   mixins: [
     SaveMixin,
-    History
+    History,
   ],
 
-  getInitialState() {
+  getInitialState () {
     return {
       post: {
         title: '',
         body: '',
         created_at: new Date().toJSON(),
-      }
+      },
     }
   },
 
-  onChange(cb) {
+  onChange (cb) {
     let onSuccess = (response) => {
       console.log('new thing saved successfully', response)
       this.history.pushState(null, `/posts/${response.createPost.draftEdge.node.post_id}/edit`)
     }
     let onFailure = (transaction) => {
       let error = transaction.getError()
-      console.log(transaction);
-      console.log(error);
+      console.log(transaction)
+      console.log(error)
     }
 
     console.log(this.state.post, this.props)
@@ -44,13 +44,13 @@ const PostCreate = React.createClass({
       title: this.state.post.title,
       body: this.state.post.body,
       created_at: this.state.post.created_at,
-    }), {onFailure, onSuccess})
+    }), { onFailure, onSuccess })
   },
 
-  componentDidMount() {
+  componentDidMount () {
     this.refs.title.focus()
-    console.log(this.props);
-  }
+    console.log(this.props)
+  },
 })
 
 export default Relay.createContainer(PostCreate, {
@@ -68,6 +68,6 @@ export default Relay.createContainer(PostCreate, {
           }
         }
       }
-    `
-  }
-});
+    `,
+  },
+})

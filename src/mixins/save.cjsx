@@ -3,7 +3,7 @@ React = require 'react'
 ReactDOM = require 'react-dom'
 _ = require 'underscore'
 Messages = require 'react-message'
-Textarea = require 'react-textarea-autosize'
+Textarea = require('react-textarea-autosize').default
 MarkdownTextarea = require 'react-markdown-textarea'
 moment = require 'moment'
 Spinner = require 'react-spinkit'
@@ -37,7 +37,7 @@ module.exports =
       unsubscribeFunc()
 
   render: ->
-    console.log @state
+    console.log 'inside save mixin', @state
     {input, button} = require('react-simple-form-inline-styles')(rhythm)
     unless @state.post?
       return (

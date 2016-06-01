@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import moment from 'moment'
 import { Link } from 'react-router'
 import { typography } from '../typography'
@@ -8,36 +8,37 @@ import Relay from 'react-relay'
 import Button from './Button'
 import PostListItem from './PostListItem'
 
-var loading = false
+let loading = false
 
 const PostsIndex = React.createClass({
   displayName: 'PostsIndex',
 
-  getInitialState() {
+  getInitialState () {
     return {
-      posts: []
+      posts: [],
     }
   },
 
-  componentDidMount() {
+  componentDidMount () {
     window.addEventListener('scroll', this.distanceToBottom)
   },
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     window.removeEventListener('scroll', this.distanceToBottom)
   },
 
-  render() {
-    var months = {};
-    var posts = [];
-    this.props.viewer.allPosts.edges.map(function(node) {
-      let post = node.node;
-      let month = moment(post.created_at).format('MMMM YYYY');
-      if(!months[month]) {
-        posts.push (
+  render () {
+    const months = {}
+    let posts = []
+    // TODO refactor os map returns post instead of pushing onto array.
+    this.props.viewer.allPosts.edges.map(function (node) {
+      const post = node.node
+      let month = moment(post.created_at).format('MMMM YYYY')
+      if (!months[month]) {
+        posts.push(
           <h2
             style={{
-              marginTop: rhythm(1)
+              marginTop: rhythm(1),
             }}
             key={month}
           >
@@ -47,47 +48,47 @@ const PostsIndex = React.createClass({
       }
       months[month] = true
 
-      posts.push (
-        <PostListItem key={node.node.post_id} post={node.node}></PostListItem>
+      posts.push(
+        <PostListItem key={node.node.post_id} post={node.node} />
       )
       return
     })
 
     return (
       <div>
-         <Link to='/posts/new'>
-           <Button {...this.props}>
-             New post
-           </Button>
-         </Link>
-        <ul style={{margin: 0}}>
+        <Link to="/posts/new">
+          <Button {...this.props}>
+            New post
+          </Button>
+        </Link>
+        <ul style={{ margin: 0 }}>
           {posts}
         </ul>
       </div>
     )
   },
 
-  distanceToBottom() {
-    let body = document.body,
-        html = document.documentElement;
+  distanceToBottom () {
+    const body = document.body
+    const html = document.documentElement
 
-    let documentHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight,
-                          html.scrollHeight, html.offsetHeight);
+    const documentHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight,
+                          html.scrollHeight, html.offsetHeight)
 
-    let windowHeight = window.innerHeight;
-    let scrollY = window.scrollY;
+    const windowHeight = window.innerHeight
+    const scrollY = window.scrollY
 
-    let distance = documentHeight - windowHeight - scrollY
+    const distance = documentHeight - windowHeight - scrollY
 
     if (distance < 300 && loading === false) {
-      loading = true;
+      loading = true
       this.props.relay.setVariables({
-        first: this.props.relay.variables.first + 50
-      }, function(state) {
+        first: this.props.relay.variables.first + 50,
+      }, (state) => {
         if (state.done) loading = false
       })
     }
-  }
+  },
 })
 
 export default Relay.createContainer(PostsIndex, {
@@ -110,6 +111,6 @@ export default Relay.createContainer(PostsIndex, {
           }
         }
       }
-    `
-  }
-});
+    `,
+  },
+})

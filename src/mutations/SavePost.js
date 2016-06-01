@@ -16,10 +16,10 @@ export default class SavePostMutation extends Relay.Mutation {
       }
     `,
   };
-  getMutation() {
-    return Relay.QL`mutation{savePost}`;
+  getMutation () {
+    return Relay.QL`mutation{savePost}`
   }
-  getFatQuery() {
+  getFatQuery () {
     return Relay.QL`
       fragment on SavePostPayload {
         postEdge
@@ -29,21 +29,21 @@ export default class SavePostMutation extends Relay.Mutation {
           allDrafts
         }
       }
-    `;
+    `
   }
-  getConfigs() {
+  getConfigs () {
     return [{
       type: 'FIELDS_CHANGE',
       fieldIDs: {
         viewer: this.props.viewer.id,
-      }
-    }];
+      },
+    }]
   }
-  getVariables() {
+  getVariables () {
     return {
       id: this.props.id,
       title: this.props.title,
       body: this.props.body,
-    };
+    }
   }
 }

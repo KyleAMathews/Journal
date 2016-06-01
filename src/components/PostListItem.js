@@ -6,23 +6,23 @@ const rhythm = typography.rhythm
 export default React.createClass({
   displayName: 'PostListItem',
 
-  render() {
+  render () {
     return (
       <li
         style={{
           listStyle: 'none',
-          marginBottom: rhythm(1/4)
+          marginBottom: rhythm(1/4),
         }}
       >
         <Link
           to={`/posts/${this.props.post.post_id}`}
           style={{
-            textDecoration: 'none'
+            textDecoration: 'none',
           }}
         >
          {this.props.post.title}
         </Link>
       </li>
     )
-  }
+  },
 })

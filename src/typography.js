@@ -9,13 +9,13 @@ export const typography = new Typography({
   baseLineHeight: '26px',
   modularScales: [
     {
-      scale: 'major third'
+      scale: 'major third',
     },
     {
       maxWidth: '768px',
-      scale:  'minor third'
-    }
-  ]
+      scale: 'minor third',
+    },
+  ],
 })
 
 typography.injectStyles()

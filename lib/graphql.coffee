@@ -513,9 +513,21 @@ exports.register = (server, options, next) ->
       handler: (request, reply) ->
         console.log "graphql query"
         console.log request.payload
-        graphql(schema, request.payload.query, {}, request.payload.variables, request.payload.operationName)
-          .then (result) ->
+        graphql(
+          schema,
+          request.payload.query,
+          {},
+          null,
+          request.payload.variables,
+          request.payload.operationName
+        )
+          .then((result) ->
+            console.log 'result', result
             reply result
+          )
+          .catch((error) ->
+            console.log error
+          )
 
   next()
 

@@ -8,10 +8,10 @@ export default class CreatePostMutation extends Relay.Mutation {
       }
     `,
   };
-  getMutation() {
-    return Relay.QL`mutation{createPost}`;
+  getMutation () {
+    return Relay.QL`mutation{createPost}`
   }
-  getFatQuery() {
+  getFatQuery () {
     return Relay.QL`
       fragment on CreatePostPayload {
         draftEdge
@@ -20,9 +20,9 @@ export default class CreatePostMutation extends Relay.Mutation {
           allPosts
         }
       }
-    `;
+    `
   }
-  getConfigs() {
+  getConfigs () {
     return [{
       type: 'RANGE_ADD',
       parentName: 'viewer',
@@ -32,13 +32,13 @@ export default class CreatePostMutation extends Relay.Mutation {
       rangeBehaviors: {
         '': 'prepend',
       },
-    }];
+    }]
   }
-  getVariables() {
+  getVariables () {
     return {
       title: this.props.title,
       body: this.props.body,
       created_at: this.props.created_at,
-    };
+    }
   }
 }

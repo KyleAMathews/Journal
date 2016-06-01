@@ -10,17 +10,17 @@ import PostListItem from './PostListItem'
 const DraftsIndex = React.createClass({
   displayName: 'DraftsIndex',
 
-  render() {
-    var months = {};
-    var posts = [];
-    this.props.viewer.allDrafts.edges.map(function(node) {
-      let post = node.node;
-      let month = moment(post.created_at).format('MMMM YYYY');
-      if(!months[month]) {
-        posts.push (
+  render () {
+    var months = {}
+    var posts = []
+    this.props.viewer.allDrafts.edges.map(function (node) {
+      let post = node.node
+      let month = moment(post.created_at).format('MMMM YYYY')
+      if (!months[month]) {
+        posts.push(
           <h2
             style={{
-              marginTop: rhythm(1)
+              marginTop: rhythm(1),
             }}
             key={month}
           >
@@ -30,7 +30,7 @@ const DraftsIndex = React.createClass({
       }
       months[month] = true
 
-      posts.push (
+      posts.push(
         <PostListItem key={node.node.post_id} post={node.node}></PostListItem>
       )
       return
@@ -44,7 +44,7 @@ const DraftsIndex = React.createClass({
         </ul>
       </div>
     )
-  }
+  },
 })
 
 export default Relay.createContainer(DraftsIndex, {
@@ -67,6 +67,6 @@ export default Relay.createContainer(DraftsIndex, {
           }
         }
       }
-    `
-  }
-});
+    `,
+  },
+})

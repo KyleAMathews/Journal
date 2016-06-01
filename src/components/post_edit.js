@@ -2,8 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Relay from 'react-relay'
 import _ from 'underscore'
-import {History} from 'react-router'
-
 import SaveMixin from '../mixins/save'
 import EditPostMutation from '../mutations/EditPost'
 import SavePostMutation from '../mutations/SavePost'
@@ -17,69 +15,68 @@ import SavePostMutation from '../mutations/SavePost'
 const PostEdit = React.createClass({
   displayName: 'PostEdit',
 
-  getInitialState() {
+  getInitialState () {
     return {
       post: {
         title: this.props.node.title,
         body: this.props.node.body,
         created_at: this.props.node.created_at,
-        draft: this.props.node.draft
-      }
+        draft: this.props.node.draft,
+      },
     }
   },
 
   mixins: [
-    History,
-    SaveMixin
+    SaveMixin,
   ],
 
-  componentDidMount() {
+  componentDidMount () {
     const element = ReactDOM.findDOMNode(this.refs.markdown.refs.textarea)
     element.focus()
-    element.setSelectionRange(element.value.length,element.value.length)
+    element.setSelectionRange(element.value.length, element.value.length)
   },
 
-  onChange(cb) {
+  onChange (cb) {
     // Back out if node isn't mounted.
     if (!this.isMounted()) { return }
 
     this.setState({
       unsavedChanges: true,
-      errors: []
+      errors: [],
     })
 
     // Success/Failure handlers
     let onSuccess = (response) => {
-      this.setState({unsavedChanges: false})
+      this.setState({ unsavedChanges: false })
       console.log(response)
       if (cb) { cb() }
     }
     let onFailure = (transaction) => {
       let error = transaction.getError()
       this.setState({
-        errors: [error.message]
+        errors: [error.message],
       })
     }
 
     if (this.state.saveFromDraft === true) {
-      console.log("saving post from draft to published");
+      console.log('saving post from draft to published')
       Relay.Store.commitUpdate(new SavePostMutation({
         post: this.props.node,
         viewer: this.props.viewer,
         id: this.props.node.id,
         title: this.state.post.title,
         body: this.state.post.body,
-      }), {onFailure, onSuccess})
+      }), { onFailure, onSuccess })
     }
     else {
-      console.log("editing saving");
+      console.log('editing saving')
       Relay.Store.commitUpdate(new EditPostMutation({
         viewer: this.props.viewer,
         post: this.props.node,
         id: this.props.node.id,
         title: this.state.post.title,
         body: this.state.post.body,
-      }), {onFailure, onSuccess})
+      }), { onFailure, onSuccess })
     }
   },
 })
@@ -94,7 +91,7 @@ export default Relay.createContainer(PostEdit, {
     return {
       ...prevVariables,
       id: btoa('Post:' + prevVariables.post_id),
-      post_id: parseInt(prevVariables.post_id, 10)
+      post_id: parseInt(prevVariables.post_id, 10),
     }
   },
 
@@ -139,23 +136,23 @@ export default Relay.createContainer(PostEdit, {
         }
       }
     `,
-  }
-});
-        //allDrafts(first:5) {
-          //edges {
-            //node {
-              //id
-              //post_id
-              //title
-            //}
-          //}
-        //}
-        //allPosts(first:5) {
-          //edges {
-            //node {
-              //id
-              //post_id
-              //title
-            //}
-          //}
-        //}
+  },
+})
+        // allDrafts(first:5) {
+          // edges {
+            // node {
+              // id
+              // post_id
+              // title
+            // }
+          // }
+        // }
+        // allPosts(first:5) {
+          // edges {
+            // node {
+              // id
+              // post_id
+              // title
+            // }
+          // }
+        // }

@@ -10,10 +10,10 @@ export default class EditPostMutation extends Relay.Mutation {
       }
     `,
   };
-  getMutation() {
-    return Relay.QL`mutation{editPost}`;
+  getMutation () {
+    return Relay.QL`mutation{editPost}`
   }
-  getFatQuery() {
+  getFatQuery () {
     return Relay.QL`
       fragment on EditPostPayload {
         post {
@@ -22,22 +22,22 @@ export default class EditPostMutation extends Relay.Mutation {
           updated_at
         }
       }
-    `;
+    `
   }
-  getConfigs() {
+  getConfigs () {
     return [{
       type: 'FIELDS_CHANGE',
       fieldIDs: {
         post: this.props.id,
-      }
-    }];
+      },
+    }]
   }
-  getVariables() {
+  getVariables () {
     return {
       id: this.props.id,
       title: this.props.title,
       body: this.props.body,
-    };
+    }
   }
 }
 

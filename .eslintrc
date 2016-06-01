@@ -1,21 +1,24 @@
 {
-  "ecmaFeatures": {
-    "jsx": true,
-    "modules": true
-  },
-  "env": {
-    "browser": true,
-    "node": true
-  },
   "parser": "babel-eslint",
+  "extends": [
+    "eslint-config-airbnb",
+  ],
   "rules": {
-    "quotes": [2, "single"],
-    "strict": [2, "never"],
-    "react/jsx-uses-react": 2,
-    "react/jsx-uses-vars": 2,
-    "react/react-in-jsx-scope": 2
+    "indent": [2, 2, {"SwitchCase": 1}],
+    "no-console": [0],
+    "func-names": [0],
+    "semi": [2, "never"],
+    "no-extra-semi": [2],
+    "space-before-function-paren": [2, "always"],
+    "no-else-return": [0],
+    "space-infix-ops": [0],
+    "react/prefer-es6-class": [0],
+    "react/prefer-stateless-function": [0],
+    "no-underscore-dangle": ["error", { "allow": ["_config"] }],
+    "import/no-unresolved": [0],
+    "global-require": [0]
   },
-  "plugins": [
-    "react"
-  ]
+  "globals": {
+    "__PREFIX_LINKS__": true,
+  },
 }
