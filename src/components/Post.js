@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router'
+import { withRouter, Link } from 'react-router'
 import moment from 'moment'
 import gray from 'gray-percentage'
 import Relay from 'react-relay'
@@ -17,7 +17,6 @@ const Post = React.createClass({
   },
 
   render () {
-    console.log(this.props)
     // if @state.errors.length > 0
       // <Messages type="errors" messages={@state.errors} />
     // else if not @state.post?.id
@@ -74,11 +73,11 @@ const Post = React.createClass({
         // window.open e.target.href, '_blank'
 
   handleDblClick () {
-    this.history.pushState(null, `/posts/${this.props.node.post_id}/edit`)
+    this.props.router.push( `/posts/${this.props.node.post_id}/edit`)
   },
 })
 
-export default Relay.createContainer(Post, {
+export default Relay.createContainer(withRouter(Post), {
   initialVariables: {
     post_id: null,
     id: btoa('Post:1'),

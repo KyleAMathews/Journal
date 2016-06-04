@@ -31,7 +31,6 @@ const ViewerNodeQuery = {
 }
 
 const preparePostParams = (params, { location }) => {
-  console.log('nextState', params, location)
   return {
     ...params,
     id: btoa(`Post:${params.post_id}`),

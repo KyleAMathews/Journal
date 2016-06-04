@@ -1,20 +1,23 @@
 import React from 'react'
 import Relay from 'react-relay'
-import _ from 'underscore'
-import { History } from 'react-router'
+import { EditorState } from 'draft-js'
+import { withRouter } from 'react-router'
 
 import SaveMixin from '../mixins/save'
 import CreatePostMutation from '../mutations/CreatePost'
 
 // TODO, create new post as soon as tab out of the title
 // area.
+//
+// Actually, just get rid of this and create
+// a new post right off and navigate there
+// from the home screen.
 
 const PostCreate = React.createClass({
   displayName: 'NewPost',
 
   mixins: [
     SaveMixin,
-    History,
   ],
 
   getInitialState () {
@@ -22,6 +25,7 @@ const PostCreate = React.createClass({
       post: {
         title: '',
         body: '',
+        rteBody: EditorState.createEmpty(),
         created_at: new Date().toJSON(),
       },
     }
@@ -30,7 +34,7 @@ const PostCreate = React.createClass({
   onChange (cb) {
     let onSuccess = (response) => {
       console.log('new thing saved successfully', response)
-      this.history.pushState(null, `/posts/${response.createPost.draftEdge.node.post_id}/edit`)
+      this.props.router.push( `/posts/${response.createPost.draftEdge.node.post_id}/edit`)
     }
     let onFailure = (transaction) => {
       let error = transaction.getError()
@@ -53,7 +57,7 @@ const PostCreate = React.createClass({
   },
 })
 
-export default Relay.createContainer(PostCreate, {
+export default Relay.createContainer(withRouter(PostCreate), {
   fragments: {
     viewer: () => Relay.QL`
       fragment on User {

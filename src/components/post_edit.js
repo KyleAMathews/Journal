@@ -1,7 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Relay from 'react-relay'
-import _ from 'underscore'
+//import MarkupEditor from 'react-markup-editor'
+import { EditorState, ContentState } from 'draft-js'
+import { withRouter } from 'react-router'
+
 import SaveMixin from '../mixins/save'
 import EditPostMutation from '../mutations/EditPost'
 import SavePostMutation from '../mutations/SavePost'
@@ -15,25 +18,27 @@ import SavePostMutation from '../mutations/SavePost'
 const PostEdit = React.createClass({
   displayName: 'PostEdit',
 
+  mixins: [
+    SaveMixin,
+  ],
+
   getInitialState () {
     return {
       post: {
         title: this.props.node.title,
         body: this.props.node.body,
+        //rteBody: RichTextEditor.createValueFromString(this.props.node.body, 'markdown'),
+        rteBody: EditorState.createWithContent(ContentState.createFromText(this.props.node.body)),
         created_at: this.props.node.created_at,
         draft: this.props.node.draft,
       },
     }
   },
 
-  mixins: [
-    SaveMixin,
-  ],
-
   componentDidMount () {
-    const element = ReactDOM.findDOMNode(this.refs.markdown.refs.textarea)
-    element.focus()
-    element.setSelectionRange(element.value.length, element.value.length)
+    //const element = ReactDOM.findDOMNode(this.refs.markdown.refs.textarea)
+    //element.focus()
+    //element.setSelectionRange(element.value.length, element.value.length)
   },
 
   onChange (cb) {
@@ -81,7 +86,7 @@ const PostEdit = React.createClass({
   },
 })
 
-export default Relay.createContainer(PostEdit, {
+export default Relay.createContainer(withRouter(PostEdit), {
   initialVariables: {
     post_id: null,
     id: btoa('Post:' + 1),

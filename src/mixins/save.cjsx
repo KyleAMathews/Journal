@@ -4,11 +4,18 @@ ReactDOM = require 'react-dom'
 _ = require 'underscore'
 Messages = require 'react-message'
 Textarea = require('react-textarea-autosize').default
-MarkdownTextarea = require 'react-markdown-textarea'
+#MarkdownTextarea = require 'react-markdown-textarea'
 moment = require 'moment'
 Spinner = require 'react-spinkit'
 gray = require 'gray-percentage'
 raf = require 'raf'
+#RichTextEditor = require('react-rte').default
+#MarkupEditor = require('react-markup-editor')
+{Editor, EditorState, ContentState} = require 'draft-js'
+assign = require 'object-assign'
+
+Button = require '../components/Button'
+
 {typography} = require '../typography'
 rhythm = typography.rhythm
 
@@ -37,7 +44,6 @@ module.exports =
       unsubscribeFunc()
 
   render: ->
-    console.log 'inside save mixin', @state
     {input, button} = require('react-simple-form-inline-styles')(rhythm)
     unless @state.post?
       return (
@@ -55,59 +61,34 @@ module.exports =
             autosize
             value={@state.post.title}
             onChange={@handleTitleChange}
-            style={_.extend({}, input, {borderColor: 'transparent'})}
+            style={
+              _.extend(
+                {},
+                input,
+                {
+                  borderColor: 'transparent'
+                  marginBottom: 0
+                }
+              )
+            }
           />
         </h1>
-        <MarkdownTextarea
-          placeholder="The body of your post"
-          rows=4
+        <div
+          style={_.extend({}, input)}
           ref="markdown"
-          deleteButton=true
-          onDelete={@handleDelete}
-          saving={@state.saving}
-          onChange={@handleBodyChange}
-          onSave={@handleSave}
-          initialValue={@state.post.body}
-          spinner={Spinner}
-          textareaStyle={_.extend(input, marginBottom: 0)}
-          buttonStyle={_.extend({}, button, {
-            float: 'left'
-            marginTop: rhythm(1)
-            padding: "#{rhythm(1/3)} #{rhythm(2/3)}"
-          })}
-          deleteButtonStyle={_.extend({}, button, {
-            float: 'right'
-            marginTop: rhythm(1)
-            padding: "#{rhythm(1/3)} #{rhythm(2/3)}"
-          })}
-          navTabStyle={{
-            fontSize: '15px'
-            marginBottom: rhythm(1/4)
-          }}
-          tabStyle={{
-            borderRadius: 3
-            cursor: 'pointer'
-            display: 'inline-block'
-            listStyle: 'none'
-            marginRight: rhythm(1/2)
-            padding: "#{rhythm(1/4)} #{rhythm(1/2)}"
-          }}
-          tabActiveStyle={{
-            background: gray(95, 'warm')
-            border: "1px solid #{gray(75, 'warm')}"
-            color: gray(35, 'warm')
-            cursor: 'default'
-            padding: "calc(#{rhythm(1/4)} - 1px) #{rhythm(1/2)}"
-          }}
-          previewStyle={{
-            padding: rhythm(3/4)
-          }}
-          spinnerOptions={
-            fadeIn: true,
-            spinnerName: "wave"
-            className: "react-markdown-textarea__spinner"
-          }
-        />
+        >
+          <Editor
+            editorState={@state.post.rteBody}
+            stripPastedStyles
+            spellCheck
+            onChange={@rteOnChange}
+          />
+        </div>
+        <Button
+          onClick={@handleSave}
+        >
+          Save
+        </Button>
         <div
           style={{
             bottom: '10px'
@@ -123,6 +104,20 @@ module.exports =
           }
         </div>
       </div>
+
+  rteOnChange: (value) ->
+    @setState(
+      post: assign(
+        {},
+        @state.post,
+        {
+          rteBody: value
+          body: value.getCurrentContent().getPlainText()
+        }
+      )
+    )
+    @debouncedSaveDraft()
+    raf(=> @scrollWindow())
 
   handleTitleChange: (e) ->
     post = _.extend {}, @state.post, title: e.target.value
@@ -145,14 +140,13 @@ module.exports =
     @debouncedSaveDraft()
 
   scrollWindow: ->
-    textarea = ReactDOM.findDOMNode(@refs.markdown).querySelector('textarea')
+    textarea = ReactDOM.findDOMNode(@refs.markdown)
 
-    if (textarea.value.length - textarea.selectionStart) < 200
-      toBottomWindow = -> window.scrollY + window.innerHeight
-      toBottomElement = -> textarea.offsetHeight + textarea.offsetTop
-      distanceToBottom = toBottomWindow() - toBottomElement()
-      if -100 < distanceToBottom < 100
-        window.scrollTo(0, window.scrollY + 200)
+    toBottomWindow = -> window.scrollY + window.innerHeight
+    toBottomElement = -> textarea.offsetHeight + textarea.offsetTop
+    distanceToBottom = toBottomWindow() - toBottomElement()
+    if -100 < distanceToBottom < 100
+      window.scrollTo(0, window.scrollY + 200)
 
   saveDraft: ->
     console.log @state
@@ -179,7 +173,7 @@ module.exports =
       @onChange =>
         console.log "SAVED :)"
         console.log @
-        @history.pushState(null, "/posts/#{@props.node.post_id}")
+        @props.router.push("/posts/#{@props.node.post_id}")
     )
 
     #post = _.extend(
