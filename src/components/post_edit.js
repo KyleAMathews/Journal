@@ -29,6 +29,7 @@ const PostEdit = React.createClass({
         body: this.props.node.body,
         //rteBody: RichTextEditor.createValueFromString(this.props.node.body, 'markdown'),
         rteBody: EditorState.createWithContent(ContentState.createFromText(this.props.node.body)),
+        rteTitle: EditorState.createWithContent(ContentState.createFromText(this.props.node.title)),
         created_at: this.props.node.created_at,
         draft: this.props.node.draft,
       },
@@ -71,6 +72,7 @@ const PostEdit = React.createClass({
         id: this.props.node.id,
         title: this.state.post.title,
         body: this.state.post.body,
+        created_at: this.state.post.created_at
       }), { onFailure, onSuccess })
     }
     else {
@@ -81,6 +83,7 @@ const PostEdit = React.createClass({
         id: this.props.node.id,
         title: this.state.post.title,
         body: this.state.post.body,
+        created_at: this.state.post.created_at
       }), { onFailure, onSuccess })
     }
   },

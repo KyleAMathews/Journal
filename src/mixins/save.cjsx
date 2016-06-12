@@ -12,7 +12,11 @@ raf = require 'raf'
 #RichTextEditor = require('react-rte').default
 #MarkupEditor = require('react-markup-editor')
 {Editor, EditorState, ContentState} = require 'draft-js'
+require('draft-js/dist/Draft.css')
 assign = require 'object-assign'
+Edit = require 'react-icons/lib/md/edit'
+DatePicker = require 'react-datepicker'
+require('react-datepicker/dist/react-datepicker.css')
 
 Button = require '../components/Button'
 
@@ -45,6 +49,29 @@ module.exports =
 
   render: ->
     {input, button} = require('react-simple-form-inline-styles')(rhythm)
+    if @state.editDate
+      date = (
+        <DatePicker
+          selected={moment(this.state.post.created_at)}
+          onChange={@handleDateChange} />
+      )
+    else
+      date = (
+        <div
+          style={{
+            color: gray(75),
+            fontSize: '80%',
+            cursor: 'pointer'
+          }}
+          onClick={() => @setState({editDate: true})}
+        >
+          {moment(this.state.post.created_at).format('dddd, MMMM Do YYYY, h:mma')}
+          {' '}<Edit style={{
+            position: 'relative'
+            top: "-1px"
+          }}/>
+        </div>
+      )
     unless @state.post?
       return (
         <Spinner spinnerName="wave" fadeIn cssRequire />
@@ -52,35 +79,28 @@ module.exports =
     else
       <div className="post-edit">
         <Messages type="error" messages={@state.errors} />
+        {date}
         <h1>
-          <Textarea
-            placeholder="New title for post"
-            rows=1
-            className="post-edit__title"
-            ref="title"
-            autosize
-            value={@state.post.title}
+          <Editor
+            editorState={@state.post.rteTitle}
+            stripPastedStyles
+            spellCheck
+            placeholder="Title"
+            className="title-editor"
             onChange={@handleTitleChange}
-            style={
-              _.extend(
-                {},
-                input,
-                {
-                  borderColor: 'transparent'
-                  marginBottom: 0
-                }
-              )
-            }
           />
         </h1>
         <div
-          style={_.extend({}, input)}
           ref="markdown"
+          style={{
+            marginBottom: rhythm(2)
+          }}
         >
           <Editor
             editorState={@state.post.rteBody}
             stripPastedStyles
             spellCheck
+            placeholder="Tell your story..."
             onChange={@rteOnChange}
           />
         </div>
@@ -119,13 +139,29 @@ module.exports =
     @debouncedSaveDraft()
     raf(=> @scrollWindow())
 
-  handleTitleChange: (e) ->
-    post = _.extend {}, @state.post, title: e.target.value
-    @setState {
-      post: post
-      unsavedChanges: true
-    }
+  handleTitleChange: (value) ->
+    @setState(
+      post: assign(
+        {},
+        @state.post,
+        {
+          rteTitle: value
+          title: value.getCurrentContent().getPlainText()
+        }
+      )
+    )
+    @debouncedSaveDraft()
 
+  handleDateChange: (value) ->
+    @setState(
+      post: assign(
+        {},
+        @state.post,
+        {
+          created_at: value.toJSON()
+        }
+      )
+    )
     @debouncedSaveDraft()
 
   handleBodyChange: (value) ->

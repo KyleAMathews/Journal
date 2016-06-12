@@ -26,6 +26,7 @@ const PostCreate = React.createClass({
         title: '',
         body: '',
         rteBody: EditorState.createEmpty(),
+        rteTitle: EditorState.createEmpty(),
         created_at: new Date().toJSON(),
       },
     }

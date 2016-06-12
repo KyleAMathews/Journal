@@ -290,6 +290,8 @@ exports.register = (server, options, next) ->
         type: new GraphQLNonNull(GraphQLString)
       body:
         type: new GraphQLNonNull(GraphQLString)
+      created_at:
+        type: new GraphQLNonNull(GraphQLString)
     outputFields:
       post:
         type: postType
@@ -297,7 +299,7 @@ exports.register = (server, options, next) ->
         type: userType
         resolve: ->
           getUser()
-    mutateAndGetPayload: ({id, title, body}) ->
+    mutateAndGetPayload: ({id, title, body, created_at}) ->
       updated_at = new Date().toJSON()
 
       new Promise (resolve, reject) ->
@@ -310,6 +312,7 @@ exports.register = (server, options, next) ->
           updatedPost = _.extend(
             post,
             title: title,
+            created_at: created_at,
             body: body,
             updated_at: updated_at
           )
@@ -341,6 +344,8 @@ exports.register = (server, options, next) ->
         type: new GraphQLNonNull(GraphQLString)
       body:
         type: new GraphQLNonNull(GraphQLString)
+      created_at:
+        type: new GraphQLNonNull(GraphQLString)
     outputFields:
       postId:
         type: GraphQLInt
@@ -370,7 +375,7 @@ exports.register = (server, options, next) ->
         resolve: ->
           console.log "viewer resolve"
           getUser()
-    mutateAndGetPayload: ({id, title, body}) ->
+    mutateAndGetPayload: ({id, title, body, created_at}) ->
       updated_at = new Date().toJSON()
 
       new Promise (resolve, reject) ->
@@ -384,6 +389,7 @@ exports.register = (server, options, next) ->
             post,
             title: title,
             body: body,
+            created_at: created_at,
             updated_at: updated_at,
             draft: false
           )

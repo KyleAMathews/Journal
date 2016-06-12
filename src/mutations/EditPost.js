@@ -7,6 +7,7 @@ export default class EditPostMutation extends Relay.Mutation {
         id
         title
         body
+        created_at
       }
     `,
   };
@@ -19,6 +20,7 @@ export default class EditPostMutation extends Relay.Mutation {
         post {
           title
           body
+          created_at
           updated_at
         }
       }
@@ -37,6 +39,7 @@ export default class EditPostMutation extends Relay.Mutation {
       id: this.props.id,
       title: this.props.title,
       body: this.props.body,
+      created_at: this.props.created_at,
     }
   }
 }
