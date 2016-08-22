@@ -7,7 +7,7 @@ export const typography = new Typography({
   bodyGray: 30,
   bodyFontFamily: ['Linux Libertine', 'Georgia', 'sans-serif'],
   baseFontSize: '20px',
-  baseLineHeight: '27px',
+  baseLineHeight: 1.4,
   overrideStyles: ({ adjustFontSizeTo, rhythm }) => ({
     blockquote: {
       ...adjustFontSizeTo('22px'),

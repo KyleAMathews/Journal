@@ -64,7 +64,7 @@
     "react-transform-catch-errors": "^1.0.1",
     "safe-access": "^0.1.0",
     "style-loader": "^0.13.0",
-    "typography": "^0.10.5",
+    "typography": "^0.13.0",
     "underscore": "^1.8.2",
     "underscore.string": "^3.0.3",
     "webpack": "^1.12.1"
